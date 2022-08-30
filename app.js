@@ -10,6 +10,7 @@ const {
   notFoundHandler,
   defaultErrorHandler,
 } = require("./middlewares/common/notFoundHandler");
+const loginRouter = require("./router/loginRoute");
 
 const app = express();
 dotenv.config();
@@ -37,6 +38,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // router configuration
+app.use("/login", loginRouter);
+app.use("/users", userRouter);
+app.use("/inbox", inboxRouter);
 
 // not found error handler
 app.use(notFoundHandler);

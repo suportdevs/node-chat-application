@@ -1,3 +1,4 @@
+const { resolveInclude } = require("ejs");
 const createError = require("http-errors");
 
 // not found eroors handler
@@ -7,8 +8,15 @@ function notFoundHandler(req, res, next) {
 
 // default errors handler
 function defaultErrorHandler(err, req, res, next) {
-  res.locals.title = "Error Page";
-  res.render("errors/errors.ejs");
+  res.locals.error =
+    process.env.ENV_NODE === "Development" ? err : { message: err.message };
+  res.status(err.status ?? 500);
+  if (res.locals.html) {
+    res.locals.title = "Error Pagse";
+    res.render("errors/errors.ejs");
+  } else {
+    res.json(res.locals.error);
+  }
 }
 
 module.exports = {

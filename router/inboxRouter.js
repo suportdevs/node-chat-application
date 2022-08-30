@@ -1,10 +1,10 @@
 // external imports
 const express = require("express");
 const router = express.Router();
-const { getLogin } = require("../controllers/loginController");
+const { getInbox } = require("../controllers/inboxController");
 
 // internal imports
 
-router.get("/", getLogin);
+router.get("/", getInbox);
 
 module.exports = router;

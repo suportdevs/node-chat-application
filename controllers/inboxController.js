@@ -1,9 +1,9 @@
-function getLogin(req, res, next) {
-  res.render("index.ejs", {
+function getInbox(req, res, next) {
+  res.render("inbox.ejs", {
     title: `Inbox - ${process.env.APP_NAME}`,
   });
 }
 
 module.exports = {
-  getLogin,
+  getInbox,
 };

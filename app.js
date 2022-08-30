@@ -11,6 +11,8 @@ const {
   defaultErrorHandler,
 } = require("./middlewares/common/notFoundHandler");
 const loginRouter = require("./router/loginRoute");
+const inboxRouter = require("./router/inboxRouter");
+const userRouter = require("./router/userRouter");
 
 const app = express();
 dotenv.config();

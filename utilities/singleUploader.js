@@ -1,5 +1,5 @@
 // external imports
-const createHttpError = require("http-errors");
+const createError = require("http-errors");
 const multer = require("multer");
 const path = require("path");
 
@@ -36,7 +36,7 @@ function uploader(
       if (allowed_file_format.includes(file.mimetype)) {
         cb(null, true);
       } else {
-        cb(createHttpError(error_message));
+        cb(createError(error_message));
       }
     },
   });

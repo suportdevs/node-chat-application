@@ -40,14 +40,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // router configuration
-app.use("/login", loginRouter);
+app.use("/", loginRouter);
 app.use("/users", userRouter);
 app.use("/inbox", inboxRouter);
 
 // not found error handler
 app.use(notFoundHandler);
 
-// common error handler
+// default error handler
 app.use(defaultErrorHandler);
 
 app.listen(process.env.PORT, () => {

@@ -23,8 +23,22 @@ async function addUser(req, res, next) {
       password: hashedPassword,
     });
   }
+
+  try {
+    await newUser.save();
+    res.status(200).json({ massege: "User created successfull." });
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: "Unknow error occured!",
+        },
+      },
+    });
+  }
 }
 
 module.exports = {
   getUser,
+  addUser,
 };

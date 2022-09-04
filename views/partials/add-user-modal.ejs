@@ -1,0 +1,94 @@
+<div class="modal-wrapper" id="add-user-modal">
+  <div class="modal">
+    <a href="#" onclick="closeModal()" class="modal-close">+</a>
+    <div class="modal-title">
+      <h2>Create New User</h2>
+    </div>
+    <div class="modal-body">
+      <form id="add-user-form" method="POST" action="/users" enctype="multipart/form-data">
+        <input type="text" placeholder="enter name" name="name" />
+        <p class="error show name-error"></p>
+        <input type="text" placeholder="enter email" name="email" />
+        <p class="error show email-error"></p>
+        <input type="text" placeholder="enter mobile" name="mobile" />
+        <p class="error show mobile-error"></p>
+        <input type="password" placeholder="enter password" name="password" />
+        <p class="error show password-error"></p>
+        <input type="file" name="avatar" />
+        <p class="error show avatar-error"></p>
+        <p class="error show common-error"></p>
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const modal = document.querySelector("#add-user-modal");
+  const form = document.querySelector("#add-user-form");
+
+  // success toast notification
+  const successToast = Toastify({
+    text: "This is a toast",
+    duration: 3000,
+  });
+
+  function closeModal() {
+    modal.style.display = "none";
+  }
+  function openModal() {
+    modal.style.display = "block";
+  }
+
+  form.onSubmit = async (event) => {
+    evnet.preventDefault();
+
+    const errorPlaceholders = document.querySelector("p.error");
+    for (let i = 0; i < errorPlaceholders.lenght; i++) {
+      errorPlaceholders[i].style.display = "none";
+    }
+
+    const inputErrors = document.querySelector("input.error");
+    if (inputErrors.lenght > 0) {
+      for (let i = 0; i < inputErrors.length; i++) {
+        inputErrors[i].classList.remove("error");
+      }
+    }
+
+    // prepare the form data
+    const formData = new FormData(form);
+
+    // send the request to server
+    let response = await fetch("/users", {
+      method: "POST",
+      body: formData,
+    });
+
+    // get response
+    let result = response.json();
+
+    // handle errors
+    if (result.errors) {
+      Object.keys(result.errors).forEach((fieldName) => {
+        // add error class to inputs
+        form[fieldName].classList.add("error");
+
+        let errorPlaceholders = document.querySelector(`.${fieldName}-error`);
+        errorPlaceholders.textContent = result.errors.fieldName.msg;
+
+        // make all placeholder disable
+        errorPlaceholders.style.display = "block";
+      });
+    } else {
+      // success
+      successToast.showToast();
+      closeModal();
+
+      document.querySelector("p.error").style.display = "none";
+
+      // reload page
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    }
+  };
+</script>

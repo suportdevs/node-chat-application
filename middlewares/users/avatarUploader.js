@@ -9,7 +9,7 @@ function avatarUploader(req, res, next) {
     "Only .jpeg .jpg. png format allowed!"
   );
 
-  uploader.any()(req, res, (err) => {
+  upload.any()(req, res, (err) => {
     if (err) {
       res.status(500).json({ errors: { avatar: { msg: err.message } } });
     } else {

@@ -7,7 +7,7 @@ const peopleSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    emial: {
+    email: {
       type: String,
       required: true,
       trim: true,

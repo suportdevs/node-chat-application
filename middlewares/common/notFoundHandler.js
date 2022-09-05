@@ -9,8 +9,10 @@ function notFoundHandler(req, res, next) {
 // default errors handler
 function defaultErrorHandler(err, req, res, next) {
   res.locals.error =
-    process.env.ENV_NODE === "Development" ? err : { message: err.message };
-  res.status(err.status ?? 500);
+    process.env.NODE_ENV === "development" ? err : { message: err.message };
+
+  res.status(err.status || 500);
+
   if (res.locals.html) {
     res.locals.title = "Error Pagse";
     res.render("errors/errors.ejs");

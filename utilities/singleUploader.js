@@ -20,7 +20,11 @@ function uploader(
     filename: (req, file, cb) => {
       const fileExt = path.extname(file.originalname);
       const filename =
-        file.originalname.replace(fileExt).split(" ").join("-") +
+        file.originalname
+          .replace(fileExt, "")
+          .toLowerCase()
+          .split(" ")
+          .join("-") +
         "-" +
         Date.now();
       cb(null, filename + fileExt);

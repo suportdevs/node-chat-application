@@ -38,7 +38,7 @@
   const form = document.querySelector("#add-user-form");
   // success toast
   const successToast = Toastify({
-    text: "User was added successfully! Reloading the list...",
+    text: "User was added successfully",
     duration: 1000,
   });
   function closeModal() {
@@ -70,7 +70,7 @@
     });
     // get response
     let result = await response.json();
-    console.log(result)
+    
     // handle error and response
     if (result.errors) {
       // errors

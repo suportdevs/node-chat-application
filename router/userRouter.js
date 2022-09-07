@@ -1,11 +1,6 @@
 // external imports
 const express = require("express");
 const router = express.Router();
-const {
-  getUser,
-  addUser,
-  removeUser,
-} = require("../controllers/userController");
 
 // internal imports
 const decoreteHtmlResponse = require("../middlewares/common/decorateHtmlResponse");
@@ -14,6 +9,11 @@ const {
   addValidators,
   addUserValidationHandler,
 } = require("../middlewares/users/userValidators");
+const {
+  getUser,
+  addUser,
+  removeUser,
+} = require("../controllers/userController");
 
 router.get("/", decoreteHtmlResponse("Users"), getUser);
 

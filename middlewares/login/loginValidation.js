@@ -2,7 +2,7 @@
 const { check, validationResult } = require("express-validator");
 
 const doLoginValidators = [
-  check("name").isLength({ min: 1 }).withMessage("Username is required."),
+  check("username").isLength({ min: 1 }).withMessage("Username is required."),
   check("password").isLength({ min: 1 }).withMessage("Password is required."),
 ];
 

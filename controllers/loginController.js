@@ -15,12 +15,13 @@ async function doLogin(req, res, next) {
     const user = await User.findOne({
       $or: [{ email: req.body.username }, { mobile: req.body.username }],
     });
+
     if (user && user._id) {
-      const isValiedPassword = await bcrypt.compare(
+      const isValidPassword = await bcrypt.compare(
         req.body.password,
         user.password
       );
-      if (isValiedPassword) {
+      if (isValidPassword) {
         const userObject = {
           username: user.name,
           mobile: user.mobile,
@@ -35,7 +36,7 @@ async function doLogin(req, res, next) {
 
         // set cookie
         res.cookie(process.env.COOKIE_NAME, token, {
-          maxAge: process.env.JWT_SECRET,
+          maxAge: process.env.JWT_EXPIRE,
           httpOnly: true,
           singed: true,
         });

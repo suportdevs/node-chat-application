@@ -14,8 +14,9 @@ const {
   addUser,
   removeUser,
 } = require("../controllers/userController");
+const { checkLogin } = require("../middlewares/common/checkLogin");
 
-router.get("/", decoreteHtmlResponse("Users"), getUser);
+router.get("/", decoreteHtmlResponse("Users"), checkLogin, getUser);
 
 router.post(
   "/",

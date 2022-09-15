@@ -1,27 +1,29 @@
-// external imports
 const jwt = require("jsonwebtoken");
 
 const checkLogin = (req, res, next) => {
   let cookies =
     Object.keys(req.signedCookies).length > 0 ? req.signedCookies : null;
+  // alert(cookies);
+
   if (cookies) {
     try {
-      const token = cookies[process.env.COOKIE_NAME];
-      const decoded = jwt.verify(token, process.env.COOKIE_SECRET);
+      const token = cookies.process.env.COOKIE_NAME;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;
 
+      // pass user info to response locals
       if (res.locals.html) {
-        res.locas.loggedInUser = decoded;
+        res.locals.loggedInUser = decoded;
       }
       next();
     } catch (err) {
       if (res.locals.html) {
         res.redirect("/");
       } else {
-        res.status(500).send({
+        res.status(500).json({
           errors: {
             common: {
-              msg: "Authentication faild!",
+              msg: "Authentication failure!",
             },
           },
         });
@@ -31,17 +33,24 @@ const checkLogin = (req, res, next) => {
     if (res.locals.html) {
       res.redirect("/");
     } else {
-      res.status(500).send({
-        errors: {
-          common: {
-            msg: "Authentication faild!",
-          },
-        },
+      res.status(401).json({
+        error: "Authetication failure!",
       });
     }
   }
 };
 
+const redirectLoggedIn = function (req, res, next) {
+  let cookies =
+    Object.keys(req.signedCookies).length > 0 ? req.signedCookies : null;
+  if (!cookies) {
+    next();
+  } else {
+    res.redirect("/inbox");
+  }
+};
+
 module.exports = {
   checkLogin,
+  redirectLoggedIn,
 };

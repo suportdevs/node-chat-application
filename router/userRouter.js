@@ -20,6 +20,7 @@ router.get("/", decoreteHtmlResponse("Users"), checkLogin, getUser);
 
 router.post(
   "/",
+  checkLogin,
   avatarUploader,
   addValidators,
   addUserValidationHandler,

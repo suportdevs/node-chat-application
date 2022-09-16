@@ -8,7 +8,7 @@ const {
   doLoginValidators,
   doLoginValidationHandler,
 } = require("../middlewares/login/loginValidation");
-const { getLogin, doLogin } = require("../controllers/loginController");
+const { getLogin, login, logout } = require("../controllers/loginController");
 const { redirectLoggedIn } = require("../middlewares/common/checkLogin");
 
 const page_title = "Login";
@@ -20,7 +20,9 @@ router.post(
   decoreteHtmlResponse(page_title),
   doLoginValidators,
   doLoginValidationHandler,
-  doLogin
+  login
 );
+
+router.delete("/", logout);
 
 module.exports = router;

@@ -1,3 +1,4 @@
+// external imports
 const jwt = require("jsonwebtoken");
 
 const checkLogin = (req, res, next) => {

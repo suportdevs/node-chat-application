@@ -686,6 +686,24 @@ input[type="submit"]:active {
   }
 }
 
+div#new-message-container a {
+  background-color: #fff;
+  padding: 5px 10px;
+  border-radius: 50px;
+  text-align: center;
+  margin: 0 auto;
+  font-size: 2rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+div#new-message-container {
+  text-align: center;
+  margin: 0 auto;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
 /* styles related to toastify */
 .toastify {
   color: var(--secondary);

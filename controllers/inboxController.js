@@ -9,17 +9,17 @@ function getInbox(req, res, next) {
   res.render("inbox.ejs");
 }
 
-async function sarchUsers(req, res, next) {
+async function searchUsers(req, res, next) {
   const user = req.body.user;
   const searchquery = user.replace("+88", "");
 
   const name_search_regex = new RegExp(escape(searchquery), "i");
-  const number_search_regex = new RegExp("^", escape("+88" + searchquery));
-  const email_seach_regex = new RegExp("^", escape(searchquery), "$", "i");
+  const number_search_regex = new RegExp("^" + escape("+88" + searchquery));
+  const email_seach_regex = new RegExp("^" + escape(searchquery) + "$", "i");
 
   try {
     if (searchquery !== "") {
-      const users = User.find(
+      const users = await User.find(
         {
           $or: [
             { name: name_search_regex },
@@ -46,4 +46,5 @@ async function sarchUsers(req, res, next) {
 
 module.exports = {
   getInbox,
+  searchUsers,
 };

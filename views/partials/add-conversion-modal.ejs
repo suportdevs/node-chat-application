@@ -24,7 +24,7 @@
   const modal = document.querySelector("#add-conversion-modal");
   const form = document.querySelector("#add-conversion-form");
   const searchInput = document.querySelector("#userInput");
-  const userPlaceholder = document.querySelector('.search-users');
+  let userPlaceholder = document.querySelector('.search-users');
   // success toast
   const successToast = Toastify({
     text: "User was added successfully",
@@ -52,10 +52,10 @@
     let response = await fetch("/inbox/search", {
       method: "POST",
       body: JSON.stringify({
-        user: searchInput.value
+        user: searchInput.value,
       }),
       headers: {
-        'Content-type': 'application-json; charset-UTF-8'
+        'Content-type': 'application/json; charset=UTF-8'
       }
     });
 
@@ -67,8 +67,11 @@
       errorPlaceholder.textContent = result.errors.common.msg;
       errorPlaceholder.style.display = 'block';
     } else {
-      let generateHtml = "<ul>";
+      console.log(result.length)
+      // if(result.length > 0){
+        let generateHtml = "<ul>";
         result.forEach((user) => {
+          console.log(user)
           const avatar = user.avatar ? "./uploads/avatars/" + user.avatar : "./uploads/avatars/nophoto.png";
           generateHtml += `<li onclick="createConversion(${user._id}, ${user.name}, ${user.avatar})">
             <div class="user">
@@ -79,10 +82,11 @@
             /div>
             </li>
             `;
-            generateHtml += "</ul>";
-            userPlaceholder.innerHTML = generateHtml;
-            userPlaceholder.style.display = 'block'
-        })
+          });
+        generateHtml += "</ul>";
+        userPlaceholder.innerHTML = generateHtml;
+        userPlaceholder.style.display = 'block'
+      // }
     }
   }
 

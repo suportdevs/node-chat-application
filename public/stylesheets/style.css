@@ -715,3 +715,26 @@ div#new-message-container {
   );
   background: linear-gradient(to right, var(--green) 0%, var(--blue) 100%);
 }
+
+.user img {
+  width: 28px;
+  margin-right: 19px;
+}
+
+.user {
+  display: flex;
+  font-size: 2rem;
+  align-items: center;
+  color: #fff;
+  background-color: #171c2a;
+  margin-bottom: 4px;
+}
+
+.search-users {
+  background-color: #1f222e;
+  padding: 11px;
+  position: absolute;
+  width: 82%;
+  top: 87%;
+  display: none;
+}

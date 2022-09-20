@@ -47,6 +47,7 @@
     }
   });
 
+  //send request for search
   async function searchUsers(){
     // send request by user
     let response = await fetch("/inbox/search", {
@@ -60,26 +61,27 @@
     });
 
     // get response
-    let result = response.json();
+    let result = await response.json();
+
 
     if(result.errors){
       errorPlaceholder = document.querySelector("p.error");
       errorPlaceholder.textContent = result.errors.common.msg;
       errorPlaceholder.style.display = 'block';
     } else {
-      console.log(result.length)
+      console.log(result)
       // if(result.length > 0){
         let generateHtml = "<ul>";
         result.forEach((user) => {
           console.log(user)
-          const avatar = user.avatar ? "./uploads/avatars/" + user.avatar : "./uploads/avatars/nophoto.png";
+          const avatar = user.avatar ? "./uploads/avatars/" + user.avatar : "./images/nophoto.png";
           generateHtml += `<li onclick="createConversion(${user._id}, ${user.name}, ${user.avatar})">
             <div class="user">
               <div class="user-avatar">
                 <img src="${avatar}" />
               </div>
               <div class="username">${user.name}</div>
-            /div>
+            </div>
             </li>
             `;
           });

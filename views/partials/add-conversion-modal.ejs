@@ -26,12 +26,16 @@
   const searchInput = document.querySelector("#userInput");
   let userPlaceholder = document.querySelector('.search-users');
   // success toast
-  const successToast = Toastify({
-    text: "User was added successfully",
+  const conversionFailureToast = Toastify({
+    text: "Error creating a conversion",
     duration: 1000,
   });
   function closeModal() {
     modal.style.display = "none";
+
+    userPlaceholder.style.display = 'none'
+
+    searchInput.value = ""
   }
   function openModal() {
     modal.style.display = "block";
@@ -45,6 +49,10 @@
     if(searchInput.value){
       typingTimer = setTimeout(searchUsers, doneTypingInterval);
     }
+  });
+
+  searchInput.addEventListener("keydown", function(){
+    clearTimeout(typingTimer);
   });
 
   //send request for search
@@ -69,13 +77,11 @@
       errorPlaceholder.textContent = result.errors.common.msg;
       errorPlaceholder.style.display = 'block';
     } else {
-      console.log(result)
-      // if(result.length > 0){
+      if(result.length > 0){
         let generateHtml = "<ul>";
         result.forEach((user) => {
-          console.log(user)
           const avatar = user.avatar ? "./uploads/avatars/" + user.avatar : "./images/nophoto.png";
-          generateHtml += `<li onclick="createConversion(${user._id}, ${user.name}, ${user.avatar})">
+          generateHtml += `<li onclick="createConversion('${user._id}', '${user.name}', '${user.avatar}')">
             <div class="user">
               <div class="user-avatar">
                 <img src="${avatar}" />
@@ -88,7 +94,40 @@
         generateHtml += "</ul>";
         userPlaceholder.innerHTML = generateHtml;
         userPlaceholder.style.display = 'block'
-      // }
+      }
+    }
+  }
+
+  async function createConversion(participant_id, name, avatar){
+    try{
+      // send request
+      const response = await fetch("inbox/conversition", {
+        method: "POST",
+        body: JSON.stringify({
+          participant: name,
+          id: participant_id,
+          avatar: avatar != "undefined" ? avatar : null
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8'
+        }
+      })
+
+      // get response
+      const result = await response.json();
+
+      if(!result.errors){
+        userPlaceholder.style.display = 'none';
+        searchInput.value = name;
+
+        setTimeout(() => {
+          location.reload();
+        }, 1000)
+      } else {
+        throw new Error(result.errors.common.msg);
+      }
+    } catch (err){
+      conversionFailureToast.showToast();
     }
   }
 

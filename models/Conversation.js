@@ -1,7 +1,7 @@
 //external imports
 const mongoose = require("mongoose");
 
-const conversionSchema = mongoose.Schema(
+const conversationSchema = mongoose.Schema(
   {
     creator: {
       id: mongoose.Types.ObjectId,
@@ -23,6 +23,6 @@ const conversionSchema = mongoose.Schema(
   }
 );
 
-const Conversion = mongoose.model("Conversion", conversionSchema);
+const Conversation = mongoose.model("Conversation", conversationSchema);
 
-module.exports = Conversion;
+module.exports = Conversation;

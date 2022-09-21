@@ -4,10 +4,21 @@ const createError = require("http-errors");
 // internal imports
 const escape = require("../utilities/escape");
 const User = require("../models/People");
-const Conversion = require("../models/Conversion");
+const Conversation = require("../models/Conversation");
 
-function getInbox(req, res, next) {
-  res.render("inbox.ejs");
+async function getInbox(req, res, next) {
+  try {
+    const conversions = await Conversation.find({
+      $or: [
+        { "creator.id": req.user.userId },
+        { "participant.id": req.user.userId },
+      ],
+    });
+    res.locals.data = conversions;
+    res.render("inbox.ejs");
+  } catch (err) {
+    next(err);
+  }
 }
 
 async function searchUsers(req, res, next) {
@@ -47,7 +58,7 @@ async function searchUsers(req, res, next) {
 
 async function addConversion(req, res, next) {
   try {
-    const newConversion = new Conversion({
+    const newConversion = new Conversation({
       creator: {
         id: req.user.userId,
         name: req.user.username,
@@ -62,7 +73,7 @@ async function addConversion(req, res, next) {
 
     const result = await newConversion.save();
     res.status(200).json({
-      message: "Conversion create successfull.",
+      message: "Conversation create successfull.",
     });
   } catch (err) {
     res.status(500).json({

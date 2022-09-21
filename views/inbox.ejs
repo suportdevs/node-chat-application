@@ -4,23 +4,35 @@
         <input type="text" placeholder="Search" />
       </div>
       <div id="conversation-list">
+        <% data.forEach(function(conversation){ %>
+          <% if(conversation.creator.id == loggedInUser.userId) { %>
         <div class="conversation active">
-          <img src="./images/user1.png" alt="Mamun" />
-          <div class="title-text">Mamunur Rashid</div>
+          <% if(conversation.participant.avatar) { %>
+          <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="<%= conversation.participant.name %>" />
+          <% } else { %>
+            <img src="./images/nophoto.png" alt="<%= conversation.participant.name %>" />
+          <% } %>
+          <div class="title-text"><%= conversation.participant.name %></div>
           <di class="created-date"> Apr 16 </di>
           <div class="conversation-message">
             Love you janu <span style="color: red">&hearts;</span>
           </div>
         </div>
-        <div class="conversation">
-          <img src="./images/user2.png" alt="Mamun" />
-          <div class="title-text">Janu</div>
-          <di class="created-date"> Apr 16 </di>
-          <div class="conversation-message">
-            Love you too
-            <span style="color: red">&hearts; &hearts; &hearts;</span>
+        <% } else { %>
+          <div class="conversation active">
+            <% if(conversation.creatot.avatar) { %>
+            <img src="./uploads/avatars/<%= conversation.creatot.avatar %>" alt="<%= conversation.creatot.name %>" />
+            <% } else { %>
+              <img src="./images/nophoto.png" alt="<%= conversation.creatot.name %>" />
+            <% } %>
+            <div class="title-text"><%= conversation.creatot.name %></div>
+            <di class="created-date"> Apr 16 </di>
+            <div class="conversation-message">
+              Love you janu <span style="color: red">&hearts;</span>
+            </div>
           </div>
-        </div>
+        <% } %>
+        <% }) %>
       </div>
       <div id="new-message-container">
         <a href="#" onclick="openModal()">+</a>

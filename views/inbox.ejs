@@ -13,21 +13,21 @@
             <img src="./images/nophoto.png" alt="<%= conversation.participant.name %>" />
           <% } %>
           <div class="title-text"><%= conversation.participant.name %></div>
-          <di class="created-date"> Apr 16 </di>
+          <di class="created-date"><%= conversation.last_update %></di>
           <div class="conversation-message">
             Love you janu <span style="color: red">&hearts;</span>
           </div>
         </div>
 
         <% } else { %>
-          
+
           <div class="conversation active">
-            <% if(conversation.creatot.avatar) { %>
-            <img src="./uploads/avatars/<%= conversation.creatot.avatar %>" alt="<%= conversation.creatot.name %>" />
+            <% if(conversation.creator.avatar) { %>
+            <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="<%= conversation.creator.name %>" />
             <% } else { %>
-              <img src="./images/nophoto.png" alt="<%= conversation.creatot.name %>" />
+              <img src="./images/nophoto.png" alt="<%= conversation.creator.name %>" />
             <% } %>
-            <div class="title-text"><%= conversation.creatot.name %></div>
+            <div class="title-text"><%= conversation.creator.name %></div>
             <di class="created-date"> Apr 16 </di>
             <div class="conversation-message">
               Love you janu <span style="color: red">&hearts;</span>

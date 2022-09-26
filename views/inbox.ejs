@@ -43,7 +43,7 @@
         <span>Mamun</span>
         <img src="./images/trash.png" alt="Delete Conversation" />
       </div>
-      <div id="chat-message-list">
+      <!-- <div id="chat-message-list">
         <div class="message-row other-message">
           <div class="message-content">
             <img src="./images/user1.png" alt="Mamun" />
@@ -62,6 +62,9 @@
             <div class="message-time">Apr 16</div>
           </div>
         </div>
+      </div> -->
+      <div id="chat-message-list">
+        <div class="nothing">select a conversation</div>
       </div>
       <div id="chat-form">
         <img src="./images/attachment.png" alt=Add Attachment"" />
@@ -88,12 +91,62 @@
     <%- include('./partials/add-conversion-modal.ejs') %>
 
     <script>
+      const chatForm = document.querySelector("#chat-form");
+      const messageContainer = document.querySelector("#chat-message-list")
+      let participant = null;
+      let current_conversation_id;
       //get messages fo a conversion
       async function getMessages(conversationId, paticipantName){
         const response = await fetch(`inbox/messages/${conversationId}`);
         const result = await response.json();
 
-        // if(result.)
+        if(!result.errors && result.data){
+          chatForm.style.visibility = 'visible';
+
+          const { data, user, conversationd_id } = result;
+
+          participant = data.participant;
+          current_conversation_id = conversation_id;
+
+          if(data.messages){
+            
+            let allMessages = '';
+
+            if(data.messages.length > 0){
+              data.messages.forEach((message) => {
+                let senderAvatar = message.sender.avatar ? `uploads/avatars/${message.sender.avatar}` : 'images/nophoto.png';
+                const messageClass = message.sender._id === loggedInUserId ? 'you-message' : 'other-message';
+                const showAvatar = message.sender._id === loggedInUserId ? '' : `<img src="${senderAvatar}" alt="${message.sender.name}" />`;
+
+                let attachments = '<div class="attachments">';
+
+                if(message.attachment && message.attachment.length > 0){
+                  message.attachment.forEach((attachment) => {
+                    attachments += `<img src="uploads/attachemts/${message.attachment}" ?>`;
+                  })
+                }
+
+                attachments += "</div>";
+
+                //final message
+                let messageHtml = `<div class="message-row ${messageClass}">
+                  ${showAvatar}
+                  <div class="message-text">${message.text}</div>
+                  ${attachments}
+                  <div class="message-time">${message.date_time}</div>
+                  </div>
+                  `;
+
+                  allMessages +=  messageHtml;
+                  messageContainer.innerHtml = allMessages;
+              })
+            }
+          } else {
+            
+          }
+        } else {
+
+        }
       }
     </script>
 

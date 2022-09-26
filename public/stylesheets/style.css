@@ -88,6 +88,25 @@ input[type="submit"]:active {
   transform: scale(0.99);
 }
 
+.nothing {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 2.5rem;
+}
+
+.nothing img {
+  width: 100%;
+  max-width: 120px;
+}
+
+@media only screen and (max-width: 1000px) {
+  .nothing {
+    display: none;
+  }
+}
 /* modal relayed styles */
 .modal-wrapper {
   position: absolute;
@@ -429,6 +448,7 @@ input[type="submit"]:active {
   border-top: 2px solid rgba(0, 0, 0, 0.25);
   padding-left: 10px;
   padding-right: 22px;
+  visibility: hidden;
 }
 
 #chat-form input {

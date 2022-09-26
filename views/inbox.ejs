@@ -6,7 +6,7 @@
       <div id="conversation-list">
         <% data.forEach(function(conversation){ %>
           <% if(conversation.creator.id == loggedInUser.userId) { %>
-        <div class="conversation active">
+        <div class="conversation active" onclick="getMessages('<%= conversation._id %>', '<%= conversation.participant.name %>')">
           <% if(conversation.participant.avatar) { %>
           <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="<%= conversation.participant.name %>" />
           <% } else { %>
@@ -21,7 +21,7 @@
 
         <% } else { %>
 
-          <div class="conversation active">
+          <div class="conversation active" onclick="getMessages('<%= conversation._id %>', '<%= conversation.participant.name %>')">
             <% if(conversation.creator.avatar) { %>
             <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="<%= conversation.creator.name %>" />
             <% } else { %>
@@ -86,6 +86,16 @@
     </div>
 
     <%- include('./partials/add-conversion-modal.ejs') %>
+
+    <script>
+      //get messages fo a conversion
+      async function getMessages(conversationId, paticipantName){
+        const response = await fetch(`inbox/messages/${conversationId}`);
+        const result = await response.json();
+
+        // if(result.)
+      }
+    </script>
 
   </body>
 </html>

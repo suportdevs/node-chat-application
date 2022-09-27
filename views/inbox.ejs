@@ -95,6 +95,7 @@
       const messageContainer = document.querySelector("#chat-message-list")
       let participant = null;
       let current_conversation_id;
+      
       //get messages fo a conversion
       async function getMessages(conversationId, paticipantName){
         const response = await fetch(`inbox/messages/${conversationId}`);

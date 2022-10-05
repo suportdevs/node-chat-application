@@ -79,6 +79,7 @@
       
       //get messages fo a conversion
       async function getMessages(conversationId, paticipantName){
+        // send request to get messages
         const response = await fetch(`inbox/messages/${conversationId}`);
         const result = await response.json();
 

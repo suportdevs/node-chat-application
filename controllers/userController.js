@@ -52,6 +52,7 @@ async function addUser(req, res, next) {
   }
 }
 
+// remove user
 async function removeUser(req, res, next) {
   try {
     const user = await User.findByIdAndDelete({ _id: req.params.id }).clone();

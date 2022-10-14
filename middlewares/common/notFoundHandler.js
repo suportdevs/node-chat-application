@@ -6,6 +6,7 @@ function notFoundHandler(req, res, next) {
   next(createError(404, "Your request content was not found!"));
 }
 
+
 // default errors handler
 function defaultErrorHandler(err, req, res, next) {
   res.locals.error =

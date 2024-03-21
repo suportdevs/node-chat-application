@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser");
 const dbConnection = require("./database/dbConnection");
 const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
 const loginRouter = require("./router/loginRouter");
+const usersRouter = require("./router/usersRouter");
+const inboxRouter = require("./router/inboxRouter");
 
 const app = express();
 dotenv.config();
@@ -30,6 +32,8 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // routing setup
 app.use("/", loginRouter);
+app.use("/users", usersRouter);
+app.use("/inbox", inboxRouter);
 
 // 404 not found handler
 app.use(notFoundHandler);

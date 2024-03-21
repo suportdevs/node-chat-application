@@ -3,8 +3,9 @@ const router = require("express").Router();
 
 // internal imports
 const { getInbox } = require("../controllers/InboxController");
+const decorateHtmlResponse = require("../middlewares/decorateHtmlResponse");
 
 // get inbox page
-router.get("/", getInbox);
+router.get("/", decorateHtmlResponse("Inbox"), getInbox);
 
 module.exports = router;

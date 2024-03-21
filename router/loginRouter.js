@@ -3,7 +3,8 @@ const router = require("express").Router();
 
 // internal imports
 const { getLogin } = require("../controllers/loginController");
+const decorateHtmlResponse = require("../middlewares/decorateHtmlResponse");
 
-router.get("/", getLogin);
+router.get("/", decorateHtmlResponse("Login"), getLogin);
 
 module.exports = router;

@@ -1,9 +1,12 @@
+// external imports
 const express = require("express");
 const dotenv = require("dotenv");
-const ejs = require("ejs");
 const path = require("path");
-const dbConnection = require("./database/dbConnection");
 const cookieParser = require("cookie-parser");
+
+// internal imports
+const dbConnection = require("./database/dbConnection");
+const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 dotenv.config();
@@ -16,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // set view engine ejs
-app.set("view engine", ejs);
+app.set("view engine", "ejs");
 
 // set static folder
 app.use(express.static(path.join(__dirname, "public")));
@@ -26,7 +29,11 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // routing setup
 
-// error handling
+// 404 not found handler
+app.use(notFoundHandler);
+
+// default error handler
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
   console.log(`Application listen to port ${process.env.PORT}`);

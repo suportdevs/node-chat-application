@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 // internal imports
 const dbConnection = require("./database/dbConnection");
 const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
+const loginRouter = require("./router/loginRouter");
 
 const app = express();
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // routing setup
+app.use("/", loginRouter);
 
 // 404 not found handler
 app.use(notFoundHandler);

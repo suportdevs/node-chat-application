@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
 
 async function dbConnection() {
   mongoose
     .connect(process.env.MONGODB_URI)
-    .then(() => console.log("Database connection successfull."))
-    .catch((error) => console.log(`Database connection failed ${error}`));
+    .then(() => {
+      console.log("Database connection successfull");
+    })
+    .catch((err) => {
+      console.log(`Database error ${err}`);
+    });
 }
 
 module.exports = dbConnection;

@@ -9,7 +9,8 @@ function getUsers(req, res, next) {
 
 async function addUser(req, res, next) {
   let newUser;
-  const hashedPassword = bcrypt.hash(req.body.password, 10);
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
   if (req.files && req.files.length > 0) {
     newUser = new People({
       ...req.body,
@@ -28,6 +29,7 @@ async function addUser(req, res, next) {
     const result = await newUser.save();
     res.status(200).json({ message: "User created successfull." });
   } catch (err) {
+    console.log(err);
     res
       .status(500)
       .json({ errors: { common: { msg: "Unknow error occured!" } } });

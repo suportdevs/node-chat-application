@@ -7,15 +7,20 @@
       <div class="modal-body">
         <form method="post" action="/users" enctype="multipart/form-data" id="add-user-form">
           <input type="text" placeholder="enter name" name="name" />
-          <p class="error show">This is error</p>
+          <p class="error name-error"></p>
           <input type="text" placeholder="enter email" name="email" />
+          <p class="error email-error"></p>
           <input type="text" placeholder="enter mobile" name="mobile" />
+          <p class="error mobile-error"></p>
           <input
-            type="password"
-            placeholder="enter password"
-            name="password"
+          type="password"
+          placeholder="enter password"
+          name="password"
           />
+          <p class="error password-error"></p>
           <input type="file" name="avatar" />
+          <p class="error avatar-error"></p>
+          <p class="error common-error"></p>
           <input type="submit" value="Submit" />
         </form>
       </div>
@@ -41,6 +46,17 @@
     // form submit handler
     form.onsubmit = async function(event){
       event.preventDefault();
+
+      //clear errors first
+      const errorPlaceHolders = document.querySelectorAll('p.error');
+      for(let i = 0; i < errorPlaceHolders.length; i++){
+        errorPlaceHolders[i].style.display = 'none';
+      }
+
+      const inputErrors = document.querySelectorAll('input.error');
+      for(let j=0; j < inputErrors.length; j++){
+        inputErrors[j].classList.remove("error");
+      }
 
       // prepare the form data
       const formData = new FormData(form)

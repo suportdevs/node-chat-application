@@ -2,7 +2,11 @@
 const router = require("express").Router();
 
 // internal imports
-const { getUsers, addUser } = require("../controllers/UsersController");
+const {
+  getUsers,
+  addUser,
+  deleteUser,
+} = require("../controllers/UsersController");
 const decorateHtmlResponse = require("../middlewares/decorateHtmlResponse");
 const avatarUpload = require("../middlewares/users/avatarUpload");
 const {
@@ -19,5 +23,7 @@ router.post(
   addUserValidationHandler,
   addUser
 );
+
+router.delete("/:id", deleteUser);
 
 module.exports = router;

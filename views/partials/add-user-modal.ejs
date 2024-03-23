@@ -33,7 +33,7 @@
     // success toast
     const successToast = Toastify({
       text: "User was added successfull. Reloading the list...",
-      duration: 1000
+      duration: 3000
     });
 
     function closeModal() {
@@ -88,13 +88,12 @@
         // success
         successToast.showToast();
         closeModal();
-        document.querySelectorAll('p.error').style.display = 'none';
+        document.querySelector('p.error').style.display = 'none';
 
         // reload the page after 1 second
         setTimeout(() => {
           location.reload();
         }, 1000);
       }
-
-    }
+    };
   </script>

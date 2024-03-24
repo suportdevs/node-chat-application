@@ -9,7 +9,7 @@ const People = require("../../models/People");
 
 const addUserValidators = [
   check("name")
-    .isLength(1)
+    .isLength({ min: 1 })
     .withMessage("Name is required.")
     .isAlpha("en-US", { ignore: " -" })
     .withMessage("Name must not contain anything other then alphabet.")

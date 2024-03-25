@@ -8,8 +8,14 @@ const {
   doLoginValidators,
   doLoginValidationHandler,
 } = require("../middlewares/login/doLoginValidators");
+const redirectIfAuthenticated = require("../middlewares/redirectIfAuthenticated");
 
-router.get("/", decorateHtmlResponse("Login"), getLogin);
+router.get(
+  "/",
+  decorateHtmlResponse("Login"),
+  redirectIfAuthenticated,
+  getLogin
+);
 
 router.post(
   "/",

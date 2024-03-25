@@ -7,6 +7,7 @@ const {
   addUser,
   deleteUser,
 } = require("../controllers/UsersController");
+const authenticated = require("../middlewares/authenticated");
 const decorateHtmlResponse = require("../middlewares/decorateHtmlResponse");
 const avatarUpload = require("../middlewares/users/avatarUpload");
 const {
@@ -14,16 +15,17 @@ const {
   addUserValidationHandler,
 } = require("../middlewares/users/userValidators");
 // get users page
-router.get("/", decorateHtmlResponse("Users"), getUsers);
+router.get("/", decorateHtmlResponse("Users"), authenticated, getUsers);
 
 router.post(
   "/",
+  authenticated,
   avatarUpload,
   addUserValidators,
   addUserValidationHandler,
   addUser
 );
 
-router.delete("/:id", deleteUser);
+router.delete("/:id", authenticated, deleteUser);
 
 module.exports = router;

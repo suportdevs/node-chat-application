@@ -23,22 +23,22 @@
         <div class="menu-item"><a href="/users">Users</a></div>
         <div class="menu-item"><a href="/">Login</a></div>
       <% } %>
-
-      <script>
-        // toast
-        const logoutToast = Toastify({
-          text: "You are being logged out...",
-          duration: 3000
-        });
-
-        function logout(){
-          fetch('/', {
-            method: "DELETE",
-          });
-          logoutToast.showToast();
-          setTimeout(() => {
-            window.location.replace('/');
-          }, 1000);
-        }
-      </script>
     </div>
+
+    <script>
+      // toast
+      const logoutToast = Toastify({
+        text: "You are being logged out...",
+        duration: 3000
+      });
+
+      function logout(){
+        fetch('/', {
+          method: "DELETE",
+        });
+        logoutToast.showToast();
+        setTimeout(() => {
+          window.location.replace('/');
+        }, 1000);
+      }
+    </script>

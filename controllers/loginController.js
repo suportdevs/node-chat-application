@@ -39,7 +39,7 @@ async function doLogin(req, res, next) {
         res.cookie(process.env.COOKIE_NAME, token, {
           maxAge: process.env.JWT_EXPIRY,
           httpOnly: true,
-          sign: true,
+          signed: true,
         });
 
         //set the logged in user in local indentifier

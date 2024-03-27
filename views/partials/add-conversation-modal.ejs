@@ -31,8 +31,8 @@
 
   // conversation created failure toast
   const conversationFailureToast = Toastify({
-    text: "Error create a conversation",
-    duration: 3000,
+    text: "Error creating a conversation!",
+    duration: 1000,
   });
 
   function openModal(){
@@ -74,7 +74,6 @@
     let result = await response.json();
 
     // handle error and response
-    console.log(result.length);
     if(result.errors){
       const errorPlaceholder = document.querySelector('p.error');
       errorPlaceholder.textContent = result.errors.common.msg;
@@ -85,7 +84,7 @@
         let generateHtml = "<ul>";
           result.forEach((user) => {
             const avatar = user.avatar ? "./uploads/avatars/" + user.avatar : "./images/nophoto.png";
-            generateHtml += `<li>
+            generateHtml += `<li onclick="createConversation('${user._id}', '${user.name}', '${user.avatar}')">
               <div class="user">
                 <div class="avatar">
                   <img src="${avatar}" alt="" />
@@ -99,7 +98,43 @@
           usersPlaceholder.style.display = "block";
       }
     }
+  }
 
+  async function createConversation(participant_id, name, avatar){
+    try{
+      const response = await fetch('/inbox/conversation', {
+        method: "POST",
+        body: JSON.stringify({
+          participant:name,
+          id: participant_id,
+          avatar: avatar != "undefined" ? avatar : null,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+
+      const result = response.json();
+
+      if (!result.errors) {
+        // reset
+        usersPlaceholder.style.display = "none";
+        input.value = name;
+        
+        Toastify({
+          text: "Conversation created successfull.",
+          duration: 1000,
+        }).showToast();
+        // reload the page after 1 second
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+      } else {
+        throw new Error(result.errors.common.msg);
+      }
+    }catch(err){
+      conversationFailureToast.showToast();
+    }
   }
 
 </script>

@@ -3,6 +3,7 @@ const createError = require("http-errors");
 
 // external imports
 const User = require("../models/People");
+const Conversation = require("../models/Conversation");
 
 // get inbox page
 function getInbox(req, res, next) {
@@ -17,7 +18,6 @@ async function searchUsers(req, res, next) {
   const mobile_search_regex = new RegExp("^" + escape(searchQuery));
   const email_search_regex = new RegExp("^" + escape(searchQuery) + "$", "i");
 
-  console.log(mobile_search_regex);
   try {
     if (searchQuery !== "") {
       const users = await User.find(
@@ -51,4 +51,27 @@ async function searchUsers(req, res, next) {
   }
 }
 
-module.exports = { getInbox, searchUsers };
+async function addConversation(req, res, next) {
+  try {
+    const newConversation = new Conversation({
+      creator: {
+        id: req.user.userid,
+        name: req.user.username,
+        avatar: req.user.avatar || null,
+      },
+      participant: {
+        name: req.body.participant,
+        id: req.body.id,
+        avatar: req.body.avatar || null,
+      },
+    });
+    const result = await newConversation.save();
+    res.status(200).json({
+      message: "Conversation was added successfull.",
+    });
+  } catch (err) {
+    res.status(500).json({ errors: { common: { msg: err.message } } });
+  }
+}
+
+module.exports = { getInbox, searchUsers, addConversation };

@@ -24,6 +24,7 @@ async function doLogin(req, res, next) {
       );
       if (isPasswordValid) {
         const userObject = {
+          userid: user._id,
           username: user.name,
           email: user.email,
           mobile: user.mobile,

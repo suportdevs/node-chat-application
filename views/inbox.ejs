@@ -5,18 +5,37 @@
         <input type="text" placeholder="Search" />
       </div>
       <div id="conversation-list">
-        <div class="conversation active">
-          <img src="./images/user1.png" alt="Sumit" />
-          <div class="title-text">Sumit Saha</div>
-          <di class="created-date"> Apr 16 </di>
-          <div class="conversation-message">This is a message</div>
-        </div>
-        <div class="conversation">
-          <img src="./images/user2.png" alt="Sumit" />
-          <div class="title-text">Sumit Saha</div>
-          <di class="created-date"> Apr 16 </di>
-          <div class="conversation-message">This is a message</div>
-        </div>
+        <% data.forEach((conversation) => { %>
+          <% if(conversation.creator.id == loggedInUser.userid) { %>
+          <div class="conversation active">
+            <% if(conversation.participant.avatar) { %>
+              <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="<%= conversation.participant.name %>" />
+            <% } else { %>
+              <img src="./images/nophoto.png" alt="<%= conversation.participant.name %>" />
+            <% } %>
+
+            <div class="title-text"><%= conversation.participant.name %>></div>
+            <di class="created-date"><%= moment(conversation.participant.last_updated).fromNow() %></di>
+            <!-- <div class="conversation-message">This is a message</div> -->
+          </div>
+          <% } else { %>
+          <div class="conversation">
+            <% if(conversation.creator.avatar) { %>
+              <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="<%= conversation.creator.name %>" />
+            <% } else { %>
+              <img src="./images/nophoto.png" alt="<%= conversation.creator.name %>" />
+            <% } %>
+
+            <div class="title-text"><%= conversation.creator.name %>></div>
+            <di class="created-date"><%= moment(conversation.creator.last_updated).fromNow() %></di>
+          </div>
+          <% } %>
+        <% }); %>
+
+        <!-- no conversation placeholder for 0 conversation -->
+        <% if(data && data.length === 0) { %>
+          <div class="nothing"><img src="./images/no-conversation.svg" /></div>
+        <% } %>
       </div>
       <div class="new-message-container">
         <a href="#" onclick="openModal()">+</a>

@@ -6,8 +6,19 @@ const User = require("../models/People");
 const Conversation = require("../models/Conversation");
 
 // get inbox page
-function getInbox(req, res, next) {
-  res.render("inbox");
+async function getInbox(req, res, next) {
+  try {
+    const conversations = await Conversation.find({
+      $or: [
+        { "creator.id": req.user.userid },
+        { "participant.id": req.user.userid },
+      ],
+    });
+    res.locals.data = conversations;
+    res.render("inbox");
+  } catch (err) {
+    next(err);
+  }
 }
 
 async function searchUsers(req, res, next) {

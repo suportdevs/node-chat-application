@@ -1,0 +1,105 @@
+<div class="modal-wrapper" id="add-conversation-modal">
+  <div class="modal">
+    <a onclick="closeModal()" class="modal-close">+</a>
+    <div class="modal-title">
+      <h2>Create New Conversation</h2>
+    </div>
+    <div class="modal-body">
+      <form id="add-conversation-form">
+        <input
+          type="text"
+          placeholder="search user by name or email or mobile"
+          name="user"
+          id="user"
+          autocomplete="off"
+        />
+        <p class="error"></p>
+        <div class="search_users"></div>
+        <input type="submit" value="Submit" class="hide" />
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById("add-conversation-modal");
+  // typing detector
+  let typingTimer;
+  const doneTypingInterval = 500;
+  const input = document.querySelector('input#user');
+  const usersPlaceholder =document.querySelector('.search_users');
+
+  // conversation created failure toast
+  const conversationFailureToast = Toastify({
+    text: "Error create a conversation",
+    duration: 3000,
+  });
+
+  function openModal(){
+    modal.style.display = 'block';
+  }
+
+  function closeModal(){
+    modal.style.display = 'none';
+  }
+
+  // on keyup start the countdown
+  input.addEventListener("keyup", function() {
+    clearTimeout(typingTimer);
+    // reset the users placeholder
+    usersPlaceholder.style.display = 'none';
+    if(input.value){
+      typingTimer = setTimeout(searchUsers, doneTypingInterval); // user is "Finished typing" send user search request
+    }
+  });
+
+  // on keydown clear the countdown
+  input.addEventListener("keydown", function() {
+    clearTimeout(typingTimer);
+  });
+
+  // send request for search user
+  async function searchUsers(){
+    let response = await fetch("/inbox/search", {
+      method: "POST",
+      body: JSON.stringify({
+        user: input.value,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+
+    // get response
+    let result = await response.json();
+
+    // handle error and response
+    console.log(result.length);
+    if(result.errors){
+      const errorPlaceholder = document.querySelector('p.error');
+      errorPlaceholder.textContent = result.errors.common.msg;
+      errorPlaceholder.style.display= 'block';
+    }else{
+      // generate the searched users html
+      if(result.length > 0){
+        let generateHtml = "<ul>";
+          result.forEach((user) => {
+            const avatar = user.avatar ? "./uploads/avatars/" + user.avatar : "./images/nophoto.png";
+            generateHtml += `<li>
+              <div class="user">
+                <div class="avatar">
+                  <img src="${avatar}" alt="" />
+                </div>
+                <div class="username">${user.name}</div>
+              </div>
+            </li>`;
+          });
+          generateHtml += "</ul>";
+          usersPlaceholder.innerHTML = generateHtml;
+          usersPlaceholder.style.display = "block";
+      }
+    }
+
+  }
+
+</script>

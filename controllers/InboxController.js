@@ -14,6 +14,7 @@ async function getInbox(req, res, next) {
         { "participant.id": req.user.userid },
       ],
     });
+    console.log(conversations);
     res.locals.data = conversations;
     res.render("inbox");
   } catch (err) {

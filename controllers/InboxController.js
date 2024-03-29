@@ -4,6 +4,7 @@ const createError = require("http-errors");
 // external imports
 const User = require("../models/People");
 const Conversation = require("../models/Conversation");
+const Message = require("../models/Message");
 
 // get inbox page
 async function getInbox(req, res, next) {
@@ -85,4 +86,26 @@ async function addConversation(req, res, next) {
   }
 }
 
-module.exports = { getInbox, searchUsers, addConversation };
+// get messages
+async function getMessages(req, res, next) {
+  try {
+    const messages = await Message.find({
+      conversation_id: req.params.conversation_id,
+    });
+    const { participant } = await Conversation.findById(
+      req.params.conversation_id
+    );
+    res.status(200).json({
+      data: {
+        messages,
+        participant,
+      },
+      userid: req.user.userid,
+      conversation_id: req.params.conversation_id,
+    });
+  } catch (err) {
+    res.status(500).json({ errors: { common: { msg: err.message } } });
+  }
+}
+
+module.exports = { getInbox, searchUsers, addConversation, getMessages };

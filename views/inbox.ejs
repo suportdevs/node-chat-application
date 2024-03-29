@@ -57,11 +57,11 @@
         </div> -->
         <div class="nothing">Select a conversation</div>
       </div>
-      <div id="chat-form">
+      <form id="chat-form" method="post" enctype="multipart/form-data">
         <label for="attachment"><img src="./images/attachment.png" alt=Add Attachment"" /></label>
-        <input type="file" name="attachment" id="attachment" class="hide"  multiple autocomplete="off">
-        <input type="text" placeholder="Type a message" />
-      </div>
+        <input type="file" name="attachment" id="attachment" class="hide"  multiple >
+        <input type="text" name="message" placeholder="Type a message" autocomplete="off"/>
+      </form>
     </div>
 
     <%- include('./partials/add-conversation-modal') %>
@@ -131,7 +131,35 @@
             conversationFailueToast.showToast();
           }
       }
-    </script>
+    
+      // send request to sending message
+      form.onsubmit = async function(event){
+        event.preventDefault();
+        //prepare the from data
+        const formData = new FormData(form);
+        formData.append('receiverId', participant.id);
+        formData.append('receiverName', participant.name);
+        formData.append('receiverAvatar', participant.avatar || '');
+        formData.append('conversationId', current_conversation_id);
 
+        // send then request to server
+        let response = await fetch('/inbox/message', {
+          method: "POST",
+          body: formData,
+        });
+
+        // get then responze
+        let result = await response.json();
+
+        if(!result.errors){
+          form.reset(); // reset the form
+        }else{
+          Toastify({
+            text: "Error sending message",
+            duration: 1000,
+          }).showToast();
+        }
+      }
+    </script>
   </body>
 </html>

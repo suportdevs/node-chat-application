@@ -4,34 +4,31 @@
       <div id="search-container">
         <input type="text" placeholder="Search" />
       </div>
-      <div id="conversation-list">
+      <div id="conversation-list" style="color: #fff">
+        
         <% data.forEach((conversation) => { %>
           <% if(conversation.creator.id == loggedInUser.userid) { %>
-          <div class="conversation active">
-            <% if(conversation.participant.avatar) { %>
-              <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="<%= conversation.participant.name %>" />
-            <% } else { %>
-              <img src="./images/nophoto.png" alt="<%= conversation.participant.name %>" />
+            <div class="conversation">
+              <% if(conversation.participant.avatar){ %>
+                <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="<%= conversation.participant.name %>">
+              <% }else{ %>
+                  <img src="./images/nophoto.png" alt="<%= conversation.participant.name %>">
+              <% } %>
+              <div class="title-text"><%= conversation.participant.name %></div>
+              <div class="conversation-date"><%= moment(conversation.last_updated).fromNow() %></div>
+            </div>
+            <% }else{ %>
+              <div class="conversation">
+                <% if(conversation.creator.avatar){ %>
+                  <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="<%= conversation.creator.name %>">
+                <% }else{ %>
+                    <img src="./images/nophoto.png" alt="<%= conversation.creator.name %>">
+                <% } %>
+                <div class="title-text"><%= conversation.creator.name %></div>
+                <div class="conversation-date"><%= moment(conversation.last_updated).fromNow() %></div>
+              </div>
             <% } %>
-
-            <div class="title-text"><%= conversation.participant.name %>></div>
-            <di class="created-date"><%= moment(conversation.participant.last_updated).fromNow() %></di>
-            <!-- <div class="conversation-message">This is a message</div> -->
-          </div>
-          <% } else { %>
-          <div class="conversation">
-            <% if(conversation.creator.avatar) { %>
-              <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="<%= conversation.creator.name %>" />
-            <% } else { %>
-              <img src="./images/nophoto.png" alt="<%= conversation.creator.name %>" />
-            <% } %>
-
-            <div class="title-text"><%= conversation.creator.name %>></div>
-            <di class="created-date"><%= moment(conversation.creator.last_updated).fromNow() %></di>
-          </div>
-          <% } %>
         <% }); %>
-
         <!-- no conversation placeholder for 0 conversation -->
         <% if(data && data.length === 0) { %>
           <div class="nothing"><img src="./images/no-conversation.svg" /></div>
@@ -45,7 +42,7 @@
         <img src="./images/trash.png" alt="Delete Conversation" />
       </div>
       <div id="chat-message-list">
-        <div class="message-row other-message">
+        <!-- <div class="message-row other-message">
           <div class="message-content">
             <img src="./images/user1.png" alt="Sumit" />
             <div class="message-text">Ok then</div>
@@ -57,7 +54,8 @@
             <div class="message-text">Lorem ipsum dolor sit amet</div>
             <div class="message-time">Apr 16</div>
           </div>
-        </div>
+        </div> -->
+        <div class="nothing">Select a conversation</div>
       </div>
       <div id="chat-form">
         <img src="./images/attachment.png" alt=Add Attachment"" />

@@ -3,6 +3,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const moment = require("moment");
 
 // internal imports
 const dbConnection = require("./database/dbConnection");
@@ -13,6 +14,9 @@ const inboxRouter = require("./router/inboxRouter");
 
 const app = express();
 dotenv.config();
+
+// set moment as app locals
+app.locals.moment = moment;
 
 // database connection
 dbConnection();

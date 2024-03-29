@@ -74,11 +74,12 @@
     let result = await response.json();
 
     // handle error and response
+    const errorPlaceholder = document.querySelector('p.error');
     if(result.errors){
-      const errorPlaceholder = document.querySelector('p.error');
       errorPlaceholder.textContent = result.errors.common.msg;
       errorPlaceholder.style.display= 'block';
     }else{
+      errorPlaceholder.style.display= 'none';
       // generate the searched users html
       if(result.length > 0){
         let generateHtml = "<ul>";

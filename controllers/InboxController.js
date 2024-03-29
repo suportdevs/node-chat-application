@@ -92,7 +92,7 @@ async function getMessages(req, res, next) {
   try {
     const messages = await Message.find({
       conversation_id: req.params.conversation_id,
-    });
+    }).sort("-createdAt");
     const { participant } = await Conversation.findById(
       req.params.conversation_id
     );
@@ -123,6 +123,7 @@ async function sendMessage(req, res, next) {
 
       const newMessage = new Message({
         text: req.body.message,
+        attachments: attachments,
         sender: {
           id: req.user.userid,
           name: req.user.username,
@@ -137,6 +138,20 @@ async function sendMessage(req, res, next) {
       });
 
       const result = await newMessage.save();
+
+      global.io.emit("new_message", {
+        message: {
+          conversation_id: req.body.conversationId,
+          sender: {
+            id: req.user.userid,
+            name: req.user.username,
+            avatar: req.user.avatar || null,
+          },
+          message: req.body.message,
+          attachments: attachments,
+          date_time: result.date_time,
+        },
+      });
 
       res.status(200).json({ message: "Successfull", data: result });
     } catch (err) {

@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const moment = require("moment");
+const http = require("http");
 
 // internal imports
 const dbConnection = require("./database/dbConnection");
@@ -13,8 +14,12 @@ const usersRouter = require("./router/usersRouter");
 const inboxRouter = require("./router/inboxRouter");
 
 const app = express();
+const server = http.createServer(app);
 dotenv.config();
 
+// set socket globally
+const io = require("socket.io")(server);
+global.io = io;
 // set moment as app locals
 app.locals.moment = moment;
 

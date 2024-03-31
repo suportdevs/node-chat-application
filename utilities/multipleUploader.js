@@ -10,7 +10,7 @@ function uploader(
   allowed_max_files,
   error_msg
 ) {
-  const UPLOADS_FOLDER = `${__dirname}/../public/uploades/${subfolder_path}/`;
+  const UPLOADS_FOLDER = `${__dirname}/../public/uploads/${subfolder_path}/`;
 
   // define the multer storage
   const storage = multer.diskStorage({
@@ -20,7 +20,13 @@ function uploader(
     filename: (req, file, cb) => {
       const fileExt = path.extname(file.originalname);
       const fileName =
-        file.replace(fileExt).split(" ").join("-") + "-" + Date.now();
+        file.originalname
+          .replace(fileExt, "")
+          .toLowerCase()
+          .split(" ")
+          .join("-") +
+        "-" +
+        Date.now();
       cb(null, fileName + fileExt);
     },
   });
@@ -28,15 +34,19 @@ function uploader(
   // prepare the final multer upload object
   const upload = multer({
     storage: storage,
-    limits: file_size,
+    limits: { fileSize: file_size },
     fileFilter: (req, file, cb) => {
       if (req.files.length > allowed_max_files) {
-        createError(`Maximum ${allowed_max_files} files are allowed to upload`);
+        cb(
+          createError(
+            `Maximum ${allowed_max_files} files are allowed to upload`
+          )
+        );
       } else {
         if (allowed_file_types.includes(file.mimetype)) {
           cb(null, true);
         } else {
-          createError(error_msg);
+          cb(createError(error_msg));
         }
       }
     },

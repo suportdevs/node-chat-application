@@ -3,7 +3,7 @@ const uploader = require("../../utilities/multipleUploader");
 function attachmentUpload(req, res, next) {
   const upload = uploader(
     "attachments",
-    ["images/jpg", "images/jpeg", "images/png"],
+    ["image/jpeg", "image/jpg", "image/png"],
     1000000,
     5,
     "Only .jpg .jpeg .png files allowed."

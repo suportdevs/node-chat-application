@@ -87,7 +87,7 @@
         // only respond if current conversation is open in any client
         if(data.message.conversation_id == current_conversation_id) {
           // message class
-          const messageClass = data.message.sender.id === loggedinUserId ? 'you-message' : 'other-message';
+          const messageClass = data.message.sender.id === loggedUserId ? 'you-message' : 'other-message';
           
           const senderAvatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" />` : `<img src="./images/nophoto.png" alt="${data.message.sender.name}" />`;
 
@@ -101,11 +101,11 @@
           }
 
           attachments += '</div>';
-console.log(attachments);
+
           let messageHTML;
 
           // do not show avatar for loggedin user
-          if(data.message.sender.id == loggedinUserId) {
+          if(data.message.sender.id == loggedUserId) {
             messageHTML = `<div class="message-row ${messageClass}"><div class="message-content">
               <div class="message-text">${data.message.message}</div>
               ${attachments}
@@ -147,9 +147,9 @@ console.log(attachments);
             let allMessages = '';
             if(data.messages.length > 0){
               data.messages.forEach((message) => {
-                const senderPath = message.sender.avatar ? `./uploads.avatars/${message.sender.avatar}` : './images/nophoto.png';
+                const senderPath = message.sender.avatar ? `./uploads/avatars/${message.sender.avatar}` : './images/nophoto.png';
                 const messageClass = message.sender.id === loggedUserId ? 'you-message' : 'other-message';
-                const showAvatar = message.sender.id === loggedUserId ? '' : `<img src="${senderPath}" alt="${sender.message.name}" />`;
+                const showAvatar = message.sender.id === loggedUserId ? '' : `<img src="${senderPath}" alt="${message.sender.name}" />`;
 
                 let attachments = '<div class="attachments">';
                   if(message.attachments && message.attachments.length > 0){

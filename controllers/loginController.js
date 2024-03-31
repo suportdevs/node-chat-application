@@ -28,6 +28,7 @@ async function doLogin(req, res, next) {
           username: user.name,
           email: user.email,
           mobile: user.mobile,
+          avatar: user.avatar || null,
           role: user.role,
         };
 
@@ -46,7 +47,7 @@ async function doLogin(req, res, next) {
         //set the logged in user in local indentifier
         res.locals.loggedInUser = userObject;
 
-        res.render("inbox");
+        res.redirect("inbox");
       } else {
         throw createError("Login failed! Please try again.");
       }

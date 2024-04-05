@@ -39,7 +39,7 @@
       </div>
       <div id="chat-title">
         <span id="conversation-partner"></span>
-        <img src="./images/trash.png" alt="Delete Conversation" />
+        <img src="./images/trash.png" alt="Delete Conversation" id="hide-conversation-icon" />
       </div>
       <div id="chat-message-list">
         <div class="nothing">Select a conversation</div>
@@ -62,6 +62,7 @@
       const messageContainer = document.getElementById("chat-message-list");
       const chatTitleContainer = document.getElementById("chat-title");
       const chatPartnerTitleName = document.getElementById("conversation-partner");
+      const hideConversationIcon = document.getElementById("hide-conversation-icon");
       const form = document.querySelector("#chat-form");
       const loggedUserId = "<%= loggedInUser.userid %>";;
       const loggedUserUsername = "<%= loggedInUser.username %>";
@@ -73,13 +74,13 @@
       const socket = io('http://localhost:5000');
 
       // Handle events from server
-    socket.on('connect', () => {
-        console.log('Connected to server');
-    });
+      socket.on('connect', () => {
+          console.log('Connected to server');
+      });
 
-    socket.on('disconnect', () => {
-        console.log('Disconnected from server');
-    });
+      socket.on('disconnect', () => {
+          console.log('Disconnected from server');
+      });
 
       // handle new/live incoming message from socket
       socket.on("new_message", data => {
@@ -209,6 +210,37 @@
           }).showToast();
         }
       }
+    
+      hideConversationIcon.addEventListener("click", async function(event) {
+        event.preventDefault();
+        if(!current_conversation_id){
+          Toastify({
+            text: "You don't have select conversation!",
+            duration:2000,
+          }).showToast();
+          return false;
+        }
+
+        if(confirm("Are sure to delete this messages!") == true){
+          let response = await fetch(`/inbox/message/hide/${current_conversation_id}`, {
+            method: "DELETE",
+          });
+
+          let result = await response.json();
+          if(!result.errors){
+            Toastify({
+              text: result.message,
+              duration:2000,
+            }).showToast();
+            messageContainer.innerHTML = '<div class="message-row"></div>';
+          }else{
+            Toastify({
+              text: "Something went wrong!",
+              duration:2000,
+            }).showToast();
+          }
+        }
+      });
     </script>
   </body>
 </html>

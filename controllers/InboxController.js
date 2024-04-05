@@ -92,6 +92,7 @@ async function getMessages(req, res, next) {
   try {
     const messages = await Message.find({
       conversation_id: req.params.conversation_id,
+      hideable: { $nin: [req.user.userid] }, // Exclude messages where hideable does not contain req.user.userid
     }).sort("-createdAt");
     const { participant } = await Conversation.findById(
       req.params.conversation_id
@@ -164,10 +165,25 @@ async function sendMessage(req, res, next) {
   }
 }
 
+// message hide
+async function messageHide(req, res, next) {
+  try {
+    const conversation_id = req.params.conversation_id;
+    await Message.updateMany(
+      { conversation_id: conversation_id },
+      { $addToSet: { hideable: req.user.userid } }
+    );
+    res.status(200).json({ message: "Message deleted successfull." });
+  } catch (err) {
+    res.status(500).json({ errors: { common: { msg: err.message } } });
+  }
+}
+
 module.exports = {
   getInbox,
   searchUsers,
   addConversation,
   getMessages,
   sendMessage,
+  messageHide,
 };

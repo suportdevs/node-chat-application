@@ -23,6 +23,7 @@ const messageSchema = mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
+    hideable: [{ type: mongoose.Types.ObjectId }],
   },
   {
     timestamps: true,

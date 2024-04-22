@@ -14,7 +14,7 @@ function errorHandler(err, req, res, next) {
       title: "Error Page",
     });
   } else {
-    res.json(re.locals.error);
+    res.json(res.locals.error);
   }
 }
 

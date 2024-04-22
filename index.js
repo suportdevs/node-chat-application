@@ -6,7 +6,7 @@ const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
 const dbConnection = require("./database/dbConnection");
 
 // internal imports
-const loginRouter = require("./routes/loginRouter");
+const authRouter = require("./routes/authRouter");
 const inboxRouter = require("./routes/inboxRouter");
 
 const app = express();
@@ -25,7 +25,7 @@ app.set("view engine", "ejs");
 // set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", loginRouter);
+app.use("/", authRouter);
 // app.use('/users', userRouter);
 app.use("/inbox", inboxRouter);
 

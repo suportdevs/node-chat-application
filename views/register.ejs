@@ -1,31 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Chat Application</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* dark mode looking scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+<%- include('./layouts/app') %>
 
-        ::-webkit-scrollbar-track {
-            background: #555;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #121212;
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #242424;
-        }
-    </style>
-</head>
-<body style="background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('./images/bg-1.png'), no-repeat center; background-size: cover;">
     <div class="h-screen flex items-center justify-center ">    
         <div class='flex flex-col items-center justify-center min-w-full p-3 sm:p-0 sm:min-w-96 mx-auto'>
             <div class="w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
@@ -33,26 +7,31 @@
                     <img src="./images/logo.png" alt="">
                     <h2 class="text-3xl font-semibold text-center text-gray-300">Knock Me</h2>
                 </div>
-                <form action="">
+                <form action="/register" method="POST">
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="username" class="text-gray-300 text-sm">Username</label>
                         <input type="text" name="username" placeholder="Username" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <span class=" username-error text-red-500"></span>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="email" class="text-gray-300 text-sm">Email address</label>
                         <input type="email" name="email" placeholder="Email address" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <span class=" email-error text-red-500"></span>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="mobile" class="text-gray-300 text-sm">Mobile</label>
                         <input type="text" name="mobile" placeholder="Mobile" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <span class=" mobile-error text-red-500"></span>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="password" class="text-gray-300 text-sm">Password</label>
                         <input type="password" name="password" placeholder="*******" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <span class=" password-error text-red-500"></span>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="confirm-password" class="text-gray-300 text-sm">Confirm Password</label>
                         <input type="password" name="confirm-password" placeholder="*******" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <span class=" confirm-password-error text-red-500"></span>
                     </div>
                     <a href='/' class='text-sm text-gray-300 hover:underline hover:text-blue-600 mt-2 inline-block'>
 						Already have an account?

@@ -40,20 +40,25 @@ const registerValidators = [
 
 function registerValidationHandler(req, res, next) {
   const errors = validationResult(req);
+  console.log(errors);
   const mappedErrors = errors.mapped();
   if (Object.keys(mappedErrors).length === 0) {
     next();
   } else {
-    // remove uploaded avatar file
-    if (req.files.length > 0) {
-      const filename = req.files[0];
+    // Check if req.files is defined and has a length greater than 0
+    if (req.files && req.files.length > 0) {
+      const { filename } = req.files[0];
       unlink(
         path.join(__dirname, `../public/uploads/avatars/${filename}`),
-        (err) => console.log(err)
+        (err) => {
+          if (err) {
+            throw createError(err.message); // Throw an error if unlink fails
+          }
+        }
       );
     }
+    res.render("register", { errors: mappedErrors });
   }
-  res.render("register", { errors: mappedErrors });
 }
 
 module.exports = { registerValidators, registerValidationHandler };

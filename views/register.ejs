@@ -1,43 +1,54 @@
 <%- include('./layouts/app') %>
 
     <div class="h-screen flex items-center justify-center ">    
-        <div class='flex flex-col items-center justify-center min-w-full p-3 sm:p-0 sm:min-w-96 mx-auto'>
+        <div class='flex flex-col items-center justify-center p-3 sm:p-0 sm:w-96 mx-auto'>
             <div class="w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
                 <div class="flex flex-col gap-3 items-center justify-center">
                     <img src="./images/logo.png" alt="">
                     <h2 class="text-3xl font-semibold text-center text-gray-300">Knock Me</h2>
                 </div>
-                <form action="/register" method="POST">
+                <form action="/register" method="POST" enctype="multipart/form-data">
                     <div class="flex flex-col gap-2 mt-2">
-                        <label for="username" class="text-gray-300 text-sm">Username</label>
-                        <input type="text" name="username" placeholder="Username" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
-                        <span class=" username-error text-red-500"></span>
+                        <label for="name" class="text-gray-300 text-sm">Username</label>
+                        <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <% if(errors.name){ %>
+                            <span class=" name-error text-red-500"><%= errors.name.msg %></span>
+                        <% } %>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="email" class="text-gray-300 text-sm">Email address</label>
                         <input type="email" name="email" placeholder="Email address" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
-                        <span class=" email-error text-red-500"></span>
+                        <% if(errors.email){ %>
+                            <span class=" name-error text-red-500"><%= errors.email.msg %></span>
+                        <% } %>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="mobile" class="text-gray-300 text-sm">Mobile</label>
                         <input type="text" name="mobile" placeholder="Mobile" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
-                        <span class=" mobile-error text-red-500"></span>
+                        <% if(errors.mobile){ %>
+                            <span class=" name-error text-red-500"><%= errors.mobile.msg %></span>
+                        <% } %>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="password" class="text-gray-300 text-sm">Password</label>
                         <input type="password" name="password" placeholder="*******" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
-                        <span class=" password-error text-red-500"></span>
+                        <% if(errors.password){ %>
+                            <span class=" name-error text-red-500"><%= errors.password.msg %></span>
+                        <% } %>
                     </div>
-                    <div class="flex flex-col gap-2 mt-2">
+                    <% if(errors.common){ %>
+                        <span class=" name-error text-red-500"><%= errors.common.msg %></span>
+                    <% } %>
+                    <!-- <div class="flex flex-col gap-2 mt-2">
                         <label for="confirm-password" class="text-gray-300 text-sm">Confirm Password</label>
                         <input type="password" name="confirm-password" placeholder="*******" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
                         <span class=" confirm-password-error text-red-500"></span>
-                    </div>
+                    </div> -->
                     <a href='/' class='text-sm text-gray-300 hover:underline hover:text-blue-600 mt-2 inline-block'>
 						Already have an account?
 					</a>
                     <div class="flex flex-col gap-2 mt-2">
-                        <button type="submit" name="password" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-800/40 focus:ring-offset-2 focus:ring-offset-gray-800/40 text-gray-300 hover:bg-gray-900">Register</button>
+                        <button type="submit" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-800/40 focus:ring-offset-2 focus:ring-offset-gray-800/40 text-gray-300 hover:bg-gray-900">Register</button>
                     </div>
                 </form>
             </div>

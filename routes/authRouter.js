@@ -13,22 +13,33 @@ const {
   doLoginValidator,
   doLoginValidationHandler,
 } = require("../middlewares/doLoginValidator");
+const redirectIfAuthenticated = require("../middlewares/redirectIfAuthenticated");
 const {
   registerValidators,
   registerValidationHandler,
 } = require("../middlewares/registerValidator");
 
-router.get("/", decoratedHtmlResponse("Login"), getLogin);
+router.get(
+  "/",
+  decoratedHtmlResponse("Login"),
+  redirectIfAuthenticated,
+  getLogin
+);
 
 router.post(
   "/",
-  decoratedHtmlResponse("Inbox"),
+  decoratedHtmlResponse("Login"),
   doLoginValidator,
   doLoginValidationHandler,
   doLogin
 );
 
-router.get("/register", decoratedHtmlResponse("Register"), getRegister);
+router.get(
+  "/register",
+  decoratedHtmlResponse("Register"),
+  redirectIfAuthenticated,
+  getRegister
+);
 
 router.post(
   "/register",

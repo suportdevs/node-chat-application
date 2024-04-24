@@ -34,7 +34,7 @@ async function doLogin(req, res, next) {
         };
 
         // generate token
-        const token = jwt.sign(userObject, process.env.JWT_SCRET, {
+        const token = jwt.sign(userObject, process.env.JWT_SECRET, {
           expiresIn: process.env.JWT_EXPIRY,
         });
 

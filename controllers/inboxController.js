@@ -6,4 +6,11 @@ function getInbox(req, res, next) {
   }
 }
 
+async function searchUsers(req, res, next) {
+  try {
+    const { user } = req.body;
+    if (!user) throw createError("Please type anything.");
+  } catch (error) {}
+}
+
 module.exports = { getInbox };

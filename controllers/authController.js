@@ -1,11 +1,58 @@
 // internal imports
 const bcript = require("bcrypt");
+const User = require("../models/People");
 
 async function getLogin(req, res, next) {
   try {
     res.render("index");
   } catch (error) {
     next(error);
+  }
+}
+
+async function doLogin(req, res, next) {
+  try {
+    const { email, password } = req.body;
+    const user = User.findOne({
+      $or: [{ email: email }, { mobile: email }],
+    });
+    if (user && user._id) {
+      const isPasswordValid = bcript.compare(password, user.password);
+      if (isPasswordValid) {
+        userObject = {
+          user_id: user._id,
+          username: user.name,
+          email: user.email,
+          mobile: user.mobile,
+          avatar: user.avatar || null,
+          role: user.role,
+        };
+
+        // generate token
+        const token = jwt.sign(userObject, process.env.JWT_SCRET, {
+          expiredIn: process.envEXPIRY,
+        });
+
+        // set cookie
+        res.cookie(process.env.COOKIE_NAME, {
+          maxAge: process.env.EXPIRY,
+          httpOnly: true,
+          signed: true,
+        });
+
+        res.locals.loggedInUser = userObject;
+        res.render("index");
+      } else {
+        createError("Login faild! Please try agian.");
+      }
+    } else {
+      createHttpError("Login faild! Please try agian.");
+    }
+  } catch (error) {
+    res.render("index", {
+      data: { email: req.body.email },
+      errors: { common: { msg: error.message } },
+    });
   }
 }
 
@@ -33,6 +80,7 @@ async function doRegister(req, res, next) {
 
 module.exports = {
   getLogin,
+  doLogin,
   getRegister,
   doRegister,
 };

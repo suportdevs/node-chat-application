@@ -6,6 +6,7 @@ const {
   getLogin,
   getRegister,
   doRegister,
+  doLogin,
 } = require("../controllers/authController");
 const decoratedHtmlResponse = require("../middlewares/decoratedHtmlResponse");
 const {
@@ -14,6 +15,8 @@ const {
 } = require("../middlewares/registerValidator");
 
 router.get("/", decoratedHtmlResponse("Login"), getLogin);
+
+router.post("/", decoratedHtmlResponse("Inbox"), doLogin);
 
 router.get("/register", decoratedHtmlResponse("Register"), getRegister);
 

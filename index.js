@@ -2,10 +2,11 @@
 const express = require("express");
 const dotEnv = require("dotenv");
 const path = require("path");
-const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
-const dbConnection = require("./database/dbConnection");
+const cookieParser = require("cookie-parser");
 
 // internal imports
+const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
+const dbConnection = require("./database/dbConnection");
 const authRouter = require("./routes/authRouter");
 const inboxRouter = require("./routes/inboxRouter");
 
@@ -24,6 +25,8 @@ app.set("view engine", "ejs");
 
 // set static folder
 app.use(express.static(path.join(__dirname, "public")));
+// cookie parse
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use("/", authRouter);
 // app.use('/users', userRouter);

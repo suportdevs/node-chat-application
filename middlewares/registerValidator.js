@@ -38,9 +38,8 @@ const registerValidators = [
     ),
 ];
 
-function registerValidationHandler(req, res, next) {
+const registerValidationHandler = (req, res, next) => {
   const errors = validationResult(req);
-  console.log(errors);
   const mappedErrors = errors.mapped();
   if (Object.keys(mappedErrors).length === 0) {
     next();
@@ -52,13 +51,13 @@ function registerValidationHandler(req, res, next) {
         path.join(__dirname, `../public/uploads/avatars/${filename}`),
         (err) => {
           if (err) {
-            throw createError(err.message); // Throw an error if unlink fails
+            console.log(err);
           }
         }
       );
     }
     res.render("register", { errors: mappedErrors });
   }
-}
+};
 
 module.exports = { registerValidators, registerValidationHandler };

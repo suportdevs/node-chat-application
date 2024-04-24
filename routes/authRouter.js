@@ -10,13 +10,23 @@ const {
 } = require("../controllers/authController");
 const decoratedHtmlResponse = require("../middlewares/decoratedHtmlResponse");
 const {
+  doLoginValidator,
+  doLoginValidationHandler,
+} = require("../middlewares/doLoginValidator");
+const {
   registerValidators,
   registerValidationHandler,
 } = require("../middlewares/registerValidator");
 
 router.get("/", decoratedHtmlResponse("Login"), getLogin);
 
-router.post("/", decoratedHtmlResponse("Inbox"), doLogin);
+router.post(
+  "/",
+  decoratedHtmlResponse("Inbox"),
+  doLoginValidator,
+  doLoginValidationHandler,
+  doLogin
+);
 
 router.get("/register", decoratedHtmlResponse("Register"), getRegister);
 

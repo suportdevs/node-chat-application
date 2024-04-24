@@ -7,20 +7,33 @@
                     <img src="./images/logo.png" alt="">
                     <h2 class="text-3xl font-semibold text-center text-gray-300">Knock Me</h2>
                 </div>
-                <form action="">
+                <form action="/" method="post">
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="email" class="text-gray-300 text-sm">Email adress</label>
-                        <input type="email" name="email" placeholder="Email address" value="<%= data.email %>" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <input type="text" name="email" placeholder="Email address" value="<%= data.email %>" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <% if(errors.email){ %>
+                            <span class=" name-error text-red-500"><%= errors.email.msg %></span>
+                        <% } %>
                     </div>
                     <div class="flex flex-col gap-2 mt-2">
                         <label for="password" class="text-gray-300 text-sm">Password</label>
                         <input type="password" name="password" placeholder="*******" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                        <% if(errors.password){ %>
+                            <span class=" name-error text-red-500"><%= errors.password.msg %></span>
+                        <% } %>
                     </div>
+                    <div class="flex flex-col gap-2 mt-2">
+                        <label for="confirm_password" class="text-gray-300 text-sm">Confirm Password</label>
+                        <input type="password" name="confirm_password" placeholder="*******" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm" />
+                    </div>
+                    <% if(errors.common){ %>
+                        <span class=" name-error text-red-500"><%= errors.common.msg %></span><br />
+                    <% } %>
                     <a href='/register' class='text-sm text-gray-300 hover:underline hover:text-blue-600 mt-2 inline-block'>
 						Don't have an account?
 					</a>
                     <div class="flex flex-col gap-2 mt-2">
-                        <button type="submit" name="password" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-800/40 focus:ring-offset-2 focus:ring-offset-gray-800/40 text-gray-300 hover:bg-gray-900">Log In</button>
+                        <button type="submit" class="w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-800/40 focus:ring-offset-2 focus:ring-offset-gray-800/40 text-gray-300 hover:bg-gray-900">Log In</button>
                     </div>
                 </form>
             </div>

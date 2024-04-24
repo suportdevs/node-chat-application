@@ -1,6 +1,8 @@
 // internal imports
 const bcript = require("bcrypt");
 const User = require("../models/People");
+const createError = require("http-errors");
+const jwt = require("jsonwebtoken");
 
 async function getLogin(req, res, next) {
   try {
@@ -12,8 +14,11 @@ async function getLogin(req, res, next) {
 
 async function doLogin(req, res, next) {
   try {
-    const { email, password } = req.body;
-    const user = User.findOne({
+    const { email, password, confirm_password } = req.body;
+    if (password !== confirm_password) {
+      throw createError("Password doesn't match!");
+    }
+    const user = await User.findOne({
       $or: [{ email: email }, { mobile: email }],
     });
     if (user && user._id) {
@@ -30,23 +35,25 @@ async function doLogin(req, res, next) {
 
         // generate token
         const token = jwt.sign(userObject, process.env.JWT_SCRET, {
-          expiredIn: process.envEXPIRY,
+          expiresIn: process.env.JWT_EXPIRY,
         });
 
         // set cookie
-        res.cookie(process.env.COOKIE_NAME, {
-          maxAge: process.env.EXPIRY,
+        res.cookie(process.env.COOKIE_NAME, token, {
+          maxAge: process.env.JWT_EXPIRY,
           httpOnly: true,
           signed: true,
         });
 
         res.locals.loggedInUser = userObject;
-        res.render("index");
+        res.redirect("/inbox");
       } else {
-        createError("Login faild! Please try agian.");
+        console.log("pass");
+        throw createError("Login faild! Please try agian.");
       }
     } else {
-      createHttpError("Login faild! Please try agian.");
+      console.log("user");
+      throw createError("Login faild! Please try agian.");
     }
   } catch (error) {
     res.render("index", {

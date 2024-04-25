@@ -5,20 +5,24 @@
           </svg>
           <h2 class="text-2xl font-bold">Conversation Create</h2>                                      
     </div>
-    <div class="flex flex-col text-color" id="conversation-users-placeholder">
+    <div class="flex flex-col text-color" >
         <div class="p-3">
             <div class="flex gap-4 items-center w-full bg-light-color rounded-md px-3 py-1">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
-                <input type="text" placeholder="Search" class="bg-transparent focus:outline-none border-none" id="conversation-search-input">
+                <input type="text" placeholder="Search" class="bg-transparent focus:outline-none border-none" id="conversation-search-input" />
             </div>
         </div>
-        <div class="flex items-center justify-center h-full gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer last:border-none">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-            <h2 class="conversation-searched-placeholder">Search to create a conversation</h2>
+        <div id="conversation-users-placeholder">
+            <div class="flex items-center justify-center h-full gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer last:border-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+                <h2 class="conversation-searched-placeholder">Search to create a conversation</h2>
+            </div>
+        </div>
+        <div id="conversation-users-list">
         </div>
         <!-- <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer last:border-none">
             <div>
@@ -89,18 +93,20 @@
         }
     });
 
-    const conversation_search_input = querySelector("#conversation-search-input");
-    const conversation_searched_placeholder = querySelector("#conversation-searched-placeholder");
-    const conversation_users_placeholder = querySelector("#conversation-users-placeholder");
+    const conversation_users_placeholder = document.querySelector("#conversation-users-placeholder");
+    const conversation_users_list = document.querySelector("#conversation-users-list");
+    const conversation_search_input = document.querySelector("#conversation-search-input");
+    const conversation_searched_placeholder = document.querySelector(".conversation-searched-placeholder");
     let typingTimer;
     const doneTypingInterval = 500;
 
     conversation_search_input.addEventListener('keyup', function(){
+        console.log(conversation_search_input.value);
         clearInterval(typingTimer);
         conversation_searched_placeholder.textContent = 'Search to create a conversation';
         conversation_searched_placeholder.classList.remove('text-red-500');
         if(conversation_search_input.value){
-            typingTimer = setInterval(searchUsers, doneTypingInterval);
+            typingTimer = setTimeout(searchUsers, doneTypingInterval);
         }
     });
 
@@ -110,8 +116,9 @@
 
     async function searchUsers(){
         let response = await fetch('/inbox/search', {
+            method: "POST",
             body: JSON.stringify({user: conversation_search_input.value}),
-            "content-type": "application/json; charset=UTF-8"
+            headers: {"content-type": "application/json; charset=UTF-8"},
         });
 
         const result = await response.json();
@@ -119,25 +126,30 @@
             conversation_searched_placeholder.textContent = result.errors.common.msg;
             conversation_searched_placeholder.classList.add('text-red-500');
         }else{
-            conversation_searched_placeholder.classList.add('hidden');
+            conversation_users_placeholder.classList.add('hidden');
             if(result.length > 0){
-                let generateHtml ="";
+                conversation_users_list.classList.remove('hidden');
+                let generateHtml = "";
                 result.forEach((user) => {
                     let avatar = user.avatar ? `./uploads/avatars/${user.avatar}` : './images/nophoto.png';
-                    generateHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
+                    generateHtml += `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
                             <div>
-                                <img src="<%= avatar %>" alt="<%= user.name %>" class="w-10 h-10 rounded-full">
+                                <img src="${avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">
                             </div>
                             <div class="sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
                                 <div>
-                                    <h3 class="text-md font-bold"><%= user.name %>></h3>
+                                    <h3 class="text-md font-bold">${user.name}</h3>
                                     <span class="text-sm text-gray-300">I'm fine.</span>
                                 </div>
                             </div>
                         </div>`;
 
                 });
-                conversation_users_placeholder.appendChild(generateHtml);
+                conversation_users_list.innerHTML = generateHtml;
+            }else{
+                conversation_users_list.classList.add('hidden');
+                conversation_users_placeholder.classList.remove('hidden');
+                conversation_searched_placeholder.textContent = `User not found of search: ${conversation_search_input.value} query`;
             }
         }
     }

@@ -28,29 +28,7 @@
             <div>
                 <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
             </div>
-            <div class="sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                <div>
-                    <h3 class="text-md font-bold">Mr Anonymous</h3>
-                    <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-            <div>
-                <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-            </div>
-            <div class="sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                <div>
-                    <h3 class="text-md font-bold">Jhon Due</h3>
-                    <span class="text-sm text-gray-300">I'm fine.</span>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-            <div>
-                <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-            </div>
-            <div class="sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
+            <div class="sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal conversation-users-info">
                 <div>
                     <h3 class="text-md font-bold">Mr Anonymous</h3>
                     <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
@@ -131,21 +109,25 @@
                 conversation_users_list.classList.remove('hidden');
                 let generateHtml = "";
                 result.forEach((user) => {
-                    let avatar = user.avatar ? `./uploads/avatars/${user.avatar}` : './images/nophoto.png';
-                    generateHtml += `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
+                    let avatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
+                                        <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                            <span class="text-3xl">${user.name[0].toUpperCase()}</span>
+                                        </div>
+                                        </div>`;
+                    generateHtml += `<div class="conversation-users-item flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
                             <div>
-                                <img src="${avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">
+                                ${avatar}
                             </div>
-                            <div class="sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
+                            <div class="sm:flex items-center justify-between w-full h-14 border-b border-gray-200/40 py-1 leading-normal conversation-users-info">
                                 <div>
                                     <h3 class="text-md font-bold">${user.name}</h3>
-                                    <span class="text-sm text-gray-300">I'm fine.</span>
                                 </div>
                             </div>
                         </div>`;
 
                 });
                 conversation_users_list.innerHTML = generateHtml;
+                // document.querySelectorAll(".conversation-users-info").lastChild.style.borderBottom = 'none';
             }else{
                 conversation_users_list.classList.add('hidden');
                 conversation_users_placeholder.classList.remove('hidden');

@@ -13,6 +13,7 @@ const authenticated = (req, res, next) => {
         if (res.locals.html) {
           res.loggedInUser = decoded;
         }
+        console.log(decoded);
         next();
       } else {
         if (res.locals.html) {

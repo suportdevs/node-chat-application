@@ -48,11 +48,9 @@ async function doLogin(req, res, next) {
         res.locals.loggedInUser = userObject;
         res.redirect("/inbox");
       } else {
-        console.log("pass");
         throw createError("Login faild! Please try agian.");
       }
     } else {
-      console.log("user");
       throw createError("Login faild! Please try agian.");
     }
   } catch (error) {

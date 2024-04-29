@@ -4,7 +4,6 @@ const escape = require("../utilies/escape");
 
 async function getInbox(req, res, next) {
   try {
-    console.log(req.user);
     const conversations = await Conversation({
       $or: [
         { "creator.id": req.user.user_id },

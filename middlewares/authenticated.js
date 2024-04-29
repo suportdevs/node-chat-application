@@ -9,11 +9,12 @@ const authenticated = (req, res, next) => {
       const token = cookies[process.env.COOKIE_NAME];
       if (token) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        res.user = decoded;
+
+        req.user = decoded;
         if (res.locals.html) {
           res.loggedInUser = decoded;
         }
-        console.log(decoded);
+
         next();
       } else {
         if (res.locals.html) {

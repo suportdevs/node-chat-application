@@ -3,6 +3,7 @@ const express = require("express");
 const dotEnv = require("dotenv");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const moment = require("moment");
 
 // internal imports
 const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
@@ -22,6 +23,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // set view engine
 app.set("view engine", "ejs");
+
+app.locals.moment = moment;
 
 // set static folder
 app.use(express.static(path.join(__dirname, "public")));

@@ -79,7 +79,6 @@
     const doneTypingInterval = 500;
 
     conversation_search_input.addEventListener('keyup', function(){
-        console.log(conversation_search_input.value);
         clearInterval(typingTimer);
         conversation_searched_placeholder.textContent = 'Search to create a conversation';
         conversation_searched_placeholder.classList.remove('text-red-500');
@@ -110,11 +109,11 @@
                 let generateHtml = "";
                 result.forEach((user) => {
                     let avatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
-                                        <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
-                                            <span class="text-3xl">${user.name[0].toUpperCase()}</span>
-                                        </div>
-                                        </div>`;
-                    generateHtml += `<div class="conversation-users-item flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
+                            <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                <span class="text-3xl">${user.name[0].toUpperCase()}</span>
+                            </div>
+                            </div>`;
+                    generateHtml += `<div class="conversation-users-item flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="addConversation('${user.name}', '${user._id}', '${user.avatar}')">
                             <div>
                                 ${avatar}
                             </div>
@@ -142,7 +141,7 @@
             body: JSON.stringify({
                 participant,
                 id,
-                avatar,
+                avatar: avatar != "undefined" ? avatar : null,
             }),
             headers: {"content-type": "application/json; charset=UTF-8"}
         });
@@ -150,12 +149,12 @@
         const result = await response.json();
 
         if(!result.errors){
-            toaster.success("Conversation was created successfull.");
+            toastr.success("Conversation was created successfull.");
             setTimeout(() => {
                 location.reload();
             }, 100)
         }else{
-            toaster.warning(results.errors.common.msg);
+            toastr.warning(results.errors.common.msg);
         }
     }
 </script>

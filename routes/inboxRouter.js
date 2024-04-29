@@ -14,6 +14,6 @@ router.get("/", decoratedHtmlResponse("Inbox"), authenticated, getInbox);
 
 router.post("/search", searchUsers);
 
-router.post("/conversation", addConversation);
+router.post("/conversation", authenticated, addConversation);
 
 module.exports = router;

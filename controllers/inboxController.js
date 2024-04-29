@@ -4,13 +4,14 @@ const escape = require("../utilies/escape");
 
 async function getInbox(req, res, next) {
   try {
-    const conversations = await Conversation({
+    const conversations = await Conversation.find({
       $or: [
         { "creator.id": req.user.user_id },
         { "participant.id": req.user.user_id },
       ],
     });
-    res.locals.data.conversations = conversations;
+    // console.log(conversations);
+    res.locals.data = conversations;
     res.render("inbox");
   } catch (error) {
     next(error);
@@ -47,8 +48,8 @@ async function addConversation(req, res, next) {
   try {
     const newConversation = new Conversation({
       creator: {
-        id: req.user.userid,
-        name: req.user.name,
+        id: req.user.user_id,
+        name: req.user.username,
         avatar: req.user.avatar || null,
       },
       participant: {

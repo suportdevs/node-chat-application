@@ -12,7 +12,7 @@ const authenticated = (req, res, next) => {
 
         req.user = decoded;
         if (res.locals.html) {
-          res.loggedInUser = decoded;
+          res.locals.loggedInUser = decoded;
         }
 
         next();

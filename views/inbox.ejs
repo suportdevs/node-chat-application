@@ -86,174 +86,65 @@
                         <!-- conversation search end -->
                         
                         <div class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Mr Anonymous</h3>
-                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                            
+                            <% data.forEach((conversation) => { %>
+                                <% if(conversation.creator.id == loggedInUser.user_id) { %>
+                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
+                                        <div>
+                                            <% if(conversation.participant.avatar) { %>
+                                            <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="" class="w-10 h-10 rounded-full">
+                                            <% }else { %>
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                                        <span class="text-3xl"><%= conversation.participant.name[0].toUpperCase() %></span>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
+                                            <div>
+                                                <h3 class="text-md font-bold"><%= conversation.participant.name %></h3>
+                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                            </div>
+                                            <div class="text-sm text-gray-300"><%= moment(conversation.participant.last_updated).fromNow() %></div>
+                                        </div>
                                     </div>
-                                    <div class="text-sm text-gray-300">Sunday</div>
+                                <% }else{ %>
+                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
+                                        <div>
+                                            <% if(conversation.creator.avatar) { %>
+                                            <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="" class="w-10 h-10 rounded-full">
+                                            <% }else { %>
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                                        <span class="text-3xl"><%= conversation.creator.name[0].toUpperCase() %></span>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
+                                            <div>
+                                                <h3 class="text-md font-bold"><%= conversation.creator.name %></h3>
+                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                            </div>
+                                            <div class="text-sm text-gray-300"><%= moment(conversation.creator.last_updated).fromNow() %></div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }); %>
+                            
+
+                            <% if(data && data.length === 0) { %>
+                            <div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
+                                <div>
+                                    <img src="./images/no-conversation.png" alt="" class="w-32">
+                                </div>
+                                <div>
+                                    <h3 class="text-md font-bold">No conversation yet</h3>
+                                    <p>Create conversation to contact others</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Jhon Due</h3>
-                                        <span class="text-sm text-gray-300">I'm fine.</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">just few min</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Mr Anonymous</h3>
-                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">Sunday</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Jhon Due</h3>
-                                        <span class="text-sm text-gray-300">I'm fine.</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">just few min</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Mr Anonymous</h3>
-                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">Sunday</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Jhon Due</h3>
-                                        <span class="text-sm text-gray-300">I'm fine.</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">just few min</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Mr Anonymous</h3>
-                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">Sunday</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Jhon Due</h3>
-                                        <span class="text-sm text-gray-300">I'm fine.</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">just few min</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Mr Anonymous</h3>
-                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">Sunday</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Jhon Due</h3>
-                                        <span class="text-sm text-gray-300">I'm fine.</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">just few min</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Mr Anonymous</h3>
-                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">Sunday</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Jhon Due</h3>
-                                        <span class="text-sm text-gray-300">I'm fine.</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">just few min</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Mr Anonymous</h3>
-                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">Sunday</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
-                                <div>
-                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                </div>
-                                <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
-                                    <div>
-                                        <h3 class="text-md font-bold">Jhon Due</h3>
-                                        <span class="text-sm text-gray-300">I'm fine.</span>
-                                    </div>
-                                    <div class="text-sm text-gray-300">just few min</div>
-                                </div>
-                            </div>
+                            <% } %>
                         </div>
 
                     </div>

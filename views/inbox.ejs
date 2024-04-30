@@ -106,7 +106,7 @@
                                                 <h3 class="text-md font-bold"><%= conversation.participant.name %></h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
                                             </div>
-                                            <div class="text-sm text-gray-300"><%= moment(conversation.participant.last_updated).fromNow() %></div>
+                                            <div class="text-sm text-gray-300"><%= moment(conversation.last_updated).fromNow() %></div>
                                         </div>
                                     </div>
                                 <% }else{ %>
@@ -127,7 +127,7 @@
                                                 <h3 class="text-md font-bold"><%= conversation.creator.name %></h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
                                             </div>
-                                            <div class="text-sm text-gray-300"><%= moment(conversation.creator.last_updated).fromNow() %></div>
+                                            <div class="text-sm text-gray-300"><%= moment(conversation.last_updated).fromNow() %></div>
                                         </div>
                                     </div>
                                 <% } %>

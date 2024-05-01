@@ -1,4 +1,5 @@
 const Conversation = require("../models/Conversation");
+const Message = require("../models/Message");
 const User = require("../models/People");
 const escape = require("../utilies/escape");
 
@@ -65,4 +66,23 @@ async function addConversation(req, res, next) {
   }
 }
 
-module.exports = { getInbox, searchUsers, addConversation };
+async function getMessages(req, res, next) {
+  try {
+    let messages = await Message.find({
+      conversation_id: req.params.conversation_id,
+    }).sort("-createdAt");
+    const { participant } = await Conversation.findById(
+      req.params.conversation_id
+    );
+
+    res.status(200).json({
+      data: { messages, participant },
+      user_id: req.user.user_id,
+      conversation_id: req.params.conversation_id,
+    });
+  } catch (error) {
+    res.status(500).json({ errors: { common: { msg: error.message } } });
+  }
+}
+
+module.exports = { getInbox, searchUsers, addConversation, getMessages };

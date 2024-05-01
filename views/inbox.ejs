@@ -84,12 +84,13 @@
                               </svg>
                         </div>
                         <!-- conversation search end -->
-                        
+
+                        <!-- conversation list start -->
                         <div class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
                             
                             <% data.forEach((conversation) => { %>
                                 <% if(conversation.creator.id == loggedInUser.user_id) { %>
-                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
+                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.participant.name %>')">
                                         <div>
                                             <% if(conversation.participant.avatar) { %>
                                             <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="" class="w-10 h-10 rounded-full">
@@ -110,7 +111,7 @@
                                         </div>
                                     </div>
                                 <% }else{ %>
-                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer">
+                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.creator.name %>')">
                                         <div>
                                             <% if(conversation.creator.avatar) { %>
                                             <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="" class="w-10 h-10 rounded-full">
@@ -146,14 +147,15 @@
                             </div>
                             <% } %>
                         </div>
+                        <!-- conversation list end -->
 
                     </div>
                     <div class="flex flex-col w-full sm:w-8/12 justify-between ">
-                        <div class="flex items-center justify-between px-3 h-14 bg-light-color">
+                        <div id="chat-message-title-container" class="flex items-center justify-between px-3 h-14 bg-light-color invisible">
                             <div class="flex items-center gap-4 text-color">
                                 <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
                                 <div class="leading-none">
-                                    <h3 class="text-lg font-bold">Jhon Due</h3>
+                                    <h3 id="chat-message-title-name" class="text-lg font-bold"></h3>
                                     <span class="text-sm text-dark-color">Last seen 2:35 pm</span>
                                 </div>
                             </div>
@@ -164,59 +166,59 @@
 
                                 <input type="text" placeholder="Search" class="bg-transparent focus:outline-none border-none w-full" style="display: none;" id="message-search-input">
                                                 
-                            <div class="relative" id="message-dots">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color ">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                                </svg>
-                                <div class="dropdown min-w-max absolute right-0 top-8 py-3 bg-light-color app-shadow-2xl hidden opacity-0 rounded-md" id="message-dots-dropdown">
-                                    <div class="text-color">
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                              </svg>
-                                              
-                                              
-                                            Contact Info</a>
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">Select Messages</a>
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                                              </svg>                                                                                              
-                                                Close Chat</a>
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-                                              </svg>
-                                            Mute Notifications</a>
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                              </svg>
+                                <div class="relative" id="message-dots">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color ">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                    </svg>
+                                    <div class="dropdown min-w-max absolute right-0 top-8 py-3 bg-light-color app-shadow-2xl hidden opacity-0 rounded-md" id="message-dots-dropdown">
+                                        <div class="text-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                </svg>
                                                 
-                                            Clear Chat</a>
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                              </svg>                                              
                                                 
-                                            Delete Chat</a>
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-                                              </svg>
-                                              
+                                                Contact Info</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">Select Messages</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                                </svg>                                                                                              
+                                                    Close Chat</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                                                </svg>
+                                                Mute Notifications</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                                </svg>
+                                                    
+                                                Clear Chat</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                </svg>                                              
+                                                    
+                                                Delete Chat</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                                                </svg>
                                                 
-                                            Block</a>
-                                        <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                                              </svg>
-                                              
+                                                    
+                                                Block</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                                </svg>
                                                 
-                                            Report</a>
+                                                    
+                                                Report</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                         <div id="chat-message-list" class="flex flex-col flex-col-reverse gap-4 justify-between h-[calc(85vh-112px)] p-3 overflow-y-scroll">
@@ -259,7 +261,7 @@
                             </div>
                         </div>
                         <!-- chat-form-container start -->
-                        <div id="chat-form-container" class="h-14 bg-light-color text-soft-color ">
+                        <div id="chat-form-container" class="h-14 bg-light-color text-soft-color invisible">
                             <form action="" class="grid grid-cols-12 gap-2 px-3 content-center items-center">
                                 <div >
                                     <label for="attachment" class="cursor-pointer">
@@ -305,9 +307,7 @@
 
         });
         // widget end
-        
-
-        
+                
         const chat_content_wrapper = document.querySelector(".chat-content-wrapper");
         const chat_content_infos = document.querySelectorAll(".chat-content-info");
         chat_content_wrapper.addEventListener('mouseover', function(){
@@ -349,7 +349,25 @@
                 message_search_input.classList.add('block');
                 message_search_input.style.display = 'block';
             }
-        })
+        });
+        // get messages
+        const chat_message_title_container = document.querySelector("#chat-message-title-container");
+        const chat_message_title_name = document.querySelector("#chat-message-title-name");
+        const chat_message_list = document.querySelector("#chat-message-list");
+        const chat_form_container = document.querySelector("#chat-form-container");
+        async function getMessages(conversation_id, participantName){
+            let response = await fetch(`/inbox/message/${conversation_id}`);
+            let result = await response.json();
+            if(!result.errors && result.data){
+                chat_message_title_container.classList.remove('invisible');
+                chat_form_container.classList.remove('invisible');
+                chat_message_title_name.textContent = participantName;
+                console.log(result.data)
+                console.log(conversation_id, participantName);
+            }else{
+                toastr.warning(result.errors.common.msg);
+            }
+        }
     </script>
     <script>
         function setTheme(themeName) {

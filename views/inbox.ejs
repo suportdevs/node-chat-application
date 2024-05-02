@@ -348,7 +348,7 @@
         const chat_form_container = document.querySelector("#chat-form-container");
         let participant = null; // selected conversation participt object
         let current_conversation_id; // selected conversation id
-        let loggedUserId = "<%= loggedUser.user_id %>";
+        let loggedInUserId = '<%= loggedInUser.user_id %>';
 
 
         async function getMessages(conversation_id, participantName){
@@ -371,11 +371,11 @@
                                                         <span class="text-3xl">${message.sender.name[0].toUpperCase()}</span>
                                                     </div>
                                                 </div>`;
-                            const messageClass = message.sender.id === loggedUserId ? 'items-end justify-end' : 'items-start';
-                            const showAvatar = message.sender.id === loggedUserId ? '' : avatar;
+                            const messageClass = message.sender.id === loggedInUserId ? 'items-end justify-end' : 'items-start';
+                            const showAvatar = message.sender.id === loggedInUserId ? '' : avatar;
 
                             let attachments = '';
-                            let attachmentCount = 1;
+                            let attachmentCount = 0;
                             if(message.attachments && message.attachments.length > 0){
                                 attachmentCount = message.attachments.length;
                                 message.attachments.forEach((attachment) => {
@@ -387,18 +387,22 @@
                             let messageHtml = `<div class="flex gap-2 text-soft-color ${messageClass}">
                                 ${showAvatar}
                                 <div class="w-6/12">
-                                    <div class="bg-light-color text-sm rounded-md p-2">${message.text}</div>
-                                    <div class="attachments grid grid-cols-${Math.ceil(attachmentCount / 2)} gap-2 mt-2 bg-light-color p-2 rounded-md">
-                                        ${attachments}
-                                    </div>
-                                    <div class="text-sm text-color mt-1">just now</div>
+                                    <div class="bg-light-color text-sm rounded-md ${message.text ? 'p-2' : '' }">${message.text}</div>
+                                    ${
+                                        attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
+                                            ${attachments}
+                                        </div>` : '' 
+                                    }
+                                    
+                                    <div class="text-sm text-color mt-1">${moment(message.date_time).fromNow()}</div>
                                 </div>
                             </div>`;
-
+                            allMessages += messageHtml;
+                            chat_message_list.innerHTML = allMessages;
                         })
                     }else if(data.messages.length === 0){
                         chat_message_list.innerHTML = `<div class="flex gap-2 text-soft-color items-center justify-center h-full">
-                                    <h1 class="text-2xl font-bold">Select a conversation</h1>
+                                    <h1 class="text-2xl font-bold">You don't have message</h1>
                                 </div>`;
                     }
                 }

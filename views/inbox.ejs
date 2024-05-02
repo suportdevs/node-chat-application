@@ -222,8 +222,12 @@
                             </div>
                         </div>
                         <div id="chat-message-list" class="flex flex-col flex-col-reverse gap-4 justify-between h-[calc(85vh-112px)] p-3 overflow-y-scroll">
+                            
+                            <div class="flex gap-2 text-soft-color items-center justify-center h-full">
+                                <h1 class="text-2xl font-bold">Select a conversation</h1>
+                            </div>
                             <!-- First message aligned to the left -->
-                            <div class="flex gap-2 text-soft-color items-start">
+                            <!-- <div class="flex gap-2 text-soft-color items-start">
                                 <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
                                 <div class="w-6/12">
                                     <div class="bg-light-color text-sm rounded-md p-2">Hi Mr Anonymous</div>
@@ -234,10 +238,9 @@
                                     </div>
                                     <div class="text-sm text-color mt-1">just now</div>
                                 </div>
-                            </div>
+                            </div> -->
                             <!-- Second message aligned to the right -->
-                            <div class="flex gap-2 text-soft-color items-end justify-end">
-                                <!-- <img src="./images/logo.png" alt="" class="rounded-full min-w-full"> -->
+                            <!-- <div class="flex gap-2 text-soft-color items-end justify-end">
                                 <div class="w-6/12">
                                     <div class="bg-light-color text-sm rounded-md p-2">Hi Mr Anonymous</div>
                                     <div class="attachments grid grid-cols-1 mt-2 bg-light-color p-2 rounded-md">
@@ -245,20 +248,7 @@
                                     </div>
                                     <div class="text-sm text-color mt-1">just now</div>
                                 </div>
-                            </div>
-                            <div class="flex gap-2 text-soft-color items-start">
-                                <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
-                                <div class="w-6/12">
-                                    <div class="bg-light-color text-sm rounded-md p-2">Hi Mr Anonymous</div>
-                                    <div class="attachments grid grid-cols-2 gap-2 mt-2 bg-light-color p-2 rounded-md">
-                                        <img src="./images/logo.png" alt="" class="rounded-md h-auto w-full">
-                                        <img src="./images/logo.png" alt="" class="rounded-md h-auto w-full">
-                                        <img src="./images/logo.png" alt="" class="rounded-md h-auto w-full">
-                                        <img src="./images/logo.png" alt="" class="rounded-md h-auto w-full">
-                                    </div>
-                                    <div class="text-sm text-color mt-1">just now</div>
-                                </div>
-                            </div>
+                            </div> -->
                         </div>
                         <!-- chat-form-container start -->
                         <div id="chat-form-container" class="h-14 bg-light-color text-soft-color invisible">
@@ -350,11 +340,17 @@
                 message_search_input.style.display = 'block';
             }
         });
+
         // get messages
         const chat_message_title_container = document.querySelector("#chat-message-title-container");
         const chat_message_title_name = document.querySelector("#chat-message-title-name");
         const chat_message_list = document.querySelector("#chat-message-list");
         const chat_form_container = document.querySelector("#chat-form-container");
+        let participant = null; // selected conversation participt object
+        let current_conversation_id; // selected conversation id
+        let loggedUserId = "<%= loggedUser.user_id %>";
+
+
         async function getMessages(conversation_id, participantName){
             let response = await fetch(`/inbox/message/${conversation_id}`);
             let result = await response.json();
@@ -362,8 +358,51 @@
                 chat_message_title_container.classList.remove('invisible');
                 chat_form_container.classList.remove('invisible');
                 chat_message_title_name.textContent = participantName;
-                console.log(result.data)
-                console.log(conversation_id, participantName);
+
+                const {data, user_id, conversation_id} = result;
+                participant = data.participant;
+                current_conversation_id = conversation_id;
+                if(data.messages){
+                    let allMessages = '';
+                    if(data.messages.length > 0){
+                        data.messages.forEach((message) => {
+                            const avatar = message.sender.avatar ? `<img src="./uploads/avatars/${message.sender.avatar}" alt="${message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
+                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                                        <span class="text-3xl">${message.sender.name[0].toUpperCase()}</span>
+                                                    </div>
+                                                </div>`;
+                            const messageClass = message.sender.id === loggedUserId ? 'items-end justify-end' : 'items-start';
+                            const showAvatar = message.sender.id === loggedUserId ? '' : avatar;
+
+                            let attachments = '';
+                            let attachmentCount = 1;
+                            if(message.attachments && message.attachments.length > 0){
+                                attachmentCount = message.attachments.length;
+                                message.attachments.forEach((attachment) => {
+                                    attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-auto w-full">`;
+
+                                })
+                            }
+
+                            let messageHtml = `<div class="flex gap-2 text-soft-color ${messageClass}">
+                                ${showAvatar}
+                                <div class="w-6/12">
+                                    <div class="bg-light-color text-sm rounded-md p-2">${message.text}</div>
+                                    <div class="attachments grid grid-cols-${Math.ceil(attachmentCount / 2)} gap-2 mt-2 bg-light-color p-2 rounded-md">
+                                        ${attachments}
+                                    </div>
+                                    <div class="text-sm text-color mt-1">just now</div>
+                                </div>
+                            </div>`;
+
+                        })
+                    }else if(data.messages.length === 0){
+                        chat_message_list.innerHTML = `<div class="flex gap-2 text-soft-color items-center justify-center h-full">
+                                    <h1 class="text-2xl font-bold">Select a conversation</h1>
+                                </div>`;
+                    }
+                }
+
             }else{
                 toastr.warning(result.errors.common.msg);
             }

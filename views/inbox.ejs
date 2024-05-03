@@ -90,7 +90,7 @@
                             
                             <% data.forEach((conversation) => { %>
                                 <% if(conversation.creator.id == loggedInUser.user_id) { %>
-                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.participant.name %>')">
+                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.participant.name %>', '<%= conversation.participant.avatar %>')">
                                         <div>
                                             <% if(conversation.participant.avatar) { %>
                                             <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="" class="w-10 h-10 rounded-full">
@@ -111,7 +111,7 @@
                                         </div>
                                     </div>
                                 <% }else{ %>
-                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.creator.name %>')">
+                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.creator.name %>', '<%= conversation.creator.avatar %>')">
                                         <div>
                                             <% if(conversation.creator.avatar) { %>
                                             <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="" class="w-10 h-10 rounded-full">
@@ -153,7 +153,9 @@
                     <div class="flex flex-col w-full sm:w-8/12 justify-between ">
                         <div id="chat-message-title-container" class="flex items-center justify-between px-3 h-14 bg-light-color invisible">
                             <div class="flex items-center gap-4 text-color">
-                                <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
+                                <div id="chat-message-avatar-container">
+                                    <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
+                                </div>
                                 <div class="leading-none">
                                     <h3 id="chat-message-title-name" class="text-lg font-bold"></h3>
                                     <span class="text-sm text-dark-color">Last seen 2:35 pm</span>
@@ -346,6 +348,7 @@
 
         // get messages
         const chat_message_title_container = document.querySelector("#chat-message-title-container");
+        const chat_message_avatar_container = document.querySelector("#chat-message-avatar-container");
         const chat_message_title_name = document.querySelector("#chat-message-title-name");
         const chat_message_list = document.querySelector("#chat-message-list");
         const chat_form_container = document.querySelector("#chat-form-container");
@@ -354,13 +357,18 @@
         let loggedInUserId = '<%= loggedInUser.user_id %>';
 
 
-        async function getMessages(conversation_id, participantName){
+        async function getMessages(conversation_id, participantName, participantAvatar){
             let response = await fetch(`/inbox/message/${conversation_id}`);
             let result = await response.json();
             if(!result.errors && result.data){
                 chat_message_title_container.classList.remove('invisible');
                 chat_form_container.classList.remove('invisible');
                 chat_message_title_name.textContent = participantName;
+                chat_message_avatar_container.innerHTML = participantAvatar ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
+                                                    <div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                                        <span class="text-3xl">${participantName[0].toUpperCase()}</span>
+                                                    </div>
+                                                </div>`;
 
                 const {data, user_id, conversation_id} = result;
                 participant = data.participant;

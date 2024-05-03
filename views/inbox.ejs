@@ -21,8 +21,14 @@
             <div class="main-content-wrapper flex justify-between w-full h-[90vh] overflow-hidden p-1 rounded-lg shadow-md bg-clip-padding bg-dark-color backgrop-glass bg-opacity-0">
                 <!-- <div class=""> -->
                     <div class="flex flex-col w-20 sm:w-4/12 border-r border-gray-400">
-                        <div class="relative flex items-center justify-between h-14 px-3 py-2  bg-light-color">
-                            <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full cursor-pointer" id="user-avatar">
+                        <div class="relative flex items-center justify-between h-14 px-3 py-2 bg-light-color">
+                            <% if(loggedInUser.avatar){ %>
+                                <img src="./uploads/avatars/<%= loggedInUser.avatar %>" alt="" class="w-10 h-10 rounded-full cursor-pointer" id="user-avatar">
+                            <% }else{ %>
+                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                    <span class="text-3xl"><%= loggedInUser.username[0].toUpperCase() %></span>
+                                </div>
+                            <% } %>
                             <div class="hidden sm:flex gap-4 items-center justify-end ">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
@@ -40,20 +46,20 @@
                                     </svg>
                                     <div class="dropdown min-w-max absolute right-0 top-8 py-3 bg-light-color app-shadow-2xl hidden opacity-0 rounded-md" id="conversation-dots-dropdown">
                                         <div class="text-color">
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                               </svg>
                                                New Message</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">Select Chats</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">Select Chats</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                   </svg>
                                                   
                                                   Settings</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                                                   </svg>
@@ -88,7 +94,7 @@
                         <!-- conversation list start -->
                         <div class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
                             
-                            <% data.forEach((conversation) => { %>
+                            <% data.forEach((conversation, index) => { %>
                                 <% if(conversation.creator.id == loggedInUser.user_id) { %>
                                     <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.participant.name %>', '<%= conversation.participant.avatar %>')">
                                         <div>
@@ -102,7 +108,7 @@
                                                 </div>
                                             <% } %>
                                         </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
+                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info <%= index !== data.length - 1 ? ' border-b border-gray-200/40' : '' %>">
                                             <div>
                                                 <h3 class="text-md font-bold"><%= conversation.participant.name %></h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
@@ -123,7 +129,7 @@
                                                 </div>
                                             <% } %>
                                         </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full border-b border-gray-200/40 py-1 leading-normal chat-content-info">
+                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info <%= index !== data.length - 1 ? ' border-b border-gray-200/40' : '' %>">
                                             <div>
                                                 <h3 class="text-md font-bold"><%= conversation.creator.name %></h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
@@ -174,44 +180,44 @@
                                     </svg>
                                     <div class="dropdown min-w-max absolute right-0 top-8 py-3 bg-light-color app-shadow-2xl hidden opacity-0 rounded-md" id="message-dots-dropdown">
                                         <div class="text-color">
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 </svg>
                                                 
                                                 
                                                 Contact Info</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">Select Messages</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">Select Messages</a>
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                                                 </svg>                                                                                              
                                                     Close Chat</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                                                 </svg>
                                                 Mute Notifications</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                                 </svg>
                                                     
                                                 Clear Chat</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="deleteMeassage()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                                 </svg>                                              
                                                     
                                                 Delete Chat</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
                                                 </svg>
                                                 
                                                     
                                                 Block</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color">
+                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                                                 </svg>
@@ -494,6 +500,26 @@
             }
 
         }
+    
+        // message delete
+        async function deleteMeassage(){
+            if(!current_conversation_id){
+                toastr.warning("You don't have select any conversation to delete messages.");
+            }else{
+                if(confirm("Are you sure to delete this messages!") == true){
+                    let response = await fetch(`/inbox/message/delete/${current_conversation_id}`, {
+                        method: "DELETE"
+                    });
+                    let result = await response.json();
+                    if(!result.errors){
+                        toastr.success(result.message);
+                    }else{
+                        toastr.error(result.errors.common.msg);
+                    }
+                }
+            }
+        }
+        // end message delete
     </script>
     <script>
         function setTheme(themeName) {

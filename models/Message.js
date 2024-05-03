@@ -16,6 +16,7 @@ const messageSchema = mongoose.Schema(
     },
     date_itme: { type: Date, default: Date.now() },
     conversation_id: { type: mongoose.Types.ObjectId },
+    hideable: [{ type: mongoose.Types.ObjectId }],
   },
   { timestamps: true }
 );

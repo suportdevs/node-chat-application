@@ -25,15 +25,15 @@
         <img src="./images/logo.png" alt="" class="w-32 h-32 rounded-full cursor-pointer">
         <div>
             <span class="text-sm text-dark-color">Your Name</span>
-            <h2 class="text-2xl font-bold">Mr Anonymous</h2>
+            <h2 class="text-2xl font-bold"><%= loggedInUser.username %></h2>
         </div>
         <div>
             <span class="text-sm text-dark-color">About</span>
-            <p class="text-md">Hey there! I am using WhatsApp.</p>
+            <p class="text-md"><%= loggedInUser.status %></p>
         </div>
         <div>
             <span class="text-sm text-dark-color">Address</span>
-            <p class="text-md">Street road, New York. 5400</p>
+            <p class="text-md"><%= loggedInUser.address %></p>
         </div>
     </div>
 </div>

@@ -107,7 +107,7 @@
             if(result.length > 0){
                 conversation_users_list.classList.remove('hidden');
                 let generateHtml = "";
-                result.forEach((user) => {
+                result.forEach((user, index) => {
                     let avatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
                             <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
                                 <span class="text-3xl">${user.name[0].toUpperCase()}</span>
@@ -117,7 +117,7 @@
                             <div>
                                 ${avatar}
                             </div>
-                            <div class="sm:flex items-center justify-between w-full h-14 border-b border-gray-200/40 py-1 leading-normal conversation-users-info">
+                            <div class="sm:flex items-center justify-between w-full h-14 py-1 leading-normal conversation-users-info ${index !== result.length - 1 ? 'border-b border-gray-200/40' : ''}">
                                 <div>
                                     <h3 class="text-md font-bold">${user.name}</h3>
                                 </div>

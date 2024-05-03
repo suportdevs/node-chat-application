@@ -71,6 +71,7 @@ async function getMessages(req, res, next) {
   try {
     let messages = await Message.find({
       conversation_id: req.params.conversation_id,
+      hideable: { $nin: [req.user.user_id] },
     }).sort("-createdAt");
     const { participant } = await Conversation.findById(
       req.params.conversation_id
@@ -137,10 +138,34 @@ async function sendMessage(req, res, next) {
   }
 }
 
+async function deleteMessage(req, res, next) {
+  if (req.params.conversation_id) {
+    try {
+      const conversation_id = req.params.conversation_id;
+      await Message.updateMany(
+        { conversation_id },
+        { $addToSet: { hideable: req.user.user_id } }
+      );
+      res.status(200).json({ message: "Message deleted successfull." });
+    } catch (error) {
+      res.status(500).json({ errors: { common: { msg: error.message } } });
+    }
+  } else {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: "You don't have select any conversation to delete messages.",
+        },
+      },
+    });
+  }
+}
+
 module.exports = {
   getInbox,
   searchUsers,
   addConversation,
   getMessages,
   sendMessage,
+  deleteMessage,
 };

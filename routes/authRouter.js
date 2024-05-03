@@ -7,6 +7,7 @@ const {
   getRegister,
   doRegister,
   doLogin,
+  doLogout,
 } = require("../controllers/authController");
 const decoratedHtmlResponse = require("../middlewares/decoratedHtmlResponse");
 const {
@@ -14,6 +15,7 @@ const {
   doLoginValidationHandler,
 } = require("../middlewares/doLoginValidator");
 const redirectIfAuthenticated = require("../middlewares/redirectIfAuthenticated");
+const authenticated = require("../middlewares/authenticated");
 const {
   registerValidators,
   registerValidationHandler,
@@ -48,5 +50,7 @@ router.post(
   registerValidationHandler,
   doRegister
 );
+
+router.delete("/logout", authenticated, doLogout);
 
 module.exports = router;

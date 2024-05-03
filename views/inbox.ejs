@@ -25,7 +25,7 @@
                             <% if(loggedInUser.avatar){ %>
                                 <img src="./uploads/avatars/<%= loggedInUser.avatar %>" alt="" class="w-10 h-10 rounded-full cursor-pointer" id="user-avatar">
                             <% }else{ %>
-                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 cursor-pointer" id="user-avatar">
                                     <span class="text-3xl"><%= loggedInUser.username[0].toUpperCase() %></span>
                                 </div>
                             <% } %>
@@ -59,7 +59,7 @@
                                                   </svg>
                                                   
                                                   Settings</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
+                                            <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="logout()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                                                   </svg>
@@ -520,6 +520,19 @@
             }
         }
         // end message delete
+
+        // user logout
+        function logout (){
+            fetch('/auth/logout', {
+                method: "DELETE"
+            });
+            toastr.success("Logout successfull.");
+            setTimeout(() => {
+                window.location.replace('/');
+            }, 1000);
+        }
+
+        // end user logout
     </script>
     <script>
         function setTheme(themeName) {

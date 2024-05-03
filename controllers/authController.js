@@ -83,9 +83,15 @@ async function doRegister(req, res, next) {
   }
 }
 
+async function doLogout(req, res, next) {
+  res.clearCookie(process.env.COOKIE_NAME);
+  res.status(200).json({ message: "Logout successfull" });
+}
+
 module.exports = {
   getLogin,
   doLogin,
   getRegister,
   doRegister,
+  doLogout,
 };

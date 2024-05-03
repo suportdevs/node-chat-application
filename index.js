@@ -4,6 +4,7 @@ const dotEnv = require("dotenv");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const moment = require("moment");
+const http = require("http");
 
 // internal imports
 const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
@@ -12,7 +13,11 @@ const authRouter = require("./routes/authRouter");
 const inboxRouter = require("./routes/inboxRouter");
 
 const app = express();
+const server = http.createServer(app);
 dotEnv.config();
+
+const io = require("socket.io")(server);
+global.io = io;
 
 // Database connection
 dbConnection();
@@ -41,6 +46,6 @@ app.use(notFoundHandler);
 // defauld error handler
 app.use(errorHandler);
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Application listen to port ${process.env.PORT}`);
 });

@@ -221,7 +221,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="chat-message-list" class="flex flex-col flex-col-reverse gap-4 justify-between h-[calc(85vh-112px)] p-3 overflow-y-scroll">
+                        <div id="chat-message-list" class="flex flex-col flex-col-reverse gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
                             
                             <div class="flex gap-2 text-soft-color items-center justify-center h-full">
                                 <h1 class="text-2xl font-bold">Select a conversation</h1>
@@ -252,7 +252,7 @@
                         </div>
                         <!-- chat-form-container start -->
                         <div id="chat-form-container" class="h-14 bg-light-color text-soft-color invisible">
-                            <form action="" class="grid grid-cols-12 gap-2 px-3 content-center items-center">
+                            <form id="chat-send-message-form" method="post" enctype="multipart/form-data" class="grid grid-cols-12 gap-2 px-3 content-center items-center">
                                 <div >
                                     <label for="attachment" class="cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -265,7 +265,7 @@
                                     <textarea type="text" name="message" placeholder="Type a message" autocomplete="off" class="w-full border-none outline-none h-auto bg-transparent  content-center placeholder:text-soft-color"></textarea>
                                 </div>
                                 <div class="flex items-center justify-end">
-                                    <button>
+                                    <button type="submit">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                                           </svg>                                          
@@ -279,6 +279,9 @@
             </div>
         </div>
     </div>
+
+    <!-- import socket io client from cdn -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script>
         // widget start
         const widget_wrapper = document.querySelector(".widget-wrapper");
@@ -371,7 +374,7 @@
                                                         <span class="text-3xl">${message.sender.name[0].toUpperCase()}</span>
                                                     </div>
                                                 </div>`;
-                            const messageClass = message.sender.id === loggedInUserId ? 'items-end justify-end' : 'items-start';
+                            const messageClass = message.sender.id === loggedInUserId ? true : false;
                             const showAvatar = message.sender.id === loggedInUserId ? '' : avatar;
 
                             let attachments = '';
@@ -379,22 +382,22 @@
                             if(message.attachments && message.attachments.length > 0){
                                 attachmentCount = message.attachments.length;
                                 message.attachments.forEach((attachment) => {
-                                    attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-auto w-full">`;
+                                    attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
 
                                 })
                             }
 
-                            let messageHtml = `<div class="flex gap-2 text-soft-color ${messageClass}">
+                            let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
                                 ${showAvatar}
-                                <div class="w-6/12">
-                                    <div class="bg-light-color text-sm rounded-md ${message.text ? 'p-2' : '' }">${message.text}</div>
+                                <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
+                                    <div class="bg-light-color text-sm rounded-md w-fit ${message.text ? 'p-2' : '' }">${message.text}</div>
                                     ${
                                         attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
                                             ${attachments}
                                         </div>` : '' 
                                     }
                                     
-                                    <div class="text-sm text-color mt-1">${moment(message.date_time).fromNow()}</div>
+                                    <div class="text-sm text-dark-color mt-1">${moment(message.date_time).fromNow()}</div>
                                 </div>
                             </div>`;
                             allMessages += messageHtml;
@@ -410,6 +413,78 @@
             }else{
                 toastr.warning(result.errors.common.msg);
             }
+        }
+    
+        // socket initialization
+        const socket = io('http://localhost:5000');
+        // handle events from server
+        // socket.on('connect', () => {
+        //     console.log('socket is connected');
+        // });
+        // socket.on('disconnect', () => {
+        //     console.log('socket is disconnected.');
+        // });
+        socket.on("new_message", (data) => {
+            if(data.message.conversation_id == current_conversation_id){
+                const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
+                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                                                        <span class="text-3xl">${data.message.sender.name[0].toUpperCase()}</span>
+                                                    </div>
+                                                </div>`;
+                const messageClass = data.message.sender.id === loggedInUserId ? true : false;
+                const showAvatar = data.message.sender.id === loggedInUserId ? '' : avatar;
+
+                let attachments = '';
+                let attachmentCount = 0;
+                if(data.message.attachments && data.message.attachments.length > 0){
+                    data.message.attachments.forEach((attachment) => {
+                        attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
+                    })
+                }
+
+                let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
+                        ${showAvatar}
+                        <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
+                            <div class="bg-light-color text-sm rounded-md w-fit ${data.message.message ? 'p-2' : '' }">${data.message.message}</div>
+                            ${
+                                attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
+                                    ${attachments}
+                                </div>` : '' 
+                            }
+                            
+                            <div class="text-sm text-dark-color mt-1">${moment(data.message.date_time).fromNow()}</div>
+                        </div>
+                    </div>`;
+                    
+            // append the inoming message to message area as last item
+            document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforebegin", messageHtml);
+
+            }
+        });
+
+        const chat_send_message_form = document.querySelector("#chat-send-message-form");
+        chat_send_message_form.onsubmit = async function(event){
+            event.preventDefault();
+
+            const formData = new FormData(chat_send_message_form);
+            formData.append('conversation_id', current_conversation_id);
+            formData.append('receiver_id', participant.id);
+            formData.append('receiver_name', participant.name);
+            formData.append('receiver_avatar', participant.avatar || null);
+
+            let response = await fetch('/inbox/message', {
+                method: 'POST',
+                body: formData
+            });
+
+            let result = await response.json();
+
+            if(!result.errors){
+                chat_send_message_form.reset();
+            }else{
+                toastr.warning(result.errors.common.msg);
+            }
+
         }
     </script>
     <script>

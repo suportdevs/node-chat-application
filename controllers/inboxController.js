@@ -86,4 +86,61 @@ async function getMessages(req, res, next) {
   }
 }
 
-module.exports = { getInbox, searchUsers, addConversation, getMessages };
+async function sendMessage(req, res, next) {
+  if (req.body.message || (req.files && req.files.length > 0)) {
+    let attachments = null;
+    if (req.files && req.files.length > 0) {
+      attachments = [];
+      req.files.forEach((file) => {
+        attachments.push(file.filename);
+      });
+    }
+    const newMessage = await Message({
+      text: req.body.message,
+      attachments: attachments,
+      sender: {
+        id: req.user.user_id,
+        name: req.user.username,
+        avatar: req.user.avatar || null,
+      },
+      receiver: {
+        id: req.body.receiver_id,
+        name: req.body.receiver_name,
+        avatar: req.body.receiver_avatar || null,
+      },
+      conversation_id: req.body.conversation_id,
+    });
+
+    const result = await newMessage.save();
+
+    global.io.emit("new_message", {
+      message: {
+        message: req.body.message,
+        attachments: attachments,
+        sender: {
+          id: req.user.user_id,
+          name: req.user.username,
+          avatar: req.user.avatar || null,
+        },
+        conversation_id: req.body.conversation_id,
+        date_time: result.date_id,
+      },
+    });
+
+    res
+      .status(200)
+      .json({ message: "Message sent successfull.", data: result });
+  } else {
+    res.status(500).json({
+      errors: { common: { msg: "Message or Attachment are required." } },
+    });
+  }
+}
+
+module.exports = {
+  getInbox,
+  searchUsers,
+  addConversation,
+  getMessages,
+  sendMessage,
+};

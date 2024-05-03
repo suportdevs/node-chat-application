@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const messageSchema = mongoose.Schema(
   {
     text: { type: String },
+    attachments: [{ type: String }],
     sender: {
       id: { type: mongoose.Types.ObjectId },
       name: { type: String },

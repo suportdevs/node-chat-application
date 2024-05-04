@@ -101,10 +101,8 @@
                                             <% if(conversation.participant.avatar) { %>
                                             <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="" class="w-10 h-10 rounded-full">
                                             <% }else { %>
-                                                <div class="avatar placeholder">
-                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
-                                                        <span class="text-3xl"><%= conversation.participant.name[0].toUpperCase() %></span>
-                                                    </div>
+                                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                    <span class="text-3xl"><%= conversation.participant.name[0].toUpperCase() %></span>
                                                 </div>
                                             <% } %>
                                         </div>
@@ -122,10 +120,8 @@
                                             <% if(conversation.creator.avatar) { %>
                                             <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="" class="w-10 h-10 rounded-full">
                                             <% }else { %>
-                                                <div class="avatar placeholder">
-                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
-                                                        <span class="text-3xl"><%= conversation.creator.name[0].toUpperCase() %></span>
-                                                    </div>
+                                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                    <span class="text-3xl"><%= conversation.creator.name[0].toUpperCase() %></span>
                                                 </div>
                                             <% } %>
                                         </div>
@@ -370,10 +366,8 @@
                 chat_message_title_container.classList.remove('invisible');
                 chat_form_container.classList.remove('invisible');
                 chat_message_title_name.textContent = participantName;
-                chat_message_avatar_container.innerHTML = participantAvatar ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
-                                                    <div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                chat_message_avatar_container.innerHTML = participantAvatar ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                         <span class="text-3xl">${participantName[0].toUpperCase()}</span>
-                                                    </div>
                                                 </div>`;
 
                 const {data, user_id, conversation_id} = result;
@@ -383,10 +377,8 @@
                     let allMessages = '';
                     if(data.messages.length > 0){
                         data.messages.forEach((message) => {
-                            const avatar = message.sender.avatar ? `<img src="./uploads/avatars/${message.sender.avatar}" alt="${message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
-                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                            const avatar = message.sender.avatar ? `<img src="./uploads/avatars/${message.sender.avatar}" alt="${message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                         <span class="text-3xl">${message.sender.name[0].toUpperCase()}</span>
-                                                    </div>
                                                 </div>`;
                             const messageClass = message.sender.id === loggedInUserId ? true : false;
                             const showAvatar = message.sender.id === loggedInUserId ? '' : avatar;
@@ -440,10 +432,8 @@
         // });
         socket.on("new_message", (data) => {
             if(data.message.conversation_id == current_conversation_id){
-                const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
-                                                    <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                         <span class="text-3xl">${data.message.sender.name[0].toUpperCase()}</span>
-                                                    </div>
                                                 </div>`;
                 const messageClass = data.message.sender.id === loggedInUserId ? true : false;
                 const showAvatar = data.message.sender.id === loggedInUserId ? '' : avatar;

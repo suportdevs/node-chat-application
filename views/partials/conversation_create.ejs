@@ -108,10 +108,8 @@
                 conversation_users_list.classList.remove('hidden');
                 let generateHtml = "";
                 result.forEach((user, index) => {
-                    let avatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="avatar placeholder">
-                            <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10">
+                    let avatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                 <span class="text-3xl">${user.name[0].toUpperCase()}</span>
-                            </div>
                             </div>`;
                     generateHtml += `<div class="conversation-users-item flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="addConversation('${user.name}', '${user._id}', '${user.avatar}')">
                             <div>

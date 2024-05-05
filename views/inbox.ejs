@@ -83,7 +83,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                 </svg>
-                                <input type="text" placeholder="Search" id="conversation-search-input" class="bg-transparent focus:outline-none border-none" onkeyup="filterConversationDataset()" value="">
+                                <input type="text" placeholder="Search" class="conversation-search-input bg-transparent focus:outline-none border-none" onkeyup="filterConversationDataset(event)">
                             </div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
@@ -252,13 +252,12 @@
         let participant = null; // selected conversation participt object
         let current_conversation_id; // selected conversation id
         let loggedInUserId = '<%= loggedInUser.user_id %>';
-        // get conversations and print
+        // get conversations and print start
         const conversation_value = document.querySelector("#conversation_dataset").value;
         const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
         let conversation_dataset = JSON.parse(conversation_value);
-        // document.addEventListener("DOMContentLoaded", () => {
 
-            const populateConversationData = (conversations) => {
+        const populateConversationData = (conversations) => {
                     let allConversationHtml = '';
                     if(conversations && conversations.length > 0){
                         conversations.forEach((conversation, index) => {
@@ -314,28 +313,20 @@
                     }
                 }
                 
-            populateConversationData(conversation_dataset);
-            
-            
-        // });
-        let  searchInput = document.getElementById("conversation-search-input");
-        console.log(searchInput)
-        searchInput.addEventListener("keyup", function(event) {
-            console.log(this)
-            // filterConversationDataset(event); // Pass the event object to the function
-        });
+        populateConversationData(conversation_dataset);
+        // get conversations and print end
+
+        // filter conversations start
         function filterConversationDataset(event) {
-            // console.log(event.target);
-            // const conversation_search_input = document.getElementById("conversation-search-input").value.toLowerCase();
-            // console.log(conversation_search_input)
-            // const filteredConversationDataset = conversation_dataset.filter(item =>
-            //     conversation_search_input === '' ||
-            //     item.creator.name.toLowerCase().includes(conversation_search_input) ||
-            //     item.participant.name.toLowerCase().includes(conversation_search_input)
-            // );
-            // console.log(filteredConversationDataset)
-            // populateConversationData(filteredConversationDataset);
+            let conversation_search_input = document.querySelector(".conversation-search-input").value.toLowerCase();
+            const filteredConversationDataset = conversation_dataset.filter(item =>
+                conversation_search_input === '' ||
+                item.creator.name.toLowerCase().includes(conversation_search_input) ||
+                item.participant.name.toLowerCase().includes(conversation_search_input)
+            );
+            populateConversationData(filteredConversationDataset);
         }
+        // filter conversations end
 
         // get messages
         const chat_message_title_container = document.querySelector("#chat-message-title-container");

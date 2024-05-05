@@ -25,7 +25,7 @@
                             <% if(loggedInUser.avatar){ %>
                                 <img src="./uploads/avatars/<%= loggedInUser.avatar %>" alt="" class="w-10 h-10 rounded-full cursor-pointer" id="user-avatar">
                             <% }else{ %>
-                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 cursor-pointer" id="user-avatar">
+                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10 cursor-pointer" id="user-avatar">
                                     <span class="text-3xl"><%= loggedInUser.username[0].toUpperCase() %></span>
                                 </div>
                             <% } %>
@@ -83,7 +83,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                 </svg>
-                                <input type="text" placeholder="Search" class="bg-transparent focus:outline-none border-none">
+                                <input type="text" placeholder="Search" id="conversation-search-input" class="bg-transparent focus:outline-none border-none" onkeyup="filterConversationDataset()" value="">
                             </div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
@@ -92,52 +92,11 @@
                         <!-- conversation search end -->
 
                         <!-- conversation list start -->
-                        <div class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
+                        <div id="conversation-content-wrapper" class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
                             
-                            <% data.forEach((conversation, index) => { %>
-                                <% if(conversation.creator.id == loggedInUser.user_id) { %>
-                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.participant.name %>', '<%= conversation.participant.avatar %>')">
-                                        <div>
-                                            <% if(conversation.participant.avatar) { %>
-                                            <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="" class="w-10 h-10 rounded-full">
-                                            <% }else { %>
-                                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                    <span class="text-3xl"><%= conversation.participant.name[0].toUpperCase() %></span>
-                                                </div>
-                                            <% } %>
-                                        </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info <%= index !== data.length - 1 ? ' border-b border-gray-200/40' : '' %>">
-                                            <div>
-                                                <h3 class="text-md font-bold"><%= conversation.participant.name %></h3>
-                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                            </div>
-                                            <div class="text-sm text-gray-300"><%= moment(conversation.last_updated).fromNow() %></div>
-                                        </div>
-                                    </div>
-                                <% }else{ %>
-                                    <div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('<%= conversation._id %>', '<%= conversation.creator.name %>', '<%= conversation.creator.avatar %>')">
-                                        <div>
-                                            <% if(conversation.creator.avatar) { %>
-                                            <img src="./uploads/avatars/<%= conversation.creator.avatar %>" alt="" class="w-10 h-10 rounded-full">
-                                            <% }else { %>
-                                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                    <span class="text-3xl"><%= conversation.creator.name[0].toUpperCase() %></span>
-                                                </div>
-                                            <% } %>
-                                        </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info <%= index !== data.length - 1 ? ' border-b border-gray-200/40' : '' %>">
-                                            <div>
-                                                <h3 class="text-md font-bold"><%= conversation.creator.name %></h3>
-                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                            </div>
-                                            <div class="text-sm text-gray-300"><%= moment(conversation.last_updated).fromNow() %></div>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            <% }); %>
                             
 
-                            <% if(data && data.length === 0) { %>
+                            <!-- <% if(data && data.length === 0) { %>
                             <div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
                                 <div>
                                     <img src="./images/no-conversation.png" alt="" class="w-32">
@@ -147,7 +106,7 @@
                                     <p>Create conversation to contact others</p>
                                 </div>
                             </div>
-                            <% } %>
+                            <% } %> -->
                         </div>
                         <!-- conversation list end -->
 
@@ -283,70 +242,100 @@
             </div>
         </div>
     </div>
-
+    <input type="hidden" id="conversation_dataset" value="<%= JSON.stringify(data) %>">
     <!-- import socket io client from cdn -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-    <script>
-        // widget start
-        const widget_wrapper = document.querySelector(".widget-wrapper");
-        const widget_toggle = document.querySelector(".widget-toggle");
-        // user off canvas menu toggle
-        widget_toggle.addEventListener("click", function(){
-            if(widget_wrapper.classList.contains('invisible')){
-                widget_wrapper.classList.remove('invisible');
-                widget_wrapper.classList.add('w-96');
-                widget_toggle.classList.add('rotate-180');
-            }else{
-                widget_wrapper.classList.remove('w-96');
-                widget_wrapper.classList.add('invisible');
-                widget_toggle.classList.remove('rotate-180');
-            }
+    <script src="./js/app.js"></script>
 
-        });
-        // widget end
+    <script>
+
+        let participant = null; // selected conversation participt object
+        let current_conversation_id; // selected conversation id
+        let loggedInUserId = '<%= loggedInUser.user_id %>';
+        // get conversations and print
+        const conversation_value = document.querySelector("#conversation_dataset").value;
+        const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
+        let conversation_dataset = JSON.parse(conversation_value);
+        // document.addEventListener("DOMContentLoaded", () => {
+
+            const populateConversationData = (conversations) => {
+                    let allConversationHtml = '';
+                    if(conversations && conversations.length > 0){
+                        conversations.forEach((conversation, index) => {
+                            let conversationHtml = '';
+                            if(conversation.creator.id == loggedInUserId){
+                                const conversationAvatar = conversation.participant.avatar ? `<img src="./uploads/avatars/${conversation.participant.avatar}" alt="${conversation.participant.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                            <span class="text-3xl">${conversation.participant.name[0].toUpperCase()}</span>
+                                                        </div>`;
+
+                                conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.participant.name}', '${conversation.participant.avatar}')">
+                                                <div>
+                                                    ${conversationAvatar}
+                                                </div>
+                                                <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                                    <div>
+                                                        <h3 class="text-md font-bold">${conversation.participant.name}</h3>
+                                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                                    </div>
+                                                    <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
+                                                </div>
+                                            </div>`;
+                            }else{
+                                const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                            <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
+                                                        </div>`;
+
+                                conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
+                                                <div>
+                                                    ${conversationAvatar}
+                                                </div>
+                                                <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                                    <div>
+                                                        <h3 class="text-md font-bold">${conversation.creator.name}</h3>
+                                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                                    </div>
+                                                    <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
+                                                </div>
+                                            </div>`;
+                            }
+                            allConversationHtml += conversationHtml;
+                            conversation_content_wrapper.innerHTML = allConversationHtml;
+                        });
+                    }else{
+                        conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
+                                            <div>
+                                                <img src="./images/no-conversation.png" alt="" class="w-32">
+                                            </div>
+                                            <div>
+                                                <h3 class="text-md font-bold">No conversation yet</h3>
+                                                <p>Create conversation to contact others</p>
+                                            </div>
+                                        </div>`
+                    }
+                }
                 
-        const chat_content_wrapper = document.querySelector(".chat-content-wrapper");
-        const chat_content_infos = document.querySelectorAll(".chat-content-info");
-        chat_content_wrapper.addEventListener('mouseover', function(){
-            chat_content_wrapper.classList.add('chat-content-wrapper-small-device');
+            populateConversationData(conversation_dataset);
+            
+            
+        // });
+        let  searchInput = document.getElementById("conversation-search-input");
+        console.log(searchInput)
+        searchInput.addEventListener("keyup", function(event) {
+            console.log(this)
+            // filterConversationDataset(event); // Pass the event object to the function
         });
-        chat_content_wrapper.addEventListener('mouseout', function(){
-            chat_content_wrapper.classList.remove('chat-content-wrapper-small-device');
-        });
-        chat_content_infos.forEach((element, index) => {
-            element.addEventListener('click', function(){
-                chat_content_wrapper.classList.remove('chat-content-wrapper-small-device');
-            });
-        });
-        const conversation_dots = document.getElementById("conversation-dots");
-        const conversation_dots_dropdown = document.getElementById('conversation-dots-dropdown');
-        conversation_dots.addEventListener('click', function(){
-            if(conversation_dots_dropdown.classList.contains('active')){
-                conversation_dots_dropdown.classList.remove('active');
-            }else{
-                conversation_dots_dropdown.classList.add('active');
-            }
-        });
-        const message_dots = document.getElementById("message-dots");
-        const message_dots_dropdown = document.getElementById('message-dots-dropdown');
-        message_dots.addEventListener('click', function(){
-            if(message_dots_dropdown.classList.contains('active')){
-                message_dots_dropdown.classList.remove('active');
-            }else{
-                message_dots_dropdown.classList.add('active');
-            }
-        });
-        const message_search_icon = document.getElementById('message-search-icon');
-        const message_search_input = document.getElementById('message-search-input');
-        message_search_icon.addEventListener('click', function(){
-            if(message_search_input.classList.contains('block')){
-                message_search_input.classList.remove('block');
-                message_search_input.style.display = 'none';
-            }else{
-                message_search_input.classList.add('block');
-                message_search_input.style.display = 'block';
-            }
-        });
+        function filterConversationDataset(event) {
+            // console.log(event.target);
+            // const conversation_search_input = document.getElementById("conversation-search-input").value.toLowerCase();
+            // console.log(conversation_search_input)
+            // const filteredConversationDataset = conversation_dataset.filter(item =>
+            //     conversation_search_input === '' ||
+            //     item.creator.name.toLowerCase().includes(conversation_search_input) ||
+            //     item.participant.name.toLowerCase().includes(conversation_search_input)
+            // );
+            // console.log(filteredConversationDataset)
+            // populateConversationData(filteredConversationDataset);
+        }
 
         // get messages
         const chat_message_title_container = document.querySelector("#chat-message-title-container");
@@ -354,9 +343,6 @@
         const chat_message_title_name = document.querySelector("#chat-message-title-name");
         const chat_message_list = document.querySelector("#chat-message-list");
         const chat_form_container = document.querySelector("#chat-form-container");
-        let participant = null; // selected conversation participt object
-        let current_conversation_id; // selected conversation id
-        let loggedInUserId = '<%= loggedInUser.user_id %>';
 
 
         async function getMessages(conversation_id, participantName, participantAvatar){
@@ -513,7 +499,7 @@
 
         // user logout
         function logout (){
-            fetch('/auth/logout', {
+            fetch('/logout', {
                 method: "DELETE"
             });
             toastr.success("Logout successfull.");
@@ -521,35 +507,7 @@
                 window.location.replace('/');
             }, 1000);
         }
-
         // end user logout
-    </script>
-    <script>
-        function setTheme(themeName) {
-            document.documentElement.className = themeName + '-theme';
-            const main_content_wrapper = document.querySelector('.main-content-wrapper ') ;
-            if(themeName != 'default'){
-                main_content_wrapper.classList.remove('backgrop-glass');
-            }else{
-                main_content_wrapper.classList.add('backgrop-glass');
-                // main_content_wrapper.style.backgroundColor = 'transparent';
-            }
-            localStorage.setItem('selectedTheme', themeName);
-        }
-    
-        // On document load, apply the saved theme
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('selectedTheme') || 'default';
-            const main_content_wrapper = document.querySelector('.main-content-wrapper ') ;
-            if(savedTheme != 'default'){
-                main_content_wrapper.classList.remove('backgrop-glass');
-            }else{
-                main_content_wrapper.classList.add('backgrop-glass');
-            //     main_content_wrapper.style.backgroundColor = 'transparent';
-            }
-            setTheme(savedTheme);
-        });
-    </script>
-    
+    </script>    
 </body>
 </html>

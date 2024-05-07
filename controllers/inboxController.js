@@ -1,3 +1,8 @@
+// internal imports
+const fs = require("fs");
+const createError = require("http-errors");
+
+// external imports
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
 const User = require("../models/People");
@@ -161,6 +166,43 @@ async function deleteMessage(req, res, next) {
   }
 }
 
+async function clearMessage(req, res, next) {
+  if (req.params.conversation_id) {
+    try {
+      const conversation_id = req.params.conversation_id;
+      const messages = await Message.find({ conversation_id });
+      if (messages && messages.length > 0) {
+        messages.forEach((message) => {
+          if (message.attachments && message.attachments.length > 0) {
+            for (const attachment of message.attachments) {
+              fs.unlink(
+                `${__dirname}/../public/uploads/attachments/${attachment}`,
+                (err) => {
+                  createError(err);
+                }
+              );
+            }
+          }
+        });
+        await Message.deleteMany({ conversation_id });
+      } else {
+        createError("You don't have any messages");
+      }
+      res.status(200).json({ message: "Message cleared successfull." });
+    } catch (error) {
+      res.status(500).json({ errors: { common: { msg: error.message } } });
+    }
+  } else {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: "You don't have select any conversation to delete messages.",
+        },
+      },
+    });
+  }
+}
+
 module.exports = {
   getInbox,
   searchUsers,
@@ -168,4 +210,5 @@ module.exports = {
   getMessages,
   sendMessage,
   deleteMessage,
+  clearMessage,
 };

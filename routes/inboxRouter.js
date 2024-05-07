@@ -9,6 +9,7 @@ const {
   getMessages,
   sendMessage,
   deleteMessage,
+  clearMessage,
 } = require("../controllers/inboxController");
 const attachmentUpload = require("../middlewares/attachmentUploader");
 const authenticated = require("../middlewares/authenticated");
@@ -24,5 +25,7 @@ router.get("/message/:conversation_id", authenticated, getMessages);
 router.post("/message", attachmentUpload, authenticated, sendMessage);
 
 router.delete("/message/delete/:conversation_id", authenticated, deleteMessage);
+
+router.delete("/message/clear/:conversation_id", authenticated, clearMessage);
 
 module.exports = router;

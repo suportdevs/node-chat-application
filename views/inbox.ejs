@@ -87,15 +87,12 @@
                             </div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-                              </svg>
+                            </svg>
                         </div>
                         <!-- conversation search end -->
 
                         <!-- conversation list start -->
                         <div id="conversation-content-wrapper" class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
-                            
-                            
-
                             <!-- <% if(data && data.length === 0) { %>
                             <div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
                                 <div>
@@ -138,47 +135,34 @@
                                             <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                                </svg>
-                                                
-                                                
-                                                Contact Info</a>
+                                                </svg>Contact Info</a>
                                             <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">Select Messages</a>
                                             <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                                                </svg>                                                                                              
-                                                    Close Chat</a>
+                                                </svg>Close Chat</a>
                                             <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-                                                </svg>
-                                                Mute Notifications</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                                </svg>
-                                                    
-                                                Clear Chat</a>
+                                                </svg>Mute Notifications</a>
                                             <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="deleteMeassage()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>                                              
-                                                    
-                                                Delete Chat</a>
+                                                </svg>Delete Chat</a>
+                                                <% if(loggedInUser.role == 'Admin'){ %>
+                                                <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="clearMessage()">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                                    </svg>Clear Chat</a>
+                                                <% } %>
                                             <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-                                                </svg>
-                                                
-                                                    
-                                                Block</a>
+                                                </svg>Block</a>
                                             <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                                                </svg>
-                                                
-                                                    
-                                                Report</a>
+                                                </svg>Report</a>
                                         </div>
                                     </div>
                                 </div>
@@ -258,60 +242,60 @@
         let conversation_dataset = JSON.parse(conversation_value);
 
         const populateConversationData = (conversations) => {
-                    let allConversationHtml = '';
-                    if(conversations && conversations.length > 0){
-                        conversations.forEach((conversation, index) => {
-                            let conversationHtml = '';
-                            if(conversation.creator.id == loggedInUserId){
-                                const conversationAvatar = conversation.participant.avatar ? `<img src="./uploads/avatars/${conversation.participant.avatar}" alt="${conversation.participant.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                            <span class="text-3xl">${conversation.participant.name[0].toUpperCase()}</span>
-                                                        </div>`;
+            let allConversationHtml = '';
+            if(conversations && conversations.length > 0){
+                conversations.forEach((conversation, index) => {
+                    let conversationHtml = '';
+                    if(conversation.creator.id == loggedInUserId){
+                        const conversationAvatar = conversation.participant.avatar ? `<img src="./uploads/avatars/${conversation.participant.avatar}" alt="${conversation.participant.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                    <span class="text-3xl">${conversation.participant.name[0].toUpperCase()}</span>
+                                                </div>`;
 
-                                conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.participant.name}', '${conversation.participant.avatar}')">
-                                                <div>
-                                                    ${conversationAvatar}
-                                                </div>
-                                                <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                                    <div>
-                                                        <h3 class="text-md font-bold">${conversation.participant.name}</h3>
-                                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                                    </div>
-                                                    <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
-                                                </div>
-                                            </div>`;
-                            }else{
-                                const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                            <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
-                                                        </div>`;
-
-                                conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
-                                                <div>
-                                                    ${conversationAvatar}
-                                                </div>
-                                                <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                                    <div>
-                                                        <h3 class="text-md font-bold">${conversation.creator.name}</h3>
-                                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                                    </div>
-                                                    <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
-                                                </div>
-                                            </div>`;
-                            }
-                            allConversationHtml += conversationHtml;
-                            conversation_content_wrapper.innerHTML = allConversationHtml;
-                        });
+                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.participant.name}', '${conversation.participant.avatar}')">
+                                        <div>
+                                            ${conversationAvatar}
+                                        </div>
+                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                            <div>
+                                                <h3 class="text-md font-bold">${conversation.participant.name}</h3>
+                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                            </div>
+                                            <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
+                                        </div>
+                                    </div>`;
                     }else{
-                        conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
+                        const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                    <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
+                                                </div>`;
+
+                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
+                                        <div>
+                                            ${conversationAvatar}
+                                        </div>
+                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                             <div>
-                                                <img src="./images/no-conversation.png" alt="" class="w-32">
+                                                <h3 class="text-md font-bold">${conversation.creator.name}</h3>
+                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
                                             </div>
-                                            <div>
-                                                <h3 class="text-md font-bold">No conversation yet</h3>
-                                                <p>Create conversation to contact others</p>
-                                            </div>
-                                        </div>`
+                                            <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
+                                        </div>
+                                    </div>`;
                     }
-                }
+                    allConversationHtml += conversationHtml;
+                    conversation_content_wrapper.innerHTML = allConversationHtml;
+                });
+            }else{
+                conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
+                                    <div>
+                                        <img src="./images/no-conversation.png" alt="" class="w-32">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-md font-bold">No conversation yet</h3>
+                                        <p>Create conversation to contact others</p>
+                                    </div>
+                                </div>`
+            }
+        }
                 
         populateConversationData(conversation_dataset);
         // get conversations and print end
@@ -327,6 +311,52 @@
             populateConversationData(filteredConversationDataset);
         }
         // filter conversations end
+    
+        // socket initialization
+        const socket = io('http://localhost:5000');
+        // handle events from server
+        // socket.on('connect', () => {
+        //     console.log('socket is connected');
+        // });
+        // socket.on('disconnect', () => {
+        //     console.log('socket is disconnected.');
+        // });
+        socket.on("new_message", (data) => {
+            if(data.message.conversation_id == current_conversation_id){
+                document.querySelector('.message-nothing').innerHTML = '';
+                const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                        <span class="text-3xl">${data.message.sender.name[0].toUpperCase()}</span>
+                                                </div>`;
+                const messageClass = data.message.sender.id === loggedInUserId ? true : false;
+                const showAvatar = data.message.sender.id === loggedInUserId ? '' : avatar;
+
+                let attachments = '';
+                let attachmentCount = 0;
+                if(data.message.attachments && data.message.attachments.length > 0){
+                    data.message.attachments.forEach((attachment) => {
+                        attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
+                    })
+                }
+
+                let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
+                        ${showAvatar}
+                        <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
+                            <div class="bg-light-color text-sm rounded-md w-fit ${data.message.message ? 'p-2' : '' }">${data.message.message}</div>
+                            ${
+                                attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
+                                    ${attachments}
+                                </div>` : '' 
+                            }
+                            
+                            <div class="text-sm text-dark-color mt-1">${moment(data.message.date_time).fromNow()}</div>
+                        </div>
+                    </div>`;
+                    
+            // append the inoming message to message area as last item
+            document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforebegin", messageHtml);
+
+            }
+        });
 
         // get messages
         const chat_message_title_container = document.querySelector("#chat-message-title-container");
@@ -335,7 +365,6 @@
         const chat_message_list = document.querySelector("#chat-message-list");
         const chat_form_container = document.querySelector("#chat-form-container");
 
-
         async function getMessages(conversation_id, participantName, participantAvatar){
             let response = await fetch(`/inbox/message/${conversation_id}`);
             let result = await response.json();
@@ -343,7 +372,7 @@
                 chat_message_title_container.classList.remove('invisible');
                 chat_form_container.classList.remove('invisible');
                 chat_message_title_name.textContent = participantName;
-                chat_message_avatar_container.innerHTML = participantAvatar ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                chat_message_avatar_container.innerHTML = participantAvatar != 'undefined' && participantAvatar != 'null' ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                         <span class="text-3xl">${participantName[0].toUpperCase()}</span>
                                                 </div>`;
 
@@ -387,7 +416,7 @@
                             chat_message_list.innerHTML = allMessages;
                         })
                     }else if(data.messages.length === 0){
-                        chat_message_list.innerHTML = `<div class="flex gap-2 text-soft-color items-center justify-center h-full">
+                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
                                     <h1 class="text-2xl font-bold">You don't have message</h1>
                                 </div>`;
                     }
@@ -397,51 +426,7 @@
                 toastr.warning(result.errors.common.msg);
             }
         }
-    
-        // socket initialization
-        const socket = io('http://localhost:5000');
-        // handle events from server
-        // socket.on('connect', () => {
-        //     console.log('socket is connected');
-        // });
-        // socket.on('disconnect', () => {
-        //     console.log('socket is disconnected.');
-        // });
-        socket.on("new_message", (data) => {
-            if(data.message.conversation_id == current_conversation_id){
-                const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${data.message.sender.name[0].toUpperCase()}</span>
-                                                </div>`;
-                const messageClass = data.message.sender.id === loggedInUserId ? true : false;
-                const showAvatar = data.message.sender.id === loggedInUserId ? '' : avatar;
-
-                let attachments = '';
-                let attachmentCount = 0;
-                if(data.message.attachments && data.message.attachments.length > 0){
-                    data.message.attachments.forEach((attachment) => {
-                        attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
-                    })
-                }
-
-                let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
-                        ${showAvatar}
-                        <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
-                            <div class="bg-light-color text-sm rounded-md w-fit ${data.message.message ? 'p-2' : '' }">${data.message.message}</div>
-                            ${
-                                attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
-                                    ${attachments}
-                                </div>` : '' 
-                            }
-                            
-                            <div class="text-sm text-dark-color mt-1">${moment(data.message.date_time).fromNow()}</div>
-                        </div>
-                    </div>`;
-                    
-            // append the inoming message to message area as last item
-            document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforebegin", messageHtml);
-
-            }
-        });
+        // end get messages
 
         const chat_send_message_form = document.querySelector("#chat-send-message-form");
         chat_send_message_form.onsubmit = async function(event){
@@ -465,7 +450,6 @@
             }else{
                 toastr.warning(result.errors.common.msg);
             }
-
         }
     
         // message delete
@@ -480,6 +464,9 @@
                     let result = await response.json();
                     if(!result.errors){
                         toastr.success(result.message);
+                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                                    <h1 class="text-2xl font-bold">You don't have message</h1>
+                                </div>`;
                     }else{
                         toastr.error(result.errors.common.msg);
                     }
@@ -487,6 +474,28 @@
             }
         }
         // end message delete
+        // message clear
+        async function clearMessage(){
+            if(!current_conversation_id){
+                toastr.warning("You don't have select any conversation to clear messages.");
+            }else{
+                if(confirm("Are you sure to clear this messages!") == true){
+                    let response = await fetch(`/inbox/message/clear/${current_conversation_id}`, {
+                        method: "DELETE"
+                    });
+                    let result = await response.json();
+                    if(!result.errors){
+                        toastr.success(result.message);
+                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                                    <h1 class="text-2xl font-bold">You don't have message</h1>
+                                </div>`;
+                    }else{
+                        toastr.error(result.errors.common.msg);
+                    }
+                }
+            }
+        }
+        // end message clear
 
         // user logout
         function logout (){

@@ -20,6 +20,7 @@ router.get("/", decoratedHtmlResponse("Inbox"), authenticated, getInbox);
 router.post("/search", searchUsers);
 
 router.post("/conversation", authenticated, addConversation);
+
 router.get("/message/:conversation_id", authenticated, getMessages);
 
 router.post("/message", attachmentUpload, authenticated, sendMessage);

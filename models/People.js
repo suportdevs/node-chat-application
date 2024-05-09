@@ -14,6 +14,14 @@ const peopleSchema = mongoose.Schema(
     password: { type: String, required: true },
     avatar: { type: String },
     role: { type: String, enum: ["Admin", "User"], default: "User" },
+    blockable: [
+      {
+        id: { type: mongoose.Types.ObjectId },
+        name: { type: String },
+        avatar: { type: String },
+        blockedAt: { type: Date, default: Date.now() },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -157,10 +157,12 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                                     </svg>Clear Chat</a>
                                                 <% } %>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-                                                </svg>Block</a>
+                                            <div class="chat-message-block-container">
+                                                <div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="userBlock()">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                                                    </svg>Block</div>
+                                            </div>
                                             <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
@@ -378,9 +380,11 @@
                                                         <span class="text-3xl">${participantName[0].toUpperCase()}</span>
                                                 </div>`;
 
-                const {data, user_id, conversation_id} = result;
+                const {data, user_id, conversation_id, participantUser} = result;
                 participant = data.participant;
                 current_conversation_id = conversation_id;
+
+                updateBlockUnblockUi(loggedInUserId, participantUser.blockable);
                 if(data.messages){
                     let allMessages = '';
                     if(data.messages.length > 0){
@@ -511,6 +515,45 @@
             }, 1000);
         }
         // end user logout
-    </script>    
+
+        // user block
+        const chat_message_block_container = document.querySelector('.chat-message-block-container');
+        async function userBlock(){
+            if(participant != null){
+                let response = await fetch('/users/block', {
+                    method: "POST",
+                    body: JSON.stringify({user_id: participant.id}),
+                    headers: {"Content-type": "application/json; charset=UTF-8"}
+                });
+                let result = await response.json();
+                if(!result.errors){
+                    toastr.success(result.message);
+                    updateBlockUnblockUi(loggedInUserId, result.participantUser.blockable)
+                }else{
+                    toastr.error(result.errors.common.msg);
+                    updateBlockUnblockUi(loggedInUserId, null);
+                }
+            }else{
+                toastr.warning("Please provide a valid person.");
+            }
+        }
+        // end user block
+    
+        function updateBlockUnblockUi(loggedInUserId, blockable){
+            if (loggedInUserId && blockable && blockable.some(blockedObj => blockedObj.id === loggedInUserId)) {
+            // The logged in user is blocked by the participant user
+            chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="userUnblock()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" onclick="userUnblock()">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>Unblock</div>`;
+            } else {
+            // The logged in user is not blocked by the participant user
+                chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="userBlock()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" onclick="userUnblock()">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>Block</div>`;
+            }
+        }
+    </script>
 </body>
 </html>

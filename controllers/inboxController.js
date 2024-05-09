@@ -81,11 +81,13 @@ async function getMessages(req, res, next) {
     const { participant } = await Conversation.findById(
       req.params.conversation_id
     );
+    const participantUser = await User.findById(participant.id);
 
     res.status(200).json({
       data: { messages, participant },
       user_id: req.user.user_id,
       conversation_id: req.params.conversation_id,
+      participantUser,
     });
   } catch (error) {
     res.status(500).json({ errors: { common: { msg: error.message } } });

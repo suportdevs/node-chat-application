@@ -26,6 +26,14 @@ const peopleSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+// Method to unblock a user
+peopleSchema.methods.unblockUser = function (userIdToBlock) {
+  this.blockable = this.blockable.filter(
+    (blockedUser) => blockedUser.id.toString() !== userIdToBlock.toString()
+  );
+  return this.save();
+};
+
 const People = mongoose.model("People", peopleSchema);
 
 module.exports = People;

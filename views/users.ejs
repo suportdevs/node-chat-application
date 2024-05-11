@@ -235,50 +235,57 @@
         let current_conversation_id; // selected conversation id
         let loggedInUserId = '<%= loggedInUser.user_id %>';
         // get conversations and print start
-        const conversation_value = document.querySelector("#conversation_dataset").value;
+        // const conversation_value = document.querySelector("#conversation_dataset").value;
         const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
-        let conversation_dataset = JSON.parse(conversation_value);
+        // let conversation_dataset = JSON.parse(conversation_value);
+        // let conversation_dataset = JSON.parse(`<%= JSON.stringify(data) %>`);
+        let stringify_dataset = `<%= JSON.stringify(data) %>`;
+        // let parsed_dataset = JSON.parse(stringify_dataset);
+        console.log(stringify_dataset);
+
+        console.log(conversation_dataset)
 
         const populateConversationData = (conversations) => {
+            console.log(conversations.length > 0)
             let allConversationHtml = '';
             if(conversations && conversations.length > 0){
                 conversations.forEach((conversation, index) => {
+                    console.log(conversation)
                     let conversationHtml = '';
-                    if(conversation.creator.id == loggedInUserId){
-                        const conversationAvatar = conversation.participant.avatar ? `<img src="./uploads/avatars/${conversation.participant.avatar}" alt="${conversation.participant.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                    <span class="text-3xl">${conversation.participant.name[0].toUpperCase()}</span>
+                    // if(conversation.creator.id == loggedInUserId){
+                        const conversationAvatar = conversation.avatar ? `<img src="./uploads/avatars/${conversation.avatar}" alt="${conversation.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                    <span class="text-3xl">${conversation.name[0].toUpperCase()}</span>
                                                 </div>`;
 
-                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.participant.name}', '${conversation.participant.avatar}')">
+                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.name}', '${conversation.avatar}')">
                                         <div>
                                             ${conversationAvatar}
                                         </div>
                                         <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                             <div>
-                                                <h3 class="text-md font-bold">${conversation.participant.name}</h3>
+                                                <h3 class="text-md font-bold">${conversation.name}</h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
                                             </div>
-                                            <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
                                         </div>
                                     </div>`;
-                    }else{
-                        const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                    <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
-                                                </div>`;
+                    // }else{
+                    //     const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                    //                                 <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
+                    //                             </div>`;
 
-                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
-                                        <div>
-                                            ${conversationAvatar}
-                                        </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                            <div>
-                                                <h3 class="text-md font-bold">${conversation.creator.name}</h3>
-                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                            </div>
-                                            <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
-                                        </div>
-                                    </div>`;
-                    }
+                    //     conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
+                    //                     <div>
+                    //                         ${conversationAvatar}
+                    //                     </div>
+                    //                     <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                    //                         <div>
+                    //                             <h3 class="text-md font-bold">${conversation.creator.name}</h3>
+                    //                             <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                    //                         </div>
+                    //                         <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
+                    //                     </div>
+                    //                 </div>`;
+                    // }
                     allConversationHtml += conversationHtml;
                     conversation_content_wrapper.innerHTML = allConversationHtml;
                 });

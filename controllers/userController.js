@@ -1,5 +1,16 @@
 const User = require("../models/People");
 
+async function getUsers(req, res, next) {
+  try {
+    const users = await User.find();
+
+    res.locals.data = users;
+    res.render("users");
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function block(req, res, next) {
   if (req.body.user_id) {
     try {
@@ -48,4 +59,4 @@ async function unblock(req, res, next) {
   }
 }
 
-module.exports = { block, unblock };
+module.exports = { getUsers, block, unblock };

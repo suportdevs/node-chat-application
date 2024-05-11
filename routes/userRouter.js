@@ -1,11 +1,10 @@
-const { block, unblock } = require("../controllers/userController");
+const { block, unblock, getUsers } = require("../controllers/userController");
 const authenticated = require("../middlewares/authenticated");
+const decoratedHtmlResponse = require("../middlewares/decoratedHtmlResponse");
 
 const router = require("express").Router();
 
-router.get("/", (req, res, next) => {
-  res.send("users");
-});
+router.get("/", decoratedHtmlResponse("Users"), authenticated, getUsers);
 
 router.post("/block", authenticated, block);
 

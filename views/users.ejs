@@ -85,7 +85,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                 </svg>
-                                <input type="text" placeholder="Search" class="conversation-search-input bg-transparent focus:outline-none border-none" onkeyup="filterConversationDataset(event)">
+                                <input type="text" placeholder="Search" class="user-search-input bg-transparent focus:outline-none border-none" onkeyup="filterUserDataset(event)">
                             </div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
@@ -94,7 +94,7 @@
                         <!-- conversation search end -->
 
                         <!-- conversation list start -->
-                        <div id="conversation-content-wrapper" class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
+                        <div id="user-content-wrapper" class="h-[76vh] overflow-y-scroll chat-content-wrapper ">
                             <!-- <% if(data && data.length === 0) { %>
                             <div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
                                 <div>
@@ -230,100 +230,72 @@
     <script src="./js/app.js"></script>
 
     <script>
-
+        let userDataset;
         async function fetchUsers(){
             let response = await fetch('/users', {
                 method: "POST",
                 headers: {"Content-type": "application/json; charset=UTF-8"}
             });
             let result = await response.json();
-            console.log(result);
+                
+                populateUserData(result);
+            return result;
         }
-        fetchUsers()
+        fetchUsers();
+        console.log(userDataset)
 
         let participant = null; // selected conversation participt object
         let current_conversation_id; // selected conversation id
         let loggedInUserId = '<%= loggedInUser.user_id %>';
         // get conversations and print start
-        // const conversation_value = document.querySelector("#conversation_dataset").value;
-        const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
-        // let conversation_dataset = JSON.parse(conversation_value);
-        // let conversation_dataset = JSON.parse(`<%= JSON.stringify(data) %>`);
-        let stringify_dataset = `<%= JSON.stringify(data) %>`;
-        // let parsed_dataset = JSON.parse(stringify_dataset);
-        console.log(stringify_dataset);
+        const user_content_wrapper = document.querySelector("#user-content-wrapper");
 
-        console.log(conversation_dataset)
+        const populateUserData = (userDataset) => {
 
-        const populateConversationData = (conversations) => {
-            console.log(conversations.length > 0)
-            let allConversationHtml = '';
-            if(conversations && conversations.length > 0){
-                conversations.forEach((conversation, index) => {
-                    console.log(conversation)
-                    let conversationHtml = '';
-                    // if(conversation.creator.id == loggedInUserId){
-                        const conversationAvatar = conversation.avatar ? `<img src="./uploads/avatars/${conversation.avatar}" alt="${conversation.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                    <span class="text-3xl">${conversation.name[0].toUpperCase()}</span>
+            let allUserHtml = '';
+            if(userDataset && userDataset.length > 0){
+                userDataset.forEach((user, index) => {
+
+                    let userHtml = '';
+                        const conversationAvatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                                    <span class="text-3xl">${user.name[0].toUpperCase()}</span>
                                                 </div>`;
 
-                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.name}', '${conversation.avatar}')">
+                        userHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${user._id}', '${user.name}', '${user.avatar}')">
                                         <div>
                                             ${conversationAvatar}
                                         </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== userDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                             <div>
-                                                <h3 class="text-md font-bold">${conversation.name}</h3>
+                                                <h3 class="text-md font-bold">${user.name}</h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
                                             </div>
                                         </div>
                                     </div>`;
-                    // }else{
-                    //     const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                    //                                 <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
-                    //                             </div>`;
-
-                    //     conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
-                    //                     <div>
-                    //                         ${conversationAvatar}
-                    //                     </div>
-                    //                     <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                    //                         <div>
-                    //                             <h3 class="text-md font-bold">${conversation.creator.name}</h3>
-                    //                             <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                    //                         </div>
-                    //                         <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
-                    //                     </div>
-                    //                 </div>`;
-                    // }
-                    allConversationHtml += conversationHtml;
-                    conversation_content_wrapper.innerHTML = allConversationHtml;
+                    allUserHtml += userHtml;
+                    user_content_wrapper.innerHTML = allUserHtml;
                 });
             }else{
-                conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
+                user_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
                                     <div>
                                         <img src="./images/no-conversation.png" alt="" class="w-32">
                                     </div>
                                     <div>
-                                        <h3 class="text-md font-bold">No conversation yet</h3>
-                                        <p>Create conversation to contact others</p>
+                                        <h3 class="text-md font-bold">No users yet</h3>
+                                        <p>Create user to contact others</p>
                                     </div>
                                 </div>`
             }
         }
-                
-        populateConversationData(conversation_dataset);
         // get conversations and print end
 
         // filter conversations start
-        function filterConversationDataset(event) {
-            let conversation_search_input = document.querySelector(".conversation-search-input").value.toLowerCase();
-            const filteredConversationDataset = conversation_dataset.filter(item =>
-                conversation_search_input === '' ||
-                item.creator.name.toLowerCase().includes(conversation_search_input) ||
-                item.participant.name.toLowerCase().includes(conversation_search_input)
-            );
-            populateConversationData(filteredConversationDataset);
+        function filterUserDataset(event) {
+            let user_search_input = document.querySelector(".user-search-input").value.toLowerCase();
+            const filteredUserDataset = userDataset.filter(item =>
+                user_search_input === '' ||
+                item.name.toLowerCase().includes(user_search_input));
+            populateUserData(filteredUserDataset);
         }
         // filter conversations end
     

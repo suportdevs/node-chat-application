@@ -231,6 +231,16 @@
 
     <script>
 
+        async function fetchUsers(){
+            let response = await fetch('/users', {
+                method: "POST",
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+            });
+            let result = await response.json();
+            console.log(result);
+        }
+        fetchUsers()
+
         let participant = null; // selected conversation participt object
         let current_conversation_id; // selected conversation id
         let loggedInUserId = '<%= loggedInUser.user_id %>';

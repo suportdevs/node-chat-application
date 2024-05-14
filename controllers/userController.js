@@ -1,13 +1,22 @@
 const User = require("../models/People");
 
 async function getUsers(req, res, next) {
+  console.log(req.method);
   try {
     const users = await User.find();
 
-    res.locals.data = users;
-    res.render("users");
+    if (req.method == "GET") {
+      res.locals.data = users;
+      res.render("users");
+    } else {
+      res.status(200).json(users);
+    }
   } catch (error) {
-    next(error);
+    if (req.method == "GET") {
+      next(error);
+    } else {
+      res.status(500).json({ errors: { common: { msg: error.message } } });
+    }
   }
 }
 

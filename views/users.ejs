@@ -257,34 +257,34 @@
                 userDataset.forEach((user, index) => {
 
                     let userHtml = '';
-                        const conversationAvatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                        const userAvatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                     <span class="text-3xl">${user.name[0].toUpperCase()}</span>
                                                 </div>`;
 
                         userHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${user._id}', '${user.name}', '${user.avatar}')">
-                                        <div>
-                                            ${conversationAvatar}
-                                        </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== userDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                            <div>
-                                                <h3 class="text-md font-bold">${user.name}</h3>
-                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
-                                            </div>
-                                        </div>
-                                    </div>`;
+                                <div>
+                                    ${userAvatar}
+                                </div>
+                                <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== userDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                    <div>
+                                        <h3 class="text-md font-bold">${user.name}</h3>
+                                        <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                    </div>
+                                </div>
+                            </div>`;
                     allUserHtml += userHtml;
                     user_content_wrapper.innerHTML = allUserHtml;
                 });
             }else{
                 user_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
-                                    <div>
-                                        <img src="./images/no-conversation.png" alt="" class="w-32">
-                                    </div>
-                                    <div>
-                                        <h3 class="text-md font-bold">No users yet</h3>
-                                        <p>Create user to contact others</p>
-                                    </div>
-                                </div>`
+                    <div>
+                        <img src="./images/no-conversation.png" alt="" class="w-32">
+                    </div>
+                    <div>
+                        <h3 class="text-md font-bold">No users yet</h3>
+                        <p>Create user to contact others</p>
+                    </div>
+                </div>`
             }
         }
         // get conversations and print end

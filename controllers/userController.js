@@ -1,7 +1,6 @@
 const User = require("../models/People");
 
 async function getUsers(req, res, next) {
-  console.log(req.method);
   try {
     const users = await User.find();
 

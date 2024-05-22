@@ -242,7 +242,6 @@
             return result;
         }
         fetchUsers();
-        console.log(userDataset)
 
         let participant = null; // selected conversation participt object
         let current_conversation_id; // selected conversation id
@@ -261,7 +260,7 @@
                                                     <span class="text-3xl">${user.name[0].toUpperCase()}</span>
                                                 </div>`;
 
-                        userHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${user._id}', '${user.name}', '${user.avatar}')">
+                        userHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getUserDetails('${user._id}', '${user.name}', '${user.avatar}')">
                                 <div>
                                     ${userAvatar}
                                 </div>
@@ -352,66 +351,36 @@
         const chat_message_list = document.querySelector("#chat-message-list");
         const chat_form_container = document.querySelector("#chat-form-container");
 
-        async function getMessages(conversation_id, participantName, participantAvatar){
-            let response = await fetch(`/inbox/message/${conversation_id}`);
-            let result = await response.json();
-            if(!result.errors && result.data){
-                chat_message_title_container.classList.remove('invisible');
-                chat_form_container.classList.remove('invisible');
-                chat_message_title_name.textContent = participantName;
-                chat_message_avatar_container.innerHTML = participantAvatar != 'undefined' && participantAvatar != 'null' ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${participantName[0].toUpperCase()}</span>
-                                                </div>`;
+        async function getUserDetails(userId, userName, useravatar){
+            if(userId && userName){
+                let userInfoHtml = '';
+                const avatar = userAvatar ? `<img src="./uploads/avatars/${useravatar}" alt="${userName}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                            <span class="text-3xl">${userName[0].toUpperCase()}</span>
+                                    </div>`;
 
-                const {data, user_id, conversation_id, participantUser} = result;
-                participant = data.participant;
-                current_conversation_id = conversation_id;
+                // let attachments = '';
+                // let attachmentCount = 0;
+                // if(message.attachments && message.attachments.length > 0){
+                //     attachmentCount = message.attachments.length;
+                //     message.attachments.forEach((attachment) => {
+                //         attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
 
-                updateBlockUnblockUi(loggedInUserId, participantUser.blockable);
-                if(data.messages){
-                    let allMessages = '';
-                    if(data.messages.length > 0){
-                        data.messages.forEach((message) => {
-                            const avatar = message.sender.avatar ? `<img src="./uploads/avatars/${message.sender.avatar}" alt="${message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${message.sender.name[0].toUpperCase()}</span>
-                                                </div>`;
-                            const messageClass = message.sender.id === loggedInUserId ? true : false;
-                            const showAvatar = message.sender.id === loggedInUserId ? '' : avatar;
+                //     })
+                // }
 
-                            let attachments = '';
-                            let attachmentCount = 0;
-                            if(message.attachments && message.attachments.length > 0){
-                                attachmentCount = message.attachments.length;
-                                message.attachments.forEach((attachment) => {
-                                    attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
-
-                                })
-                            }
-
-                            let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
-                                ${showAvatar}
-                                <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
-                                    <div class="bg-light-color text-sm rounded-md w-fit ${message.text ? 'p-2' : '' }">${message.text}</div>
-                                    ${
-                                        attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
-                                            ${attachments}
-                                        </div>` : '' 
-                                    }
-                                    
-                                    <div class="text-sm text-dark-color mt-1">${moment(message.date_time).fromNow()}</div>
-                                </div>
-                            </div>`;
-                            allMessages += messageHtml;
-                            chat_message_list.innerHTML = allMessages;
-                        })
-                    }else if(data.messages.length === 0){
-                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
-                                    <h1 class="text-2xl font-bold">You don't have message</h1>
-                                </div>`;
-                    }
-                }
-
+                let userHtml = `<div class="message-row flex gap-2 text-soft-color items-end justify-end">
+                    ${avatar}
+                    <div class="w-6/12 flex flex-col items-center">
+                        <div class="bg-light-color text-sm rounded-md w-fit">${userName}</div>                        
+                        <div class="text-sm text-dark-color mt-1">${moment(message.cratedAt).fromNow()}</div>
+                    </div>
+                </div>`;
+                userInfoHtml += userHtml;
+                chat_message_list.innerHTML = userInfoHtml;
             }else{
+                chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                                <h1 class="text-2xl font-bold">You don't have User</h1>
+                            </div>`;
                 toastr.warning(result.errors.common.msg);
             }
         }

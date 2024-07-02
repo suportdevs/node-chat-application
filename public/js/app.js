@@ -67,6 +67,7 @@ message_search_icon.addEventListener("click", function () {
   } else {
     message_search_input.classList.add("block");
     message_search_input.style.display = "block";
+    message_search_input.value = "";
   }
 });
 

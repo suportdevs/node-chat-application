@@ -166,7 +166,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="chat-message-list" class="flex flex-col flex-col-reverse gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
+                        <div id="user-container-list" class="flex flex-col flex-col-reverse gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
                             
                             <div class="flex gap-2 text-soft-color items-center justify-center h-full">
                                 <h1 class="text-2xl font-bold">Select a conversation</h1>
@@ -226,7 +226,6 @@
         </div>
     </div>
     <!-- import socket io client from cdn -->
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script src="./js/app.js"></script>
 
     <script>
@@ -298,75 +297,20 @@
         }
         // filter conversations end
     
-        // socket initialization
-        const socket = io('http://localhost:5000');
-        // handle events from server
-        // socket.on('connect', () => {
-        //     console.log('socket is connected');
-        // });
-        // socket.on('disconnect', () => {
-        //     console.log('socket is disconnected.');
-        // });
-        socket.on("new_message", (data) => {
-            if(data.message.conversation_id == current_conversation_id){
-                document.querySelector('.message-nothing').innerHTML = '';
-                const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${data.message.sender.name[0].toUpperCase()}</span>
-                                                </div>`;
-                const messageClass = data.message.sender.id === loggedInUserId ? true : false;
-                const showAvatar = data.message.sender.id === loggedInUserId ? '' : avatar;
-
-                let attachments = '';
-                let attachmentCount = 0;
-                if(data.message.attachments && data.message.attachments.length > 0){
-                    data.message.attachments.forEach((attachment) => {
-                        attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
-                    })
-                }
-
-                let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
-                        ${showAvatar}
-                        <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
-                            <div class="bg-light-color text-sm rounded-md w-fit ${data.message.message ? 'p-2' : '' }">${data.message.message}</div>
-                            ${
-                                attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
-                                    ${attachments}
-                                </div>` : '' 
-                            }
-                            
-                            <div class="text-sm text-dark-color mt-1">${moment(data.message.date_time).fromNow()}</div>
-                        </div>
-                    </div>`;
-                    
-            // append the inoming message to message area as last item
-            document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforebegin", messageHtml);
-
-            }
-        });
-
         // get messages
         const chat_message_title_container = document.querySelector("#chat-message-title-container");
         const chat_message_avatar_container = document.querySelector("#chat-message-avatar-container");
         const chat_message_title_name = document.querySelector("#chat-message-title-name");
-        const chat_message_list = document.querySelector("#chat-message-list");
+        const user_container_list = document.querySelector("#user-container-list");
         const chat_form_container = document.querySelector("#chat-form-container");
 
-        async function getUserDetails(userId, userName, useravatar){
+        async function getUserDetails(userId, userName, userAvatar){
+            console.log(userId)
             if(userId && userName){
                 let userInfoHtml = '';
-                const avatar = userAvatar ? `<img src="./uploads/avatars/${useravatar}" alt="${userName}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                const avatar = userAvatar ? `<img src="./uploads/avatars/${userAvatar}" alt="${userName}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                             <span class="text-3xl">${userName[0].toUpperCase()}</span>
                                     </div>`;
-
-                // let attachments = '';
-                // let attachmentCount = 0;
-                // if(message.attachments && message.attachments.length > 0){
-                //     attachmentCount = message.attachments.length;
-                //     message.attachments.forEach((attachment) => {
-                //         attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
-
-                //     })
-                // }
 
                 let userHtml = `<div class="message-row flex gap-2 text-soft-color items-end justify-end">
                     ${avatar}
@@ -376,9 +320,9 @@
                     </div>
                 </div>`;
                 userInfoHtml += userHtml;
-                chat_message_list.innerHTML = userInfoHtml;
+                user_container_list.innerHTML = userInfoHtml;
             }else{
-                chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                user_container_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
                                 <h1 class="text-2xl font-bold">You don't have User</h1>
                             </div>`;
                 toastr.warning(result.errors.common.msg);
@@ -386,29 +330,29 @@
         }
         // end get messages
 
-        const chat_send_message_form = document.querySelector("#chat-send-message-form");
-        chat_send_message_form.onsubmit = async function(event){
-            event.preventDefault();
+        // const chat_send_message_form = document.querySelector("#chat-send-message-form");
+        // chat_send_message_form.onsubmit = async function(event){
+        //     event.preventDefault();
 
-            const formData = new FormData(chat_send_message_form);
-            formData.append('conversation_id', current_conversation_id);
-            formData.append('receiver_id', participant.id);
-            formData.append('receiver_name', participant.name);
-            formData.append('receiver_avatar', participant.avatar || null);
+        //     const formData = new FormData(chat_send_message_form);
+        //     formData.append('conversation_id', current_conversation_id);
+        //     formData.append('receiver_id', participant.id);
+        //     formData.append('receiver_name', participant.name);
+        //     formData.append('receiver_avatar', participant.avatar || null);
 
-            let response = await fetch('/inbox/message', {
-                method: 'POST',
-                body: formData
-            });
+        //     let response = await fetch('/inbox/message', {
+        //         method: 'POST',
+        //         body: formData
+        //     });
 
-            let result = await response.json();
+        //     let result = await response.json();
 
-            if(!result.errors){
-                chat_send_message_form.reset();
-            }else{
-                toastr.warning(result.errors.common.msg);
-            }
-        }
+        //     if(!result.errors){
+        //         chat_send_message_form.reset();
+        //     }else{
+        //         toastr.warning(result.errors.common.msg);
+        //     }
+        // }
     
         // message delete
         async function deleteMeassage(){
@@ -422,7 +366,7 @@
                     let result = await response.json();
                     if(!result.errors){
                         toastr.success(result.message);
-                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                        user_container_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
                                     <h1 class="text-2xl font-bold">You don't have message</h1>
                                 </div>`;
                     }else{
@@ -445,7 +389,7 @@
                     let result = await response.json();
                     if(!result.errors){
                         toastr.success(result.message);
-                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                        user_container_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
                                     <h1 class="text-2xl font-bold">You don't have message</h1>
                                 </div>`;
                     }else{

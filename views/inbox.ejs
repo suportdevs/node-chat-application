@@ -181,7 +181,7 @@
                             <!-- <div class="flex gap-2 text-soft-color items-start">
                                 <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
                                 <div class="w-6/12">
-                                    <div class="bg-light-color text-sm rounded-md p-2">Hi Mr Anonymous</div>
+                                    <div class="message-text bg-light-color text-sm rounded-md p-2">Hi Mr Anonymous</div>
                                     <div class="attachments grid grid-cols-2 gap-2 mt-2 bg-light-color p-2 rounded-md">
                                         <img src="./images/logo.png" alt="" class="rounded-md h-auto w-full">
                                         <img src="./images/logo.png" alt="" class="rounded-md h-auto w-full">
@@ -193,7 +193,7 @@
                             <!-- Second message aligned to the right -->
                             <!-- <div class="flex gap-2 text-soft-color items-end justify-end">
                                 <div class="w-6/12">
-                                    <div class="bg-light-color text-sm rounded-md p-2">Hi Mr Anonymous</div>
+                                    <div class="message-text bg-light-color text-sm rounded-md p-2">Hi Mr Anonymous</div>
                                     <div class="attachments grid grid-cols-1 mt-2 bg-light-color p-2 rounded-md">
                                         <img src="./images/logo.png" alt="" class="rounded-md w-full h-auto">
                                     </div>
@@ -244,6 +244,7 @@
         // get conversations and print start
         const conversation_value = document.querySelector("#conversation_dataset").value;
         const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
+        const message_nothing = document.querySelector('.message-nothing');
         let conversation_dataset = JSON.parse(conversation_value);
 
         const populateConversationData = (conversations) => {
@@ -328,7 +329,9 @@
         // });
         socket.on("new_message", (data) => {
             if(data.message.conversation_id == current_conversation_id){
-                document.querySelector('.message-nothing').innerHTML = '';
+                if(message_nothing){
+                    message_nothing.innerHTML = '';
+                }
                 const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                         <span class="text-3xl">${data.message.sender.name[0].toUpperCase()}</span>
                                                 </div>`;
@@ -346,7 +349,7 @@
                 let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
                         ${showAvatar}
                         <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
-                            <div class="bg-light-color text-sm rounded-md w-fit ${data.message.message ? 'p-2' : '' }">${data.message.message}</div>
+                            <div class="message-text bg-light-color text-sm rounded-md w-fit ${data.message.message ? 'p-2' : '' }">${data.message.message}</div>
                             ${
                                 attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
                                     ${attachments}
@@ -409,7 +412,7 @@
                             let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
                                 ${showAvatar}
                                 <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
-                                    <div class="bg-light-color text-sm rounded-md w-fit ${message.text ? 'p-2' : '' }">${message.text}</div>
+                                    <div class="message-text bg-light-color text-sm rounded-md w-fit ${message.text ? 'p-2' : '' }">${message.text}</div>
                                     ${
                                         attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
                                             ${attachments}
@@ -556,6 +559,33 @@
                         </svg>Block</div>`;
             }
         }
+    
+        // message search start
+        message_search_input.addEventListener('keyup', function(event){
+            let user_typed_message_search_text = this.value.toLowerCase();
+            let message_row = document.querySelectorAll('.message-row:not(.message-nothing)');
+            console.log(message_row)
+            if(message_row.length > 0){
+                message_row.forEach((message) => {
+                    let message_text = message.querySelector('.message-text').textContent.toLowerCase();
+                    if(message_text.includes(user_typed_message_search_text)){
+                        let highlightedText = message.querySelector('.message-text').textContent.replace(
+                                new RegExp(`\\b${user_typed_message_search_text}\\b`, 'gi'),
+                                    match => `<span style="background-color: yellow; color: #000;">${match}</span>`
+                                );
+                        message.querySelector('.message-text').innerHTML = highlightedText;
+
+                        message.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                })
+
+            }else{
+                toastr.warning("You don't have any message yet to search.");
+            }
+            console.log(this.value);
+        })
+        // message search end
+    
     </script>
 </body>
 </html>

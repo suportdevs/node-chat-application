@@ -13,7 +13,9 @@ const peopleSchema = mongoose.Schema(
     mobile: { type: String, required: true },
     password: { type: String, required: true },
     avatar: { type: String },
+    status: { type: String },
     role: { type: String, enum: ["Admin", "User"], default: "User" },
+    address: { type: String },
     blockable: [
       {
         id: { type: mongoose.Types.ObjectId },

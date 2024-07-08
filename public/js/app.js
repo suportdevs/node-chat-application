@@ -120,3 +120,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   setTheme(savedTheme);
 });
+
+// user logout
+function logout() {
+  fetch("/logout", {
+    method: "DELETE",
+  });
+  toastr.success("Logout successfull.");
+  setTimeout(() => {
+    window.location.replace("/");
+  }, 1000);
+}
+// end user logout

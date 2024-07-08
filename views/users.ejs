@@ -397,18 +397,6 @@
         }
         // end message clear
 
-        // user logout
-        function logout (){
-            fetch('/logout', {
-                method: "DELETE"
-            });
-            toastr.success("Logout successfull.");
-            setTimeout(() => {
-                window.location.replace('/');
-            }, 1000);
-        }
-        // end user logout
-
         // user block
         const chat_message_block_container = document.querySelector('.chat-message-block-container');
         async function userBlock(){

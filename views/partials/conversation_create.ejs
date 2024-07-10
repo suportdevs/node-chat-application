@@ -39,56 +39,59 @@
 </div>
 
 <script>
-    // conversation create off canvas menu start
-    const conversation_create_btn = document.querySelector(".conversation-create-btn");
-    const conversation_create_btn_from_profile = document.querySelector(".conversation-create-btn-from-profile");
-    const conversation_create_off_canvas = document.querySelector(".conversation-create-off-canvas");
-    const conversation_create_off_canvas_close = document.querySelector(".conversation-create-off-canvas-close");
-    // close conversation create off canvas menu
-    conversation_create_off_canvas_close.addEventListener("click", function(){
-        conversation_create_off_canvas.classList.remove('w-[95vw]', 'visible');
-        conversation_create_off_canvas.classList.add('invisible');
-    });
-    // conversation create off canvas menu end
-
-    // conversation off canvas menu toggle
-    conversation_create_btn.addEventListener("click", function(){
-        if(conversation_create_off_canvas.classList.contains('invisible')){
-            conversation_create_off_canvas.classList.remove('invisible');
-            conversation_create_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
-        }else{
-            conversation_create_off_canvas.classList.remove('w-[95vw]', 'sm:w-full', 'z-10');
+    document.addEventListener('DOMContentLoaded', function() {
+        // conversation create off canvas menu start
+        const conversation_create_btn = document.querySelector(".conversation-create-btn");
+        const conversation_create_btn_from_profile = document.querySelector(".conversation-create-btn-from-profile");
+        const conversation_create_off_canvas = document.querySelector(".conversation-create-off-canvas");
+        const conversation_create_off_canvas_close = document.querySelector(".conversation-create-off-canvas-close");
+        // close conversation create off canvas menu
+        conversation_create_off_canvas_close.addEventListener("click", function(){
+            conversation_create_off_canvas.classList.remove('w-[95vw]', 'visible');
             conversation_create_off_canvas.classList.add('invisible');
-        }
-    });
-    conversation_create_btn_from_profile.addEventListener("click", function(){
-        if(conversation_create_off_canvas.classList.contains('invisible')){
-            conversation_create_off_canvas.classList.remove('invisible');
-            conversation_create_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
-        }else{
-            conversation_create_off_canvas.classList.remove('w-[95vw]', 'sm:w-full', 'z-10');
-            conversation_create_off_canvas.classList.add('invisible');
-        }
-    });
+        });
+        // conversation create off canvas menu end
 
-    const conversation_users_placeholder = document.querySelector("#conversation-users-placeholder");
-    const conversation_users_list = document.querySelector("#conversation-users-list");
-    const conversation_search_input = document.querySelector("#conversation-search-input");
-    const conversation_searched_placeholder = document.querySelector(".conversation-searched-placeholder");
-    let typingTimer;
-    const doneTypingInterval = 500;
+        // conversation off canvas menu toggle
+        conversation_create_btn.addEventListener("click", function(){
+            if(conversation_create_off_canvas.classList.contains('invisible')){
+                conversation_create_off_canvas.classList.remove('invisible');
+                conversation_create_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
+            }else{
+                conversation_create_off_canvas.classList.remove('w-[95vw]', 'sm:w-full', 'z-10');
+                conversation_create_off_canvas.classList.add('invisible');
+            }
+        });
+        conversation_create_btn_from_profile.addEventListener("click", function(){
+            if(conversation_create_off_canvas.classList.contains('invisible')){
+                conversation_create_off_canvas.classList.remove('invisible');
+                conversation_create_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
+            }else{
+                conversation_create_off_canvas.classList.remove('w-[95vw]', 'sm:w-full', 'z-10');
+                conversation_create_off_canvas.classList.add('invisible');
+            }
+        });
 
-    conversation_search_input.addEventListener('keyup', function(){
-        clearInterval(typingTimer);
-        conversation_searched_placeholder.textContent = 'Search to create a conversation';
-        conversation_searched_placeholder.classList.remove('text-red-500');
-        if(conversation_search_input.value){
-            typingTimer = setTimeout(searchUsers, doneTypingInterval);
-        }
-    });
+        const conversation_users_placeholder = document.querySelector("#conversation-users-placeholder");
+        const conversation_users_list = document.querySelector("#conversation-users-list");
+        const conversation_search_input = document.querySelector("#conversation-search-input");
+        const conversation_searched_placeholder = document.querySelector(".conversation-searched-placeholder");
+        let typingTimer;
+        const doneTypingInterval = 500;
 
-    conversation_search_input.addEventListener("keydown", function(){
-        clearInterval(typingTimer);
+        conversation_search_input.addEventListener('keyup', function(){
+            clearInterval(typingTimer);
+            conversation_searched_placeholder.textContent = 'Search to create a conversation';
+            conversation_searched_placeholder.classList.remove('text-red-500');
+            if(conversation_search_input.value){
+                typingTimer = setTimeout(searchUsers, doneTypingInterval);
+            }
+        });
+
+        conversation_search_input.addEventListener("keydown", function(){
+            clearInterval(typingTimer);
+        });
+
     });
 
     async function searchUsers(){

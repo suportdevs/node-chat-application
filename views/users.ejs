@@ -205,13 +205,28 @@
                                             <h2 class="text-3xl">${user.name}</h2>
                                     </div>`;
 
-                let userHtml = `<div class="message-row flex flex-col gap-2 text-soft-color items-center justify-center">
+                let userHtml = `<div class="message-row flex flex-col gap-2 text-soft-color items-center justify-center text-center">
                     ${avatar}
-                        <h2 class=" text-2xl font-bold rounded-md w-fit">${user.name}</h2>
-                        <div class="text-md text-dark-color mt-1">${status}</div>
-                        <div class="text-md text-dark-color mt-1">${user.email}</div>
-                        <div class="text-md text-dark-color mt-1">${user.mobile}</div>
-                        <div class="text-md text-dark-color mt-1">${user.address}</div>
+                        <div>
+                            <p class="user-info-text text-2xl font-bold">${user.name}</p>
+                            <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.name}" />
+                        </div>
+                        <div>
+                            <p class="user-info-text text-md text-dark-color mt-1">${user.status}</p>
+                            <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.status}" />
+                        </div>
+                        <div>
+                            <p class="user-info-text text-md text-dark-color mt-1">${user.email}</p>
+                            <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.email}" />
+                        </div>
+                        <div>
+                            <p class="user-info-text text-md text-dark-color mt-1">${user.mobile}</p>
+                            <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.mobile}" />
+                        </div>
+                        <div>
+                            <p class="user-info-text text-md text-dark-color mt-1">${user.address}</p>
+                            <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.address}" />
+                        </div>
                 </div>`;
                 userInfoHtml += userHtml;
                 user_container_list.innerHTML = userInfoHtml;
@@ -245,6 +260,15 @@
                 }
             }
         }
+
+        const user_edit_btn = document.querySelector('.user-edit-btn');
+        user_edit_btn.addEventListener('click', function(){
+            const user_info_text = document.querySelectorAll('.user-info-text');
+            const user_info_input = document.querySelectorAll('.user-info-input');
+            user_info_text.classList.add('hidden');
+            user_info_input.classList.remove('hidden');
+        })
+
         // end message delete
     </script>
 </body>

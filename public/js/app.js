@@ -40,15 +40,13 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     });
   });
-  const conversation_dots = document.getElementById("conversation-dots");
-  const conversation_dots_dropdown = document.getElementById(
-    "conversation-dots-dropdown"
-  );
-  conversation_dots.addEventListener("click", function () {
-    if (conversation_dots_dropdown.classList.contains("active")) {
-      conversation_dots_dropdown.classList.remove("active");
+  const header_dots = document.getElementById("header-dots");
+  const header_dots_dropdown = document.getElementById("header-dots-dropdown");
+  header_dots.addEventListener("click", function () {
+    if (header_dots_dropdown.classList.contains("active")) {
+      header_dots_dropdown.classList.remove("active");
     } else {
-      conversation_dots_dropdown.classList.add("active");
+      header_dots_dropdown.classList.add("active");
     }
   });
 
@@ -65,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
   const message_search_icon = document.getElementById("message-search-icon");
   const message_search_input = document.getElementById("message-search-input");
   if (message_search_icon) {
@@ -81,12 +80,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("click", (event) => {
-    // inactive conversation dots dropdown
+    // inactive header dots dropdown
     if (
-      event.target.id != "conversation_dots_dropdown" &&
-      event.target.id != "conversation-dots"
+      event.target.id != "header_dots_dropdown" &&
+      event.target.id != "header-dots"
     ) {
-      conversation_dots_dropdown.classList.remove("active");
+      header_dots_dropdown.classList.remove("active");
     }
     // inactive message dots dropdown
     if (

@@ -141,6 +141,34 @@ div#widget-area {
     opacity: 1;
     transform: translateY(0);
 }
+.user-details-delete-btn, .user-details-edit-btn {
+    position: relative;
+}
+
+.user-details-delete-btn:before, .user-details-edit-btn::before {
+    position: absolute;
+    content: "";
+    background: var(--bg-light-color);
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    transition: left 0.3s ease;
+    visibility: hidden;
+}
+.user-details-edit-btn::before {
+    left: 0%;
+    visibility: visible;
+}
+
+.user-details-delete-btn:hover:before {
+    left: 0;
+    visibility: visible;
+}
+.user-details-delete-btn:hover .user-details-edit-btn::before {
+    left: -100%;
+    visibility: hidden;
+}
 @media (max-width: 600px) {
     .chat-content-wrapper-small-device {
         position: absolute;

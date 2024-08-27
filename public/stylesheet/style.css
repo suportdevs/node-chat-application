@@ -157,17 +157,23 @@ div#widget-area {
     visibility: hidden;
 }
 .user-details-edit-btn::before {
-    left: 0%;
-    visibility: visible;
+    left: 100%;
+    visibility: hidden;
 }
 
 .user-details-delete-btn:hover:before {
     left: 0;
     visibility: visible;
 }
-.user-details-delete-btn:hover .user-details-edit-btn::before {
-    left: -100%;
+
+.user-details-edit-btn:hover:before {
+    left: 0;
+    visibility: visible;
+}
+.user-details-delete-btn:hover ~ .user-details-edit-btn::before {
+    left: 100%;
     visibility: hidden;
+    display: none;
 }
 @media (max-width: 600px) {
     .chat-content-wrapper-small-device {

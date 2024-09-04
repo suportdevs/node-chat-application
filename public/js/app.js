@@ -92,14 +92,18 @@ document.addEventListener("DOMContentLoaded", function () {
       event.target.id != "message-dots" &&
       event.target.id != "message-dots-dropdown"
     ) {
-      message_dots_dropdown.classList.remove("active");
+      if (message_dots_dropdown) {
+        message_dots_dropdown.classList.remove("active");
+      }
     }
     if (
       event.target.id != "message-search-input" &&
       event.target.id != "message-search-icon"
     ) {
-      message_search_input.classList.remove("block");
-      message_search_input.style.display = "none";
+      if (message_search_input) {
+        message_search_input.classList.remove("block");
+        message_search_input.style.display = "none";
+      }
     }
   });
 

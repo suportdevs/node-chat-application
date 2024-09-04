@@ -187,21 +187,6 @@
             populateUserData(filteredUserDataset);
         }
         // filter conversations end
-        const user_details_edit_btn = document.querySelector('.user-details-edit-btn');
-        user_details_edit_btn.addEventListener("click", function(){
-            const inputs = document.querySelectorAll("#user-container-list input");
-            const user_info_texts = document.querySelectorAll("#user-container-list .user-info-text");
-            user_info_texts.forEach(info_text => {
-                if(info_text.classList.contains('hidden')){
-                    info_text.classList.remove('hidden');
-                }else{
-                    info_text.classList.add('hidden');
-                }
-            });
-            inputs.forEach(input => {
-                input.classList.remove('hidden');
-            });
-        });
     
         // start get user details
         const chat_message_title_container = document.querySelector("#chat-message-title-container");
@@ -214,34 +199,54 @@
             if(user && (Object.keys(user).length > 0)){
                 const user_details_actions = document.querySelector('.user-details-actions');
                 user_details_actions.classList.remove('hidden');
-                let userInfoHtml = '';
-                const avatar = user.avatar && user.avatar !== 'undefined' ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="bg-light-color w-52 h-52 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-52 h-52">
-                                            <h2 class="text-3xl">${user.name}</h2>
-                                    </div>`;
+                let userInfoHtml = '<form id="user-details-edit-form" method="post" enctype="multipart/form-data">';
+                const avatar = user.avatar && user.avatar !== 'undefined' ? 
+                    `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="bg-light-color w-52 h-52 rounded-full" id="avatarPreview">` : 
+                    `
+                            <h2 class="text-3xl">${user.name}</h2>
+                    `;
 
                 let userHtml = `<div class="message-row flex flex-col gap-2 text-soft-color items-center justify-center text-center">
-                    ${avatar}
-                        <div>
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="relative w-52 h-52">
+                            <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-52 h-52">
+                            ${avatar}
+                            </div>
+                            <label for="avatarUpload" class="hidden avatarUploadLabel absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" class="w-16">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                </svg>
+                            </label>
+                        </div>
+
+                            <input id="avatarUpload" type="file" class="hidden" accept="image/*">
+                        </div>
+
+                        <div class="w-full">
                             <p class="name user-info-text text-2xl font-bold">${user.name}</p>
-                            <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.name}" />
+                            <input type="text" name="name" id="name" placeholder="name" class="min-w-fit rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.name}" />
                         </div>
-                        <div>
+                        <div class="min-w-fit">
                             <p class="status user-info-text text-md text-dark-color mt-1">${user.status}</p>
-                            <input type="text" name="name" id="name" placeholder="name" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.status}" />
+                            <input type="text" name="name" id="name" placeholder="name" class="min-w-fit rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.status}" />
                         </div>
-                        <div>
+                        <div class="min-w-fit">
                             <p class="email user-info-text text-md text-dark-color mt-1">${user.email}</p>
-                            <input type="email" name="email" id="email" placeholder="Email" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.email}" />
+                            <input type="email" name="email" id="email" placeholder="Email" class="min-w-fit rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.email}" />
                         </div>
-                        <div>
+                        <div class="min-w-fit">
                             <p class="mobile user-info-text text-md text-dark-color mt-1">${user.mobile}</p>
-                            <input type="text" name="mobile" id="mobile" placeholder="Mobile" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.mobile}" />
+                            <input type="text" name="mobile" id="mobile" placeholder="Mobile" class="min-w-fit rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.mobile}" />
                         </div>
-                        <div>
+                        <div class="min-w-fit">
                             <p class="address user-info-text text-md text-dark-color mt-1">${user.address}</p>
-                            <input type="text" name="address" id="address" placeholder="Address" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.address}" />
+                            <input type="text" name="address" id="address" placeholder="Address" class="min-w-fit rounded-lg border border-gray-700 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-700/40 focus:ring-offset-2 focus:ring-offset-gray-700/40 text-gray-300 text-sm user-info-input hidden" value="${user.address}" />
                         </div>
-                </div>`;
+                        <div class="min-w-fit">
+                            <button type="submit" class="hidden min-w-full rounded-lg border border-gray-700/0 bg-gray-800 px-4 py-1 focus:outline-none focus:ring-2 focus:ring-gray-800/40 focus:ring-offset-2 focus:ring-offset-gray-800/40 text-gray-300 hover:bg-gray-900">Save</button>
+                        </div>
+                    </div>
+                    </form>`;
                 userInfoHtml += userHtml;
                 user_container_list.innerHTML = userInfoHtml;
             }else{
@@ -274,16 +279,50 @@
                 }
             }
         }
-
-        const user_edit_btn = document.querySelector('.user-edit-btn');
-        user_edit_btn.addEventListener('click', function(){
-            const user_info_text = document.querySelectorAll('.user-info-text');
-            const user_info_input = document.querySelectorAll('.user-info-input');
-            user_info_text.classList.add('hidden');
-            user_info_input.classList.remove('hidden');
-        })
-
         // end message delete
+
+        // toggle edit button for showing user details forms
+        const user_details_edit_btn = document.querySelector('.user-details-edit-btn');
+        user_details_edit_btn.addEventListener("click", function(){
+            const inputs = document.querySelectorAll('#user-container-list input:not([type="file"])');
+            const user_info_texts = document.querySelectorAll("#user-container-list .user-info-text");
+            const button = document.querySelector("#user-container-list button");
+            const avatarUploadLabel = document.querySelector("#user-container-list .avatarUploadLabel");
+            user_info_texts.forEach(info_text => {
+                info_text.classList.toggle('hidden');
+            });
+
+            inputs.forEach(input => {
+                input.classList.toggle('hidden');
+            });
+
+            button.classList.toggle('hidden');
+            avatarUploadLabel.classList.toggle('hidden');
+        });
+
+        const avatarUpload = document.getElementById('avatarUpload');
+console.log(avatarUpload);
+        avatarUpload.addEventListener('change', function(event) {
+            const input = event.target;
+            console.log('File input event:', event); // Log the entire event
+
+            const avatarPreview = document.getElementById('avatarPreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    console.log('FileReader result:', e.target.result); // Log the data URL
+                    avatarPreview.src = e.target.result;  // Set the image source to the file URL
+                    avatarPreview.style.display = 'block';  // Display the image
+                };
+                
+                reader.readAsDataURL(input.files[0]);  // Convert the file to a data URL
+            } else {
+                avatarPreview.style.display = 'none';  // Hide the image if no file is selected
+                console.log('No file selected or input.files is empty.');
+            }
+        });
+
     </script>
 </body>
 </html>

@@ -155,6 +155,7 @@ div#widget-area {
     height: 100%;
     transition: left 0.3s ease;
     visibility: hidden;
+    border-color: var(--bg-dark-color);
 }
 .user-details-edit-btn::before {
     left: 100%;
@@ -164,11 +165,15 @@ div#widget-area {
 .user-details-delete-btn:hover:before {
     left: 0;
     visibility: visible;
+    border-top-right-radius: .5rem;
+    border-bottom-right-radius: .5rem;
 }
 
 .user-details-edit-btn:hover:before {
     left: 0;
     visibility: visible;
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
 }
 .user-details-delete-btn:hover ~ .user-details-edit-btn::before {
     left: 100%;

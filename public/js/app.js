@@ -148,3 +148,27 @@ function logout() {
   }, 1000);
 }
 // end user logout
+
+function load_image_file(event, target) {
+  var reader = new FileReader();
+  reader.onload = function () {
+    var output = document.getElementById(target);
+
+    // Check if the output element is an <img> tag
+    if (output.tagName.toLowerCase() !== "img") {
+      // If not an img tag, create a new img element
+      var img = document.createElement("img");
+      img.src = reader.result; // Set the image source
+      img.alt = "Uploaded Image"; // Add alt text (optional)
+      img.className = "w-52 h-52 rounded-full"; // Add any necessary classes
+
+      // Append the img element to the output element
+      output.innerHTML = ""; // Clear any existing content
+      output.appendChild(img);
+    } else {
+      output.src = reader.result;
+    }
+  };
+
+  reader.readAsDataURL(event.target.files[0]); // Convert the file to a data URL
+}

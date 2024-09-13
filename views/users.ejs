@@ -132,8 +132,7 @@
         }
         fetchUsers();
 
-        let participant = null; // selected conversation participt object
-        let current_conversation_id; // selected conversation id
+        let current_user_info_id; // selected conversation id
         let loggedInUserId = '<%= loggedInUser.user_id %>';
         // get conversations and print start
         const user_content_wrapper = document.querySelector("#user-content-wrapper");
@@ -148,12 +147,12 @@
                                                     <span class="text-3xl">${user.name[0].toUpperCase()}</span>
                                                 </div>`;
                         // Convert user object to a JSON string and escape quotes
-                        const userJson = JSON.stringify(user).replace(/"/g, '&quot;');
-                        userHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getUserDetails(${userJson})">
-                                <div class="w-10 h-10" >
+                        const userJson = JSON.stringify(user);
+                        userHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick='getUserDetails(${userJson})'>
+                                <div class=" w-10 h-10 overflow-hidden" >
                                     ${userAvatar}
                                 </div>
-                                <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== userDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                <div class="hidden flex-1 sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== userDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                     <div>
                                         <h3 class="text-md font-bold">${user.name}</h3>
                                         <span class="text-sm text-gray-300">${user.role}</span>
@@ -194,7 +193,9 @@
         const user_container_list = document.querySelector("#user-container-list");
         const chat_form_container = document.querySelector("#chat-form-container");
 
-        async function getUserDetails(user){
+        async function getUserDetails(userJson){
+            const user = typeof userJson === 'string' ? JSON.parse(userJson) : userJson;
+
             if(user && (Object.keys(user).length > 0)){
                 const user_details_actions = document.querySelector('.user-details-actions');
                 user_details_actions.classList.remove('hidden');
@@ -208,7 +209,7 @@
                 let userHtml = `<div class="message-row flex flex-col gap-2 text-soft-color items-center justify-center text-center">
                         <div class="flex flex-col items-center justify-center">
                             <div class="relative w-52 h-52">
-                                <div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-52 h-52">
+                                <div class="bg-light-color overflow-hidden hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-52 h-52">
                                     ${avatar}
                                 </div>
                                 <label for="avatarUpload" class="hidden avatarUploadLabel absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer opacity-0 hover:opacity-100 transition-opacity duration-300">
@@ -256,28 +257,6 @@
         }
         // end get user details
     
-        // message delete
-        async function deleteMeassage(){
-            if(!current_conversation_id){
-                toastr.warning("You don't have select any conversation to delete messages.");
-            }else{
-                if(confirm("Are you sure to delete this messages!") == true){
-                    let response = await fetch(`/inbox/message/delete/${current_conversation_id}`, {
-                        method: "DELETE"
-                    });
-                    let result = await response.json();
-                    if(!result.errors){
-                        toastr.success(result.message);
-                        user_container_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
-                                    <h1 class="text-2xl font-bold">You don't have message</h1>
-                                </div>`;
-                    }else{
-                        toastr.error(result.errors.common.msg);
-                    }
-                }
-            }
-        }
-        // end message delete
         document.addEventListener('DOMContentLoaded', function() {
         // toggle edit button for showing user details forms
             const user_details_edit_btn = document.querySelector('.user-details-edit-btn');
@@ -298,7 +277,7 @@
                 avatarUploadLabel.classList.toggle('hidden');
             });
         });
-        // message delete
+        // user details information update
         async function saveUserDetails(id){
             const form = document.querySelector("#user-details-edit-form");
             event.preventDefault();
@@ -319,7 +298,7 @@
                                 var img = document.createElement("img");
                                 img.src = './uploads/avatars/' + result.user.avatar; // Set the image source
                                 img.alt = "Uploaded Image"; // Add alt text (optional)
-                                img.className = "w-52 h-52 rounded-full"; // Add any necessary classes
+                                img.className = "w-10 h-10 rounded-full"; // Add any necessary classes
 
                                 // Append the img element to the output element
                                 user_list_item_avatar.innerHTML = ""; // Clear any existing content
@@ -333,11 +312,33 @@
                     }
                 }
             }else{
-                toastr.warning("You don't have select any conversation to delete messages.");                
+                toastr.warning("You don't have select an user to update user information.");                
             }
         }
-        // end message delete
+        // end user details information update
 
+        // delete selected user
+        async function deleteMeassage(){
+            if(!current_user_info_id){
+                toastr.warning("You don't have select any conversation to delete messages.");
+            }else{
+                if(confirm("Are you sure to delete this messages!") == true){
+                    let response = await fetch(`/inbox/message/delete/${current_user_info_id}`, {
+                        method: "DELETE"
+                    });
+                    let result = await response.json();
+                    if(!result.errors){
+                        toastr.success(result.message);
+                        user_container_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                                    <h1 class="text-2xl font-bold">You don't have message</h1>
+                                </div>`;
+                    }else{
+                        toastr.error(result.errors.common.msg);
+                    }
+                }
+            }
+        }
+        // end delete selected user
     </script>
 </body>
 </html>

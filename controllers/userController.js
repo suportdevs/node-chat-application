@@ -6,11 +6,25 @@ async function getUsers(req, res, next) {
   try {
     const users = await User.find();
 
+    const filteredUsers = users.map((user) => {
+      const {
+        password,
+        createdAt,
+        updatedAt,
+        isDeleted,
+        deletedAt,
+        blockable,
+        __v,
+        ...rest
+      } = user._doc; // Exclude the fields
+      return rest;
+    });
+
     if (req.method == "GET") {
-      res.locals.data = users;
+      res.locals.data = filteredUsers;
       res.render("users");
     } else {
-      res.status(200).json(users);
+      res.status(200).json(filteredUsers);
     }
   } catch (error) {
     if (req.method == "GET") {
@@ -74,7 +88,19 @@ async function updateUser(req, res, next) {
       });
     }
 
-    res.status(200).json({ message: "Record updated successfully.", user });
+    const userDetails = {
+      _id: user._id,
+      name: user.name,
+      avatar: user.avatar || null,
+      email: user.email,
+      mobile: user.mobile,
+      address: user.address,
+      status: user.status || null,
+    };
+
+    res
+      .status(200)
+      .json({ message: "Record updated successfully.", user: userDetails });
   } catch (error) {
     res.status(500).json({ errors: { common: { msg: error.message } } });
   }

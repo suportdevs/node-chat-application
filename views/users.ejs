@@ -126,9 +126,8 @@
                 headers: {"Content-type": "application/json; charset=UTF-8"}
             });
             let result = await response.json();
-                
-                populateUserData(result);
-                userDataset = result;
+            populateUserData(result);
+            userDataset = result;
             return result;
         }
         fetchUsers();
@@ -145,13 +144,13 @@
             if(userDataset && userDataset.length > 0){
                 userDataset.forEach((user, index) => {
                     let userHtml = '';
-                        const userAvatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                        const userAvatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full" id="user_list_item_avatar${user._id}">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10" id="user_list_item_avatar${user._id}">
                                                     <span class="text-3xl">${user.name[0].toUpperCase()}</span>
                                                 </div>`;
                         // Convert user object to a JSON string and escape quotes
                         const userJson = JSON.stringify(user).replace(/"/g, '&quot;');
                         userHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getUserDetails(${userJson})">
-                                <div>
+                                <div class="w-10 h-10" >
                                     ${userAvatar}
                                 </div>
                                 <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== userDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
@@ -201,7 +200,7 @@
                 user_details_actions.classList.remove('hidden');
                 let userInfoHtml = `<form id="user-details-edit-form" method="put" enctype="multipart/form-data">`;
                 const avatar = user.avatar && user.avatar !== 'undefined' ? 
-                    `<img alt="${user.name}" class="bg-light-color w-52 h-52 rounded-full" id="avatarPreview">` : 
+                    `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="bg-light-color w-52 h-52 rounded-full" id="avatarPreview">` : 
                     `
                         <h2 class="text-3xl" id="avatarPreview">${user.name}</h2>
                     `;
@@ -303,7 +302,6 @@
         async function saveUserDetails(id){
             const form = document.querySelector("#user-details-edit-form");
             event.preventDefault();
-            console.log(id)
             if(id){
                 if(confirm("Are you sure to update this user information!") == true){
                     let formData = new FormData(form);
@@ -312,8 +310,24 @@
                         body: formData,
                     });
                     let result = await response.json();
+                    console.log(result);
                     if(!result.errors){
                         toastr.success(result.message);
+                        const user_list_item_avatar = document.querySelector(`#user_list_item_avatar${result.user._id}`);
+                        if(user_list_item_avatar){
+                            if (user_list_item_avatar.tagName.toLowerCase() !== "img") {
+                                var img = document.createElement("img");
+                                img.src = './uploads/avatars/' + result.user.avatar; // Set the image source
+                                img.alt = "Uploaded Image"; // Add alt text (optional)
+                                img.className = "w-52 h-52 rounded-full"; // Add any necessary classes
+
+                                // Append the img element to the output element
+                                user_list_item_avatar.innerHTML = ""; // Clear any existing content
+                                user_list_item_avatar.appendChild(img);
+                            }else{
+                                user_list_item_avatar.src = './uploads/avatars/' + result.user.avatar;
+                            }
+                        }
                     }else{
                         toastr.error(result.errors.common.msg);
                     }

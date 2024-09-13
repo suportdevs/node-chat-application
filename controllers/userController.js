@@ -1,3 +1,5 @@
+const path = require("path");
+const fs = require("fs");
 const User = require("../models/People");
 
 async function getUsers(req, res, next) {
@@ -22,8 +24,6 @@ async function getUsers(req, res, next) {
 async function updateUser(req, res, next) {
   const userId = req.params.id; // Using req.params.id to get user ID from the URL
   const newImage = req.file;
-  console.log(userId);
-  console.log(newImage);
 
   if (!userId) {
     return res.status(400).json({
@@ -40,21 +40,25 @@ async function updateUser(req, res, next) {
 
     if (newImage) {
       if (user.avatar && user.avatar !== "default-avatar.png") {
+        // const existingImagePath = path.join(
+        //   __dirname,
+        //   "..",
+        //   "public",
+        //   "uploads",
+        //   "avatars",
+        //   user.avatar
+        // );
         const existingImagePath = path.join(
           __dirname,
-          "..",
-          "public",
-          "uploads",
-          "avatars",
+          "../public/uploads/avatars/",
           user.avatar
         );
         if (fs.existsSync(existingImagePath)) {
           fs.unlinkSync(existingImagePath); // Delete the old image
         }
         // Update user with the new image
-        console.log(newImage.filename);
-        user.avatar = newImage.filename;
       }
+      user.avatar = newImage.filename;
     }
 
     user.name = req.body.name || user.name;
@@ -121,6 +125,30 @@ async function unblock(req, res, next) {
     res.status(500).json({
       errors: { common: { msg: "You should provide a blocked person" } },
     });
+  }
+}
+
+async function userDelete(req, res) {
+  const userId = req.params.id;
+  if (!userId) {
+    return res.status(400).json({
+      errors: { common: { msg: "You should provide a valid user." } },
+    });
+  }
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({
+        errors: { common: { msg: "Your requested user not found." } },
+      });
+    }
+    user.isDeleted = true;
+    user.deletedAt = new Date();
+    user.save();
+
+    res.status(200).json({ message: "Record deleted successfully.", user });
+  } catch (error) {
+    res.status(500).json({ errors: { common: { msg: error.message } } });
   }
 }
 

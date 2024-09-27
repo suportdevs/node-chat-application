@@ -178,4 +178,4 @@ async function userDelete(req, res) {
   }
 }
 
-module.exports = { getUsers, updateUser, block, unblock };
+module.exports = { getUsers, updateUser, block, unblock, userDelete };

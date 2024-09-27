@@ -3,6 +3,7 @@ const {
   unblock,
   getUsers,
   updateUser,
+  userDelete,
 } = require("../controllers/userController");
 const authenticated = require("../middlewares/authenticated");
 const avatarUpload = require("../middlewares/avatarUploader");
@@ -19,5 +20,7 @@ router.put("/:id", avatarUpload, authenticated, updateUser);
 router.post("/block", authenticated, block);
 
 router.post("/unblock", authenticated, unblock);
+
+router.delete("/delete/:id", authenticated, userDelete);
 
 module.exports = router;

@@ -17,11 +17,18 @@ async function getInbox(req, res, next) {
       ],
     });
 
-    // console.log(conversations);
-    res.locals.data = conversations;
-    res.render("inbox");
+    if (req.method == "GET") {
+      res.locals.data = conversations;
+      res.render("inbox");
+    } else {
+      res.status(200).json(conversations);
+    }
   } catch (error) {
-    next(error);
+    if (res.method == "GET") {
+      next(error);
+    } else {
+      res.status(500).json({ errors: { common: { msg: error.message } } });
+    }
   }
 }
 

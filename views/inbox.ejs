@@ -231,26 +231,38 @@
             </div>
         </div>
     </div>
-    <input type="hidden" id="conversation_dataset" value="<%= JSON.stringify(data) %>">
     <!-- import socket io client from cdn -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script src="./js/app.js"></script>
 
     <script>
 
+        let conversationDataset;
+        async function fetchUsersConversions(){
+            let response = await fetch('/inbox', {
+                method: "POST",
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+            });
+            let result = await response.json();
+            populateConversationData(result);
+            conversationDataset = result;
+            return result;
+        }
+        fetchUsersConversions();
+
         let participant = null; // selected conversation participt object
         let current_conversation_id; // selected conversation id
         let loggedInUserId = '<%= loggedInUser.user_id %>';
         // get conversations and print start
-        const conversation_value = document.querySelector("#conversation_dataset").value;
         const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
         const message_nothing = document.querySelector('.message-nothing');
-        let conversation_dataset = JSON.parse(conversation_value);
 
-        const populateConversationData = (conversations) => {
+        const populateConversationData = (conversationDataset) => {
+            console.log(conversationDataset);
+
             let allConversationHtml = '';
-            if(conversations && conversations.length > 0){
-                conversations.forEach((conversation, index) => {
+            if(conversationDataset && conversationDataset.length > 0){
+                conversationDataset.forEach((conversation, index) => {
                     let conversationHtml = '';
                     if(conversation.creator.id == loggedInUserId){
                         const conversationAvatar = conversation.participant.avatar ? `<img src="./uploads/avatars/${conversation.participant.avatar}" alt="${conversation.participant.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
@@ -261,7 +273,7 @@
                                         <div>
                                             ${conversationAvatar}
                                         </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                        <div class="hidden sm:flex flex-1 items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                             <div>
                                                 <h3 class="text-md font-bold">${conversation.participant.name}</h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
@@ -278,7 +290,7 @@
                                         <div>
                                             ${conversationAvatar}
                                         </div>
-                                        <div class="hidden sm:flex items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversation_dataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                        <div class="hidden sm:flex flex-1 items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                             <div>
                                                 <h3 class="text-md font-bold">${conversation.creator.name}</h3>
                                                 <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
@@ -303,13 +315,13 @@
             }
         }
                 
-        populateConversationData(conversation_dataset);
+        populateConversationData(conversationDataset);
         // get conversations and print end
 
         // filter conversations start
         function filterConversationDataset(event) {
             let conversation_search_input = document.querySelector(".conversation-search-input").value.toLowerCase();
-            const filteredConversationDataset = conversation_dataset.filter(item =>
+            const filteredConversationDataset = conversationDataset.filter(item =>
                 conversation_search_input === '' ||
                 item.creator.name.toLowerCase().includes(conversation_search_input) ||
                 item.participant.name.toLowerCase().includes(conversation_search_input)

@@ -4,7 +4,7 @@ const User = require("../models/People");
 
 async function getUsers(req, res, next) {
   try {
-    const users = await User.find();
+    const users = await User.find({ isDeleted: false });
 
     const filteredUsers = users.map((user) => {
       const {

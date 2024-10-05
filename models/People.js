@@ -26,6 +26,10 @@ const peopleSchema = mongoose.Schema(
     ],
     isDeleted: { type: Boolean, default: false },
     deletedAt: { type: Date, default: null },
+    deletedBy: {
+      id: { type: mongoose.Types.ObjectId },
+      name: { type: String },
+    },
   },
   { timestamps: true }
 );

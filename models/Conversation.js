@@ -13,6 +13,11 @@ const conversationSchema = mongoose.Schema(
       avatar: { type: String },
     },
     last_updated: { type: Date, default: Date.now() },
+    message: {
+      id: { type: mongoose.Types.ObjectId },
+      content: { type: String, default: "Your are joining this conversation." },
+      date: { type: Date, default: Date.now() },
+    },
   },
   { timestamps: true }
 );

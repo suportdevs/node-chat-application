@@ -170,6 +170,10 @@ async function userDelete(req, res) {
     }
     user.isDeleted = true;
     user.deletedAt = new Date();
+    user.deteledBy = {
+      id: res.loggedInUser.user_id,
+      name: res.user_id.username,
+    };
     user.save();
 
     res.status(200).json({ message: "Record deleted successfully.", user });

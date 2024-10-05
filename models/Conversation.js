@@ -16,7 +16,7 @@ const conversationSchema = mongoose.Schema(
     message: {
       id: { type: mongoose.Types.ObjectId },
       content: { type: String, default: "Your are joining this conversation." },
-      date: { type: Date, default: Date.now() },
+      date_time: { type: Date, default: Date.now() },
     },
   },
   { timestamps: true }

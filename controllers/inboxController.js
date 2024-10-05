@@ -128,6 +128,21 @@ async function sendMessage(req, res, next) {
 
     const result = await newMessage.save();
 
+    // update conversation
+    const conversation = await Conversation.findById(req.body.conversation_id);
+    if (!conversation) {
+      return res
+        .status(404)
+        .json({ common: { msg: "Conversation not found" } });
+    }
+    conversation.message = {
+      id: result._id,
+      content: req.body.message,
+      date_time: Date.now(),
+    };
+
+    await conversation.save();
+
     global.io.emit("new_message", {
       message: {
         message: req.body.message,
@@ -160,6 +175,23 @@ async function deleteMessage(req, res, next) {
         { conversation_id },
         { $addToSet: { hideable: req.user.user_id } }
       );
+
+      // get lasted message
+      const lastMessage = await Message.findOne({ conversation_id })
+        .sort({ created_at: -1 }) // Sort by created_at field in descending order
+        .limit(1);
+
+      if (lastMessage) {
+        // Update the conversation with the last message details
+        await Conversation.findByIdAndUpdate(conversation_id, {
+          message: {
+            id: lastMessage._id,
+            content: lastMessage.text,
+            date_time: lastMessage.created_at,
+          },
+        });
+      }
+
       res.status(200).json({ message: "Message deleted successfull." });
     } catch (error) {
       res.status(500).json({ errors: { common: { msg: error.message } } });

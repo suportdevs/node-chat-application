@@ -265,37 +265,43 @@
                 conversationDataset.forEach((conversation, index) => {
                     let conversationHtml = '';
                     if(conversation.creator.id == loggedInUserId){
+                        let content = conversation.message.content;
+                        let truncatedContent = content.length > 70 ? content.substring(0, 70) + "..." : content;
+
                         const conversationAvatar = conversation.participant.avatar ? `<img src="./uploads/avatars/${conversation.participant.avatar}" alt="${conversation.participant.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                     <span class="text-3xl">${conversation.participant.name[0].toUpperCase()}</span>
                                                 </div>`;
 
-                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.participant.name}', '${conversation.participant.avatar}')">
+                        conversationHtml = `<div class="conversation_list_item${conversation._id} flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.participant.name}', '${conversation.participant.avatar}')">
                                         <div>
                                             ${conversationAvatar}
                                         </div>
-                                        <div class="hidden sm:flex flex-1 items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                            <div>
+                                        <div class="hidden sm:flex flex-1 flex-col justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                            <div class="flex items-center justify-between">
                                                 <h3 class="text-md font-bold">${conversation.participant.name}</h3>
-                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                                <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
                                             </div>
-                                            <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
+                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent}</span>
                                         </div>
                                     </div>`;
                     }else{
+                        let content = conversation.message.content;
+                        let truncatedContent = content.length > 70 ? content.substring(0, 70) + "..." : content;
+
                         const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                                     <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
                                                 </div>`;
 
-                        conversationHtml = `<div class="flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
+                        conversationHtml = `<div class="conversation_list_item${conversation._id} flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
                                         <div>
                                             ${conversationAvatar}
                                         </div>
-                                        <div class="hidden sm:flex flex-1 items-center justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                            <div>
+                                        <div class="hidden sm:flex flex-1 flex-col justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
+                                            <div class="flex items-center justify-between">
                                                 <h3 class="text-md font-bold">${conversation.creator.name}</h3>
-                                                <span class="text-sm text-gray-300">Hi ! Mr Anonymous</span>
+                                                <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
                                             </div>
-                                            <div class="text-sm text-gray-300">${moment(conversation.last_updated).fromNow()}</div>
+                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent}</span>
                                         </div>
                                     </div>`;
                     }
@@ -372,8 +378,12 @@
                         </div>
                     </div>`;
                     
-            // append the inoming message to message area as last item
-            document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforebegin", messageHtml);
+                // append the inoming message to message area as last item
+                document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforebegin", messageHtml);
+                
+                document.querySelector(`.conversation_list_item${current_conversation_id} .conversation_list_conent`).textContent = data.message.message;
+                document.querySelector(`.conversation_list_item${current_conversation_id} .conversation_list_time`).textContent = moment(data.message.date_time).fromNow(true);
+
 
             }
         });

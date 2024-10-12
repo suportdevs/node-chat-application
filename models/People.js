@@ -14,6 +14,12 @@ const peopleSchema = mongoose.Schema(
     password: { type: String, required: true },
     avatar: { type: String },
     status: { type: String },
+    onlineStatus: {
+      type: String,
+      enum: ["Online", "Offline"],
+      default: "Offline",
+    },
+    lastSeen: { type: Date, default: null },
     role: { type: String, enum: ["Admin", "User"], default: "User" },
     address: { type: String },
     blockable: [

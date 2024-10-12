@@ -258,7 +258,6 @@
         const message_nothing = document.querySelector('.message-nothing');
 
         const populateConversationData = (conversationDataset) => {
-            console.log(conversationDataset);
 
             let allConversationHtml = '';
             if(conversationDataset && conversationDataset.length > 0){
@@ -324,6 +323,9 @@
         populateConversationData(conversationDataset);
         // get conversations and print end
 
+        socket.on("user_status", (data) => {
+            console.log(data);
+        });
         // filter conversations start
         function filterConversationDataset(event) {
             let conversation_search_input = document.querySelector(".conversation-search-input").value.toLowerCase();
@@ -336,8 +338,6 @@
         }
         // filter conversations end
     
-        // socket initialization
-        const socket = io('http://localhost:5000');
         // handle events from server
         // socket.on('connect', () => {
         //     console.log('socket is connected');
@@ -396,6 +396,9 @@
         const chat_form_container = document.querySelector("#chat-form-container");
 
         async function getMessages(conversation_id, participantName, participantAvatar){
+
+            socket.emit('user_status', loggedInUserId);
+            
             let response = await fetch(`/inbox/message/${conversation_id}`);
             let result = await response.json();
             if(!result.errors && result.data){

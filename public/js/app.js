@@ -1,3 +1,6 @@
+// socket initialization
+const socket = io("http://localhost:5000");
+
 document.addEventListener("DOMContentLoaded", function () {
   // widget start
   const widget_area = document.querySelector("#widget-area");

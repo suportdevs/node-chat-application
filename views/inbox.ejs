@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="leading-none">
                                     <h3 id="chat-message-title-name" class="text-lg font-bold"></h3>
-                                    <span class="text-sm text-dark-color">Last seen 2:35 pm</span>
+                                    <span class="text-sm text-dark-color user-online-status-text">Last seen 2:35 pm</span>
                                 </div>
                             </div>
                             <div class="flex gap-4 items-center justify-end ">
@@ -323,9 +323,6 @@
         populateConversationData(conversationDataset);
         // get conversations and print end
 
-        socket.on("user_status", (data) => {
-            console.log(data);
-        });
         // filter conversations start
         function filterConversationDataset(event) {
             let conversation_search_input = document.querySelector(".conversation-search-input").value.toLowerCase();
@@ -395,10 +392,7 @@
         const chat_message_list = document.querySelector("#chat-message-list");
         const chat_form_container = document.querySelector("#chat-form-container");
 
-        async function getMessages(conversation_id, participantName, participantAvatar){
-
-            socket.emit('user_status', loggedInUserId);
-            
+        async function getMessages(conversation_id, participantName, participantAvatar){            
             let response = await fetch(`/inbox/message/${conversation_id}`);
             let result = await response.json();
             if(!result.errors && result.data){
@@ -472,6 +466,10 @@
             formData.append('receiver_name', participant.name);
             formData.append('receiver_avatar', participant.avatar || null);
 
+            if(loggedInUserId){
+                socket.emit('user_online', loggedInUserId);
+            }
+
             let response = await fetch('/inbox/message', {
                 method: 'POST',
                 body: formData
@@ -485,6 +483,17 @@
                 toastr.warning(result.errors.common.msg);
             }
         }
+
+        socket.on('user_status', (data) => {
+            console.log(data);
+            const user_online_status_text = document.querySelectorAll('.user-online-status-text');
+            console.log(user_online_status_text)
+            if(user_online_status_text){
+                user_online_status_text.forEach((item, index) => {
+                    item.textContent = data.onlineStatus;
+                })
+            }
+        })
     
         // message delete
         async function deleteMeassage(){

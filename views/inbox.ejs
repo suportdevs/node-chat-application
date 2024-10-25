@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="leading-none">
                                     <h3 id="chat-message-title-name" class="text-lg font-bold"></h3>
-                                    <span class="text-sm text-dark-color user-online-status-text">Last seen 2:35 pm</span>
+                                    <span class="text-sm text-dark-color user-online-status-text<%= loggedInUser.user_id %>">Last seen 2:35 pm</span>
                                 </div>
                             </div>
                             <div class="flex gap-4 items-center justify-end ">
@@ -280,7 +280,7 @@
                                                 <h3 class="text-md font-bold">${conversation.participant.name}</h3>
                                                 <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
                                             </div>
-                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent}</span>
+                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent} <span class="user-online-status-text${conversation.participant._id}">o</span></span>
                                         </div>
                                     </div>`;
                     }else{
@@ -300,7 +300,7 @@
                                                 <h3 class="text-md font-bold">${conversation.creator.name}</h3>
                                                 <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
                                             </div>
-                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent}</span>
+                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent} <span class="user-online-status-text${conversation.participant._id}">o</span></span>
                                         </div>
                                     </div>`;
                     }
@@ -486,7 +486,7 @@
 
         socket.on('user_status', (data) => {
             console.log(data);
-            const user_online_status_text = document.querySelectorAll('.user-online-status-text');
+            const user_online_status_text = document.querySelectorAll('.user-online-status-text' + data.userId);
             console.log(user_online_status_text)
             if(user_online_status_text){
                 user_online_status_text.forEach((item, index) => {

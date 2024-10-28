@@ -277,10 +277,10 @@
                                         </div>
                                         <div class="hidden sm:flex flex-1 flex-col justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                             <div class="flex items-center justify-between">
-                                                <h3 class="text-md font-bold">${conversation.participant.name}</h3>
+                                                <h3 class="text-md font-bold">${conversation.participant.name} <span class="user-online-status-text${conversation.participant.id}">Off</span></h3>
                                                 <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
                                             </div>
-                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent} <span class="user-online-status-text${conversation.participant._id}">o</span></span>
+                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent} <span class="user-online-status-text${conversation.participant.id}">o</span></span>
                                         </div>
                                     </div>`;
                     }else{
@@ -297,10 +297,10 @@
                                         </div>
                                         <div class="hidden sm:flex flex-1 flex-col justify-between w-full py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
                                             <div class="flex items-center justify-between">
-                                                <h3 class="text-md font-bold">${conversation.creator.name}</h3>
+                                                <h3 class="text-md font-bold">${conversation.creator.name} <span class="user-online-status-text${conversation.creator.id}">Off</span></h3>
                                                 <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
                                             </div>
-                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent} <span class="user-online-status-text${conversation.participant._id}">o</span></span>
+                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent} <span class="user-online-status-text${conversation.creator.id}">o</span></span>
                                         </div>
                                     </div>`;
                     }

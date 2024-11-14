@@ -46,6 +46,18 @@ async function doLogin(req, res, next) {
         });
 
         res.locals.loggedInUser = userObject;
+        // set user online when a user loggedin
+        // Set user online status
+        user.onlineStatus = "Online";
+        user.lastSeen = new Date();
+        await user.save();
+
+        global.io.emit("user_status", {
+          userId: user._id,
+          onlineStatus: "Online",
+          lastSeen: user.lastSeen,
+        });
+
         res.redirect("/inbox");
       } else {
         throw createError("Login faild! Please try agian.");
@@ -84,6 +96,18 @@ async function doRegister(req, res, next) {
 }
 
 async function doLogout(req, res, next) {
+  const user = await User.findById(req.user.user_id);
+  // Set user online status
+  user.onlineStatus = "Offline";
+  user.lastSeen = new Date();
+  await user.save();
+
+  global.io.emit("user_status", {
+    userId: user._id,
+    onlineStatus: "Offline",
+    lastSeen: user.lastSeen,
+  });
+
   res.clearCookie(process.env.COOKIE_NAME);
   res.status(200).json({ message: "Logout successfull" });
 }

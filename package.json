@@ -6,8 +6,8 @@
   "author": "suportdevs <suportdevs@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "NODE_ENV=production nodemon index.js",
-    "prod": "NODE_ENV=production node index.js"
+    "start": "nodemon index.js",
+    "prod": "node index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

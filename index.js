@@ -42,39 +42,21 @@ app.use("/", authRouter);
 app.use("/users", userRouter);
 app.use("/inbox", inboxRouter);
 
+const users = {};
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  const userId = socket.handshake.query.userId;
+  console.log("userId : " + userId);
+  console.log("A user connected - " + socket.id);
+  if (userId) {
+    users[userId] = socket.id;
+  }
+  console.log("Hi !", users);
 
-  socket.on("user_online", async (userId) => {
-    socket.userId = userId;
-    const user = await User.findOne({ _id: userId });
-    user.onlineStatus = "Online";
-    user.lastSeen = new Date();
-    await user.save();
-    io.emit("user_status", {
-      userId,
-      onlineStatus: "Online",
-      lastSeen: user.lastSeen,
-    });
-    console.log(`${user.name}  user connected.`);
-  });
+  io.emit("getOnlineUsers", Object.keys(users));
 
   socket.on("disconnect", async () => {
-    const userId = socket.userId;
-    if (userId) {
-      const user = await User.findOne({ _id: userId });
-      if (user) {
-        user.lastSeen = new Date();
-        user.onlineStatus = "Offline";
-        await user.save();
-        io.emit("user_status", {
-          userId,
-          onlineStatus: "Offline",
-          lastSeen: user.lastSeen,
-        });
-      }
-    }
-    console.log("A user disconnect.");
+    delete users[userId];
+    io.emit("getOnlineUsers", Object.keys(users));
   });
 });
 

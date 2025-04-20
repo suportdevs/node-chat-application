@@ -1,7 +1,28 @@
-// socket initialization
-const socket = io("http://localhost:5000");
+let loggedInUserId = document
+  .querySelector('meta[name="userId"]')
+  .getAttribute("content");
+
+let onlineUsers = [];
+let socket;
+
+// Initialize socket connection
+if (loggedInUserId) {
+  socket = io("http://localhost:5000", {
+    query: { userId: loggedInUserId },
+  });
+} else {
+  socket = io("http://localhost:5000");
+}
+
+// Listen for the socket event
+socket.on("getOnlineUsers", (users) => {
+  onlineUsers = users;
+  console.log("Received online users:", onlineUsers);
+  updateOnlineStatuses(onlineUsers); // Call function after receiving users
+});
 
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("onlineUsers ", onlineUsers);
   // widget start
   const widget_area = document.querySelector("#widget-area");
   const widget_wrapper = document.querySelector(".widget-wrapper");
@@ -187,6 +208,13 @@ function load_image_file(event, target) {
   reader.readAsDataURL(event.target.files[0]); // Convert the file to a data URL
 }
 
+// Update user statuses from onlineUsers
+function updateOnlineStatuses(users) {
+  users.forEach((user) => {
+    onlineUsers = user;
+  });
+}
+console.log("from updateOnlineStatuses ", onlineUsers);
 function set_user_status(data) {
   console.log(data);
   const user_online_status_text = document.querySelectorAll(

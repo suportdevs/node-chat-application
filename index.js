@@ -42,21 +42,21 @@ app.use("/", authRouter);
 app.use("/users", userRouter);
 app.use("/inbox", inboxRouter);
 
-const users = {};
+let onlineUsers = new Map();
 io.on("connection", (socket) => {
-  const userId = socket.handshake.query.userId;
-  console.log("userId : " + userId);
-  console.log("A user connected - " + socket.id);
-  if (userId) {
-    users[userId] = socket.id;
-  }
-  console.log("Hi !", users);
-
-  io.emit("getOnlineUsers", Object.keys(users));
+  socket.on("user-connected", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    io.emit("online-users", Array.from(onlineUsers.keys()));
+  });
 
   socket.on("disconnect", async () => {
-    delete users[userId];
-    io.emit("getOnlineUsers", Object.keys(users));
+    for (let [userId, id] of onlineUsers.entries()) {
+      if (id === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
+    }
+    io.emit("online-users", Array.from(onlineUsers.keys()));
   });
 });
 

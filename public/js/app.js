@@ -3,22 +3,38 @@ let loggedInUserId = document
   .getAttribute("content");
 
 let onlineUsers = [];
-let socket;
 
 // Initialize socket connection
-if (loggedInUserId) {
-  socket = io("http://localhost:5000", {
-    query: { userId: loggedInUserId },
-  });
-} else {
-  socket = io("http://localhost:5000");
-}
+let socket = io("http://localhost:5000");
+
+socket.emit("user-connected", loggedInUserId);
 
 // Listen for the socket event
-socket.on("getOnlineUsers", (users) => {
-  onlineUsers = users;
-  console.log("Received online users:", onlineUsers);
-  updateOnlineStatuses(onlineUsers); // Call function after receiving users
+socket.on("online-users", (onlineUserIds) => {
+  console.log("Online Users:", onlineUserIds);
+  onlineUsers = onlineUserIds;
+
+  // Update each status span on the page
+  document.querySelectorAll(".user-status-badge").forEach((el) => {
+    let classes = Array.from(el.classList);
+    let userIdClass = classes.find((cls) =>
+      cls.startsWith("user-status-badge")
+    );
+    console.log("userIdClass", userIdClass);
+    if (userIdClass) {
+      let userId = userIdClass.replace("user-status-badge", "");
+
+      if (onlineUserIds.includes(userId)) {
+        el.innerText = "🟢 Online";
+        el.classList.remove("text-dark-color");
+        el.classList.add("text-green-500");
+      } else {
+        el.innerText = "Offline";
+        el.classList.remove("text-green-500");
+        el.classList.add("text-dark-color");
+      }
+    }
+  });
 });
 
 document.addEventListener("DOMContentLoaded", function () {

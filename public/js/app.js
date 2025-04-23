@@ -11,34 +11,33 @@ socket.emit("user-connected", loggedInUserId);
 
 // Listen for the socket event
 socket.on("online-users", (onlineUserIds) => {
-  console.log("Online Users:", onlineUserIds);
   onlineUsers = onlineUserIds;
 
-  // Update each status span on the page
+  // Loop over all status elements
   document.querySelectorAll(".user-status-badge").forEach((el) => {
-    let classes = Array.from(el.classList);
-    let userIdClass = classes.find((cls) =>
-      cls.startsWith("user-status-badge")
-    );
-    console.log("userIdClass", userIdClass);
-    if (userIdClass) {
-      let userId = userIdClass.replace("user-status-badge", "");
+    const userId = el.getAttribute("data-user-id");
 
-      if (onlineUserIds.includes(userId)) {
-        el.innerText = "🟢 Online";
-        el.classList.remove("text-dark-color");
-        el.classList.add("text-green-500");
-      } else {
-        el.innerText = "Offline";
-        el.classList.remove("text-green-500");
-        el.classList.add("text-dark-color");
-      }
+    if (onlineUserIds.includes(userId)) {
+      el.classList.remove("bg-gray-400");
+      el.classList.add("bg-green-500");
+    } else {
+      el.classList.remove("bg-green-500");
+      el.classList.add("bg-gray-400");
+    }
+  });
+  // Loop over all status elements
+  document.querySelectorAll(".user-online-status-text").forEach((el) => {
+    const userId = el.getAttribute("data-user-id");
+
+    if (onlineUserIds.includes(userId)) {
+      el.textContent = "Online";
+    } else {
+      el.textContent = "Offline";
     }
   });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("onlineUsers ", onlineUsers);
   // widget start
   const widget_area = document.querySelector("#widget-area");
   const widget_wrapper = document.querySelector(".widget-wrapper");
@@ -158,16 +157,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   setTheme(savedTheme);
 
-  set_user_status({
-    userId: "65ff1429bd350affe1e4c485",
-    lastSeen: "2024-11-13T18:04:29.567+00:00",
-    onlineStatus: "Online",
-  });
-  set_user_status({
-    userId: "65ff1429bd350affe1e4c485",
-    lastSeen: "2024-11-13T18:04:29.567+00:00",
-    onlineStatus: "Online",
-  });
+  // set_user_status({
+  //   userId: "65ff1429bd350affe1e4c485",
+  //   lastSeen: "2024-11-13T18:04:29.567+00:00",
+  //   onlineStatus: "Online",
+  // });
+  // set_user_status({
+  //   userId: "65ff1429bd350affe1e4c485",
+  //   lastSeen: "2024-11-13T18:04:29.567+00:00",
+  //   onlineStatus: "Online",
+  // });
 });
 
 // set theme to browser local storage
@@ -225,29 +224,26 @@ function load_image_file(event, target) {
 }
 
 // Update user statuses from onlineUsers
-function updateOnlineStatuses(users) {
-  users.forEach((user) => {
-    onlineUsers = user;
-  });
-}
-console.log("from updateOnlineStatuses ", onlineUsers);
-function set_user_status(data) {
-  console.log(data);
-  const user_online_status_text = document.querySelectorAll(
-    ".user-online-status-text" + data.userId
-  );
-  const user_status_badges = document.querySelectorAll(
-    ".user-status-badge" + data.userId
-  );
-  console.log(user_online_status_text);
-  if (user_online_status_text) {
-    user_online_status_text.forEach((item, index) => {
-      item.textContent = data.onlineStatus;
-    });
-  }
-  if (user_status_badges) {
-    user_status_badges.forEach((item, index) => {
-      item.textContent = data.onlineStatus;
-    });
-  }
-}
+// function updateOnlineStatuses(users) {
+//   users.forEach((user) => {
+//     onlineUsers = user;
+//   });
+// }
+// function set_user_status(data) {
+//   const user_online_status_text = document.querySelectorAll(
+//     ".user-online-status-text" + data.userId
+//   );
+//   const user_status_badges = document.querySelectorAll(
+//     ".user-status-badge" + data.userId
+//   );
+//   if (user_online_status_text) {
+//     user_online_status_text.forEach((item, index) => {
+//       item.textContent = data.onlineStatus;
+//     });
+//   }
+//   if (user_status_badges) {
+//     user_status_badges.forEach((item, index) => {
+//       item.textContent = data.onlineStatus;
+//     });
+//   }
+// }

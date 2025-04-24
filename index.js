@@ -46,21 +46,14 @@ app.use("/inbox", inboxRouter);
 const onlineUsers = new Map();
 
 io.on("connection", (socket) => {
-  console.log("New socket connected:", socket.id);
-
   socket.on("user-connected", (userId) => {
-    console.log(`User `, onlineUsers);
-
     // Update or insert user socket
     onlineUsers.set(userId, socket.id);
-
     // Broadcast updated online user IDs
     io.emit("online-users", Array.from(onlineUsers.keys()));
   });
 
   socket.on("disconnect", () => {
-    console.log("Socket disconnected:", socket.id);
-
     // Find and remove disconnected socket
     for (let [userId, socketId] of onlineUsers.entries()) {
       if (socketId === socket.id) {
@@ -68,7 +61,6 @@ io.on("connection", (socket) => {
         break;
       }
     }
-
     // Broadcast updated online users
     io.emit("online-users", Array.from(onlineUsers.keys()));
   });

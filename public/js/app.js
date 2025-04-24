@@ -28,7 +28,6 @@ socket.on("online-users", (onlineUserIds) => {
   // Loop over all status elements
   document.querySelectorAll(".user-online-status-text").forEach((el) => {
     const userId = el.getAttribute("data-user-id");
-
     if (onlineUserIds.includes(userId)) {
       el.textContent = "Online";
     } else {
@@ -156,17 +155,6 @@ document.addEventListener("DOMContentLoaded", function () {
     //     main_content_wrapper.style.backgroundColor = 'transparent';
   }
   setTheme(savedTheme);
-
-  // set_user_status({
-  //   userId: "65ff1429bd350affe1e4c485",
-  //   lastSeen: "2024-11-13T18:04:29.567+00:00",
-  //   onlineStatus: "Online",
-  // });
-  // set_user_status({
-  //   userId: "65ff1429bd350affe1e4c485",
-  //   lastSeen: "2024-11-13T18:04:29.567+00:00",
-  //   onlineStatus: "Online",
-  // });
 });
 
 // set theme to browser local storage
@@ -222,28 +210,3 @@ function load_image_file(event, target) {
 
   reader.readAsDataURL(event.target.files[0]); // Convert the file to a data URL
 }
-
-// Update user statuses from onlineUsers
-// function updateOnlineStatuses(users) {
-//   users.forEach((user) => {
-//     onlineUsers = user;
-//   });
-// }
-// function set_user_status(data) {
-//   const user_online_status_text = document.querySelectorAll(
-//     ".user-online-status-text" + data.userId
-//   );
-//   const user_status_badges = document.querySelectorAll(
-//     ".user-status-badge" + data.userId
-//   );
-//   if (user_online_status_text) {
-//     user_online_status_text.forEach((item, index) => {
-//       item.textContent = data.onlineStatus;
-//     });
-//   }
-//   if (user_status_badges) {
-//     user_status_badges.forEach((item, index) => {
-//       item.textContent = data.onlineStatus;
-//     });
-//   }
-// }

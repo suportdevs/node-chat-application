@@ -290,7 +290,6 @@
                         body: formData,
                     });
                     let result = await response.json();
-                    console.log(result);
                     if(!result.errors){
                         toastr.success(result.message);
                         const user_list_item_avatar = document.querySelector(`#user_list_item_avatar${result.user._id}`);

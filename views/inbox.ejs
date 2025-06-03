@@ -402,12 +402,13 @@
                 chat_form_container.classList.remove('invisible');
                 chat_message_title_name.textContent = participantName;
                 chat_message_avatar_container.innerHTML = participantAvatar != 'undefined' && participantAvatar != 'null' ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${participantName[0].toUpperCase()}</span>
-                                                </div>`;
-
+                    <span class="text-3xl">${participantName[0].toUpperCase()}</span>
+                    </div>`;
+                    
                 const {data, user_id, conversation_id, participantUser} = result;
                 participant = data.participant;
                 current_conversation_id = conversation_id;
+                socket.emit("user-connected", user_id);
 
                 updateBlockUnblockUi(loggedInUserId, participantUser.blockable);
                 if(data.messages){

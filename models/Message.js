@@ -14,7 +14,7 @@ const messageSchema = mongoose.Schema(
       name: { type: String },
       avatar: { type: String },
     },
-    date_itme: { type: Date, default: Date.now() },
+    date_time: { type: Date, default: Date.now() },
     conversation_id: { type: mongoose.Types.ObjectId },
     hideable: [{ type: mongoose.Types.ObjectId }],
   },

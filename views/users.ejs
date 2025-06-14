@@ -116,6 +116,7 @@
         </div>
     </div>
     <!-- import socket io client from cdn -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script src="./js/app.js"></script>
 
     <script>
@@ -133,7 +134,6 @@
         fetchUsers();
 
         let current_user_info_id; // selected conversation id
-        let loggedInUserId = '<%= loggedInUser.user_id %>';
         // get conversations and print start
         const user_content_wrapper = document.querySelector("#user-content-wrapper");
 

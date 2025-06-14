@@ -156,6 +156,7 @@ div#widget-area {
     transition: left 0.3s ease;
     visibility: hidden;
     border-color: var(--bg-dark-color);
+    z-index: 0;
 }
 .user-details-edit-btn::before {
     left: 100%;
@@ -179,6 +180,11 @@ div#widget-area {
     left: 100%;
     visibility: hidden;
     display: none;
+}
+.user-details-delete-btn > svg,
+.user-details-edit-btn > svg {
+    position: relative;
+    z-index: 1;
 }
 @media (max-width: 600px) {
     .chat-content-wrapper-small-device {

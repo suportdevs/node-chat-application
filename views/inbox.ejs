@@ -564,6 +564,7 @@
         // end user block
     
         function updateBlockUnblockUi(loggedInUserId, blockable){
+            console.log(blockable);
             if (loggedInUserId && blockable && blockable.some(blockedObj => blockedObj.id === loggedInUserId)) {
             // The logged in user is blocked by the participant user
             chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="userUnblock()">

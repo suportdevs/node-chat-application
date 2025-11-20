@@ -53,4 +53,10 @@ router.post(
 
 router.delete("/logout", authenticated, doLogout);
 
+router.get('/call', (req, res) => {
+  // adapt: get user id from your auth cookie/session
+  const userId = req.user ? req.user._id.toString() : 'guest-' + Date.now();
+  res.render('call', { userId });
+});
+
 module.exports = router;

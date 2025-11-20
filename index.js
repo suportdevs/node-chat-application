@@ -41,7 +41,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use("/", authRouter);
 app.use("/users", userRouter);
 app.use("/inbox", inboxRouter);
-
 // Must be declared outside io.on()
 const onlineUsers = new Map();
 
@@ -64,6 +63,43 @@ io.on("connection", (socket) => {
     // Broadcast updated online users
     io.emit("online-users", Array.from(onlineUsers.keys()));
   });
+
+  /* --- SIGNALING for WebRTC --- */
+
+  // Caller wants to call targetUserId
+  socket.on("call-user", ({ from, to, offer /* sdp offer */ }) => {
+    const targetSocketId = onlineUsers.get(to);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("incoming-call", { from, offer });
+    } else {
+      // target offline - inform caller
+      socket.emit("user-unavailable", { to });
+    }
+  });
+
+  // Callee sends answer back
+  socket.on("make-answer", ({ to, answer }) => {
+    const targetSocketId = onlineUsers.get(to);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("call-accepted", { answer });
+    }
+  });
+
+  // Exchanging ICE candidates
+  socket.on("ice-candidate", ({ to, candidate }) => {
+    const targetSocketId = onlineUsers.get(to);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("ice-candidate", { candidate });
+    }
+  });
+
+  // Caller cancels or hangup
+  socket.on("end-call", ({ to }) => {
+    const targetSocketId = onlineUsers.get(to);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("call-ended");
+    }
+  });
 });
 
 // not found handler
@@ -72,6 +108,10 @@ app.use(notFoundHandler);
 // defauld error handler
 app.use(errorHandler);
 
-server.listen(process.env.PORT, () => {
-  console.log(`Application listen to port ${process.env.PORT}`);
+server.listen(process.env.PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${process.env.PORT}`);
 });
+
+// server.listen(process.env.PORT, () => {
+//   console.log(`Application listen to port ${process.env.PORT}`);
+// });

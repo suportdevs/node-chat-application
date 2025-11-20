@@ -1,0 +1,34 @@
+<!-- views/call.ejs -->
+<!doctype html>
+<html>
+<head>
+  <title>Video Call</title>
+  <style>
+    #videos { display:flex; gap:10px; }
+    video { width: 45%; border: 1px solid #ccc; background:#000; }
+    #controls { margin-top:10px; }
+  </style>
+</head>
+<body>
+  <h3>Logged in as: <span id="my-id"><%= userId %></span></h3>
+
+  <div id="user-list"></div>
+
+  <div id="call-panel" style="display:none">
+    <div id="videos">
+      <video id="localVideo" autoplay playsinline muted></video>
+      <video id="remoteVideo" autoplay playsinline></video>
+    </div>
+    <div id="controls">
+      <button id="hangupBtn">Hang up</button>
+    </div>
+  </div>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+
+  <script>
+    // expose server-provided user id to client
+    window.MY_USER_ID = "<%= userId %>";
+  </script>
+  <script src="/js/call.js"></script>
+</body>
+</html>

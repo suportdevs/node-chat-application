@@ -22,7 +22,7 @@ async function doLogin(req, res, next) {
       $or: [{ email: email }, { mobile: email }],
     });
     if (user && user._id) {
-      const isPasswordValid = bcript.compare(password, user.password);
+      const isPasswordValid = await bcript.compare(password, user.password);
       if (isPasswordValid) {
         userObject = {
           user_id: user._id,
@@ -39,10 +39,13 @@ async function doLogin(req, res, next) {
         });
 
         // set cookie
+        const cookieMaxAge = Number(process.env.JWT_EXPIRY) || 86400000;
         res.cookie(process.env.COOKIE_NAME, token, {
-          maxAge: process.env.JWT_EXPIRY,
+          maxAge: cookieMaxAge,
           httpOnly: true,
           signed: true,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
         });
 
         res.locals.loggedInUser = userObject;

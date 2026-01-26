@@ -1,20 +1,17 @@
 const mongoose = require("mongoose");
 
 async function dbConnection() {
-  mongoose
-    .connect(
-      process.env.MONGODB_URI
-      //   , {
-      //   useNewUrlParser: true,
-      //   useUnifiedTopology: true,
-      // }
-    )
-    .then(() => {
-      console.log("Database connection successfull.");
-    })
-    .catch((err) => {
-      console.log(`Database error ${err}`);
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
     });
+    console.log("Database connection successfull.");
+  } catch (err) {
+    console.error(`Database error ${err}`);
+    if (process.env.NODE_ENV === "production") {
+      process.exit(1);
+    }
+  }
 }
 
 module.exports = dbConnection;

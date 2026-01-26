@@ -18,9 +18,9 @@
     </div>
     <div class="h-screen flex items-center justify-center ">
         <div class='flex flex-col items-center justify-center p-3 sm:p-0 w-full sm:w-10/12 h-screen overflow-hidden mx-auto'>
-            <div class="main-content-wrapper flex justify-between w-full h-[90vh] overflow-hidden p-1 rounded-lg shadow-md bg-clip-padding bg-dark-color backgrop-glass bg-opacity-0">
+            <div class="main-content-wrapper chat-shell flex justify-between w-full h-[90vh] overflow-hidden p-1 rounded-lg shadow-md bg-clip-padding bg-dark-color backgrop-glass bg-opacity-0">
                 <!-- <div class=""> -->
-                    <div class="flex flex-col w-20 sm:w-4/12 border-r border-gray-400">
+                    <div class="chat-sidebar flex flex-col w-full sm:w-4/12 border-r border-gray-400">
                         <div class="relative flex items-center justify-between h-14 px-3 py-2 bg-light-color">
                             <% if(loggedInUser.avatar){ %>
                                 <img src="./uploads/avatars/<%= loggedInUser.avatar %>" alt="" class="w-10 h-10 rounded-full cursor-pointer" id="user-avatar">
@@ -110,9 +110,14 @@
                         <!-- conversation list end -->
 
                     </div>
-                    <div class="flex flex-col w-full sm:w-8/12 justify-between ">
+                    <div class="chat-panel flex flex-col w-full sm:w-8/12 justify-between ">
                         <div id="chat-message-title-container" class="flex items-center justify-between px-3 h-14 bg-light-color invisible">
-                            <div class="flex items-center gap-4 text-color">
+                            <div class="flex items-center gap-2 text-color">
+                                <button id="chat-back-btn" class="sm:hidden p-2 rounded-md bg-dark-color hover-bg-dark-color" type="button" aria-label="Back to conversations">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                                    </svg>
+                                </button>
                                 <div id="chat-message-avatar-container">
                                     <img src="./images/logo.png" alt="" class="w-10 h-10 rounded-full">
                                 </div>
@@ -172,7 +177,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="chat-message-list" class="flex flex-col flex-col-reverse gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
+                        <div id="chat-message-list" class="chat-message-list flex flex-col gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
                             
                             <div class="flex gap-2 text-soft-color items-center justify-center h-full">
                                 <h1 class="text-2xl font-bold">Select a conversation</h1>
@@ -204,6 +209,7 @@
                         <!-- chat-form-container start -->
                         <div id="chat-form-container" class="h-14 bg-light-color text-soft-color invisible">
                             <div class="blocked-message-form-container grid grid-cols-1 content-center text-center hidden"></div>
+                            <div id="attachment-preview" class="attachment-preview hidden"></div>
                             <form id="chat-send-message-form" method="post" enctype="multipart/form-data" class="grid grid-cols-12 gap-2 px-3 content-center items-center">
                                 <div >
                                     <label for="attachment" class="cursor-pointer">
@@ -211,7 +217,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                                           </svg>                                          
                                     </label>
-                                    <input type="file" name="attachment" id="attachment" multiple class="hidden">
+                                    <input type="file" name="attachment" id="attachment" multiple accept="image/*" class="hidden">
                                 </div>
                                 <div  class="col-span-10">
                                     <textarea type="text" name="message" placeholder="Type a message" autocomplete="off" class="w-full border-none outline-none h-auto bg-transparent  content-center placeholder:text-soft-color"></textarea>
@@ -236,381 +242,888 @@
     <script src="./js/app.js"></script>
 
     <script>
-
-        let conversationDataset;
-        async function fetchUsersConversions(){
-            let response = await fetch('/inbox', {
-                method: "POST",
-                headers: {"Content-type": "application/json; charset=UTF-8"}
-            });
-            let result = await response.json();
-            populateConversationData(result);
-            conversationDataset = result;
-            return result;
-        }
-        fetchUsersConversions();
-
-        let participant = null; // selected conversation participt object
-        let current_conversation_id; // selected conversation id
-        // let loggedInUserId = '<%= loggedInUser.user_id %>';
-        // get conversations and print start
+        const conversationDataset = <%- JSON.stringify(data || []) %>;
         const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
-        const message_nothing = document.querySelector('.message-nothing');
-
-        const populateConversationData = (conversationDataset) => {
-
-            let allConversationHtml = '';
-            if(conversationDataset && conversationDataset.length > 0){
-                conversationDataset.forEach((conversation, index) => {
-                    let conversationHtml = '';
-                    if(conversation.creator.id == loggedInUserId){
-                        let content = conversation.message.content;
-                        let truncatedContent = content.length > 70 ? content.substring(0, 70) + "..." : content;
-
-                        const conversationAvatar = conversation.participant.avatar ? `<img src="./uploads/avatars/${conversation.participant.avatar}" alt="${conversation.participant.name}" class="w-10 h-10 border-2 border-current rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content border-2 border-current rounded-full w-10 h-10">
-                                                    <span class="text-3xl">${conversation.participant.name[0].toUpperCase()}</span>
-                                                </div>`;
-
-                        conversationHtml = `<div class="conversation_list_item${conversation._id} flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.participant.id}', '${conversation.participant.name}', '${conversation.participant.avatar}')">
-                                        <div class="relative inline-block">
-                                            ${conversationAvatar}
-                                            <span class="user-status-badge user-status-badge${conversation.participant.id} absolute bottom-0 right-0 inline-block w-3 h-3 bg-gray-400 border-2 border-current rounded-full" data-user-id="${conversation.participant.id}"></span>
-                                        </div>
-                                        <div class="hidden sm:flex flex-1 flex-col justify-between w-full min-h-[56px] py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                            <div class="flex items-center justify-between">
-                                                <h3 class="text-md font-bold">${conversation.participant.name}</h3>
-                                                <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
-                                            </div>
-                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent}</span>
-                                        </div>
-                                    </div>`;
-                    }else{
-                        let content = conversation.message.content;
-                        let truncatedContent = content.length > 70 ? content.substring(0, 70) + "..." : content;
-
-                        const conversationAvatar = conversation.creator.avatar ? `<img src="./uploads/avatars/${conversation.creator.avatar}" alt="${conversation.creator.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                    <span class="text-3xl">${conversation.creator.name[0].toUpperCase()}</span>
-                                                </div>`;
-
-                        conversationHtml = `<div class="conversation_list_item${conversation._id} flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="getMessages('${conversation._id}', '${conversation.creator.id}', '${conversation.creator.name}', '${conversation.creator.avatar}')">
-                                        <div class="relative inline-block">
-                                            ${conversationAvatar}
-                                            <span class="user-status-badge user-status-badge${conversation.creator.id} absolute bottom-0 right-0 inline-block w-3 h-3 bg-gray-400 border-2 border-current rounded-full" data-user-id="${conversation.creator.id}"></span>
-                                        </div>
-                                        <div class="hidden sm:flex flex-1 flex-col justify-between w-full min-h-[56px] py-1 leading-normal chat-content-info ${index !== conversationDataset.length - 1 ? ' border-b border-gray-200/40' : '' }">
-                                            <div class="flex items-center justify-between">
-                                                <h3 class="text-md font-bold">${conversation.creator.name}</h3>
-                                                <div class="text-sm text-gray-300 conversation_list_time">${moment(conversation.message.date_time).fromNow(true)}</div>
-                                            </div>
-                                            <span class="text-sm text-gray-300 conversation_list_conent">${truncatedContent}</span>
-                                        </div>
-                                    </div>`;
-                    }
-                    allConversationHtml += conversationHtml;
-                    conversation_content_wrapper.innerHTML = allConversationHtml;
-                });
-            }else{
-                conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
-                                    <div>
-                                        <img src="./images/no-conversation.png" alt="" class="w-32">
-                                    </div>
-                                    <div>
-                                        <h3 class="text-md font-bold">No conversation yet</h3>
-                                        <p>Create conversation to contact others</p>
-                                    </div>
-                                </div>`
-            }
-        }
-                
-        populateConversationData(conversationDataset);
-        // get conversations and print end
-
-        // filter conversations start
-        function filterConversationDataset(event) {
-            let conversation_search_input = document.querySelector(".conversation-search-input").value.toLowerCase();
-            const filteredConversationDataset = conversationDataset.filter(item =>
-                conversation_search_input === '' ||
-                item.creator.name.toLowerCase().includes(conversation_search_input) ||
-                item.participant.name.toLowerCase().includes(conversation_search_input)
-            );
-            populateConversationData(filteredConversationDataset);
-        }
-        // filter conversations end
-    
-        // handle events from server
-        // socket.on('connect', () => {
-        //     console.log('socket is connected');
-        // });
-        // socket.on('disconnect', () => {
-        //     console.log('socket is disconnected.');
-        // });
-        socket.on("new_message", (data) => {
-            if(data.message.conversation_id == current_conversation_id){
-                if(message_nothing){
-                    message_nothing.innerHTML = '';
-                }
-                const avatar = data.message.sender.avatar ? `<img src="./uploads/avatars/${data.message.sender.avatar}" alt="${data.message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${data.message.sender.name[0].toUpperCase()}</span>
-                                                </div>`;
-                const messageClass = data.message.sender.id === loggedInUserId ? true : false;
-                const showAvatar = data.message.sender.id === loggedInUserId ? '' : avatar;
-
-                let attachments = '';
-                let attachmentCount = 0;
-                if(data.message.attachments && data.message.attachments.length > 0){
-                    data.message.attachments.forEach((attachment) => {
-                        attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
-                    })
-                }
-
-                let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
-                        ${showAvatar}
-                        <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
-                            <div class="message-text bg-light-color text-sm rounded-md w-fit ${data.message.message ? 'p-2' : '' }">${data.message.message}</div>
-                            ${
-                                attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
-                                    ${attachments}
-                                </div>` : '' 
-                            }
-                            
-                            <div class="text-sm text-dark-color mt-1">${moment(data.message.date_time).fromNow()}</div>
-                        </div>
-                    </div>`;
-                    
-                // append the inoming message to message area as last item
-                document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforebegin", messageHtml);
-                
-                document.querySelector(`.conversation_list_item${current_conversation_id} .conversation_list_conent`).textContent = data.message.message;
-                document.querySelector(`.conversation_list_item${current_conversation_id} .conversation_list_time`).textContent = moment(data.message.date_time).fromNow(true);
-
-
-            }
-        });
-
-        // get messages
         const chat_message_title_container = document.querySelector("#chat-message-title-container");
         const chat_message_avatar_container = document.querySelector("#chat-message-avatar-container");
         const chat_message_title_name = document.querySelector("#chat-message-title-name");
         const user_online_status_text_container = document.querySelector("#user-online-status-text-container");
         const chat_message_list = document.querySelector("#chat-message-list");
         const chat_form_container = document.querySelector("#chat-form-container");
+        const chat_back_btn = document.querySelector("#chat-back-btn");
+        const main_content_wrapper = document.querySelector(".main-content-wrapper");
+        const attachment_input = document.getElementById("attachment");
+        const attachment_preview = document.getElementById("attachment-preview");
+        const message_search_input = document.getElementById("message-search-input");
 
-        async function getMessages(conversation_id, participantId, participantName, participantAvatar){
-            let response = await fetch(`/inbox/message/${conversation_id}`);
-            let result = await response.json();
-            if(!result.errors && result.data){
-                chat_message_title_container.classList.remove('invisible');
-                chat_form_container.classList.remove('invisible');
-                chat_message_title_name.textContent = participantName;
-                const user_online_status_text = document.querySelector(".user-online-status-text");
-                console.log('user_online_status_text ', user_online_status_text);
-                console.log('participantId ', participantId);
-                console.log('onlineUserIds ', onlineUsers);
-                if(onlineUsers.includes(participantId)){
-                    user_online_status_text_container.innerHTML = `<span class="text-sm text-dark-color user-online-status-text user-online-status-text${participantId}" data-user-id="${participantId}">Online</span>`;
-                }else{
-                    user_online_status_text_container.innerHTML = `<span class="text-sm text-dark-color user-online-status-text user-online-status-text${participantId}" data-user-id="${participantId}">Offline</span>`;
-                }
+        const currentUserId = window.loggedInUserId || document.querySelector("meta[name=\"userId\"]")?.getAttribute("content");
+        const socketRef = typeof socket !== "undefined" ? socket : io();
+        let onlineUsersList = [];
 
-                chat_message_avatar_container.innerHTML = participantAvatar != 'undefined' && participantAvatar != 'null' ? `<img src="./uploads/avatars/${participantAvatar}" alt="${participantName}" class="w-10 h-10 rounded-full">` : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${participantName[0].toUpperCase()}</span>
-                                                </div>`;
+        let current_conversation_id = null;
+        let participant = null;
+        let pagination = { loading: false, hasMore: false, nextBefore: null };
 
-                const {data, user_id, conversation_id, participantUser} = result;
-                console.log('participantUser ', participantUser);
-                participant = data.participant;
-                current_conversation_id = conversation_id;
+        socketRef.on("online-users", (onlineUserIds) => {
+            onlineUsersList = onlineUserIds || [];
+            updateOnlineStatusText();
+        });
 
-                updateBlockUnblockUi(loggedInUserId, participantUser.blockable);
-                if(data.messages){
-                    let allMessages = '';
-                    if(data.messages.length > 0){
-                        data.messages.forEach((message) => {
-                            const avatar = message.sender.avatar ? `<img src="./uploads/avatars/${message.sender.avatar}" alt="${message.sender.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
-                                                        <span class="text-3xl">${message.sender.name[0].toUpperCase()}</span>
-                                                </div>`;
-                            const messageClass = message.sender.id === loggedInUserId ? true : false;
-                            const showAvatar = message.sender.id === loggedInUserId ? '' : avatar;
-
-                            let attachments = '';
-                            let attachmentCount = 0;
-                            if(message.attachments && message.attachments.length > 0){
-                                attachmentCount = message.attachments.length;
-                                message.attachments.forEach((attachment) => {
-                                    attachments += `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-52 w-full">`;
-
-                                })
-                            }
-
-                            let messageHtml = `<div class="message-row flex gap-2 text-soft-color ${messageClass ? 'items-end justify-end' : 'items-start' }">
-                                ${showAvatar}
-                                <div class="w-6/12 flex flex-col ${messageClass ? 'items-end' : 'items-start'}">
-                                    <div class="message-text bg-light-color text-sm rounded-md w-fit ${message.text ? 'p-2' : '' }">${message.text}</div>
-                                    ${
-                                        attachmentCount > 0 ? `<div class="attachments grid ${attachmentCount == 4 ? 'grid-cols-2' : 'grid-cols-' + attachmentCount} gap-2 mt-2 bg-light-color p-2 rounded-md">
-                                            ${attachments}
-                                        </div>` : '' 
-                                    }
-                                    
-                                    <div class="text-sm text-dark-color mt-1">${moment(message.date_time).fromNow()}</div>
-                                </div>
-                            </div>`;
-                            allMessages += messageHtml;
-                            chat_message_list.innerHTML = allMessages;
-                        })
-                    }else if(data.messages.length === 0){
-                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
-                                    <h1 class="text-2xl font-bold">You don't have message</h1>
-                                </div>`;
-                    }
-                }
-            }else{
-                toastr.warning(result.errors.common.msg);
+        function toggleChatPanel(show) {
+            if (!main_content_wrapper) return;
+            if (show) {
+                main_content_wrapper.classList.add("show-chat-panel");
+            } else {
+                main_content_wrapper.classList.remove("show-chat-panel");
             }
         }
-        // end get messages
+
+        if (chat_back_btn) {
+            chat_back_btn.addEventListener("click", () => toggleChatPanel(false));
+        }
+
+        function escapeHtml(text) {
+            return String(text || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function escapeRegex(text) {
+            return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        function getOtherUser(conversation) {
+            if (!conversation) return null;
+            const isCreator = String(conversation.creator.id) === String(currentUserId);
+            return isCreator ? conversation.participant : conversation.creator;
+        }
+
+        function renderConversationList(list) {
+            if (!conversation_content_wrapper) return;
+            if (!list || list.length === 0) {
+                conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
+                        <div>
+                            <img src="./images/no-conversation.png" alt="" class="w-32">
+                        </div>
+                        <div>
+                            <h3 class="text-md font-bold">No conversation yet</h3>
+                            <p>Create conversation to contact others</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            const html = list
+                .map((conversation) => {
+                    const other = getOtherUser(conversation);
+                    if (!other) return "";
+                    const previewText = conversation.message?.content || "You are joining this conversation.";
+                    const trimmed = previewText.length > 40 ? `${previewText.slice(0, 40)}...` : previewText;
+                    const isActive = String(current_conversation_id) === String(conversation._id);
+                    const avatarHtml = other.avatar
+                        ? `<img src="./uploads/avatars/${other.avatar}" alt="${escapeHtml(other.name)}" class="w-12 h-12 rounded-full">`
+                        : `<div class="bg-light-color hover-bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-12 h-12">
+                                <span class="text-2xl">${escapeHtml(other.name[0]).toUpperCase()}</span>
+                           </div>`;
+                    return `
+                    <div class="conversation-item ${isActive ? "active" : ""}" data-conversation-id="${conversation._id}" data-participant-id="${other.id}" data-participant-name="${escapeHtml(other.name)}" data-participant-avatar="${other.avatar || ""}">
+                        <div class="conversation-avatar">
+                            ${avatarHtml}
+                            <span class="user-status-badge absolute bottom-0 right-0 inline-block w-3 h-3 bg-gray-400 border-2 border-current rounded-full" data-user-id="${other.id}"></span>
+                        </div>
+                        <div class="conversation-meta">
+                            <div class="conversation-top">
+                                <h3 class="conversation-name">${escapeHtml(other.name)}</h3>
+                                <div class="conversation-time">${moment(conversation.message?.date_time || conversation.updatedAt).fromNow(true)}</div>
+                            </div>
+                            <div class="conversation-preview">${escapeHtml(trimmed)}</div>
+                        </div>
+                    </div>`;
+                })
+                .join("");
+
+            conversation_content_wrapper.innerHTML = html;
+        }
+
+        renderConversationList(conversationDataset);
+
+        conversation_content_wrapper?.addEventListener("click", (event) => {
+            const item = event.target.closest(".conversation-item");
+            if (!item) return;
+            const conversationId = item.dataset.conversationId;
+            const participantId = item.dataset.participantId;
+            const participantName = item.dataset.participantName;
+            const participantAvatar = item.dataset.participantAvatar;
+            openConversation(conversationId, participantId, participantName, participantAvatar);
+        });
+
+        function filterConversationDataset() {
+            const input = document.querySelector(".conversation-search-input");
+            const query = input ? input.value.toLowerCase() : "";
+            const filtered = (conversationDataset || []).filter((item) =>
+                query === "" ||
+                item.creator.name.toLowerCase().includes(query) ||
+                item.participant.name.toLowerCase().includes(query)
+            );
+            renderConversationList(filtered);
+        }
+
+        function updateOnlineStatusText() {
+            if (!participant) return;
+            const isOnline = onlineUsersList.includes(participant.id);
+            user_online_status_text_container.innerHTML = `<span class="text-sm text-dark-color user-online-status-text user-online-status-text${participant.id}" data-user-id="${participant.id}">${isOnline ? "Online" : "Offline"}</span>`;
+        }
+
+        function renderMessage(message) {
+            const isOwn = String(message.sender.id) === String(currentUserId);
+            const avatar = message.sender.avatar
+                ? `<img src="./uploads/avatars/${message.sender.avatar}" alt="${escapeHtml(message.sender.name)}" class="w-8 h-8 rounded-full">`
+                : `<div class="bg-light-color hover-bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-8 h-8">
+                        <span class="text-xl">${escapeHtml(message.sender.name[0]).toUpperCase()}</span>
+                   </div>`;
+
+            const attachments = (message.attachments || [])
+                .map((attachment) => `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-40 w-full object-cover">`)
+                .join("");
+
+            const attachmentGrid = attachments
+                ? `<div class="attachments grid gap-2 mt-2 bg-light-color/50 p-2 rounded-md">
+                        ${attachments}
+                   </div>`
+                : "";
+
+            const messageText = escapeHtml(message.text || "");
+            const messageId = message._id || message.message_id || "";
+            const time = moment(message.createdAt || message.date_time).fromNow();
+
+            return `
+                <div class="message-row ${isOwn ? "is-own" : ""}" data-message-id="${messageId}">
+                    ${isOwn ? "" : avatar}
+                    <div class="message-bubble">
+                        ${messageText ? `<div class="message-text" data-raw="${messageText}">${messageText}</div>` : ""}
+                        ${attachmentGrid}
+                        <div class="message-meta">
+                            <span>${time}</span>
+                            ${isOwn ? `<button class="message-delete-btn" data-message-id="${messageId}" type="button">Delete</button>` : ""}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function loadMessages(reset = false) {
+            if (!current_conversation_id || pagination.loading) return;
+            if (!reset && !pagination.hasMore) return;
+
+            pagination.loading = true;
+            const beforeParam = reset || !pagination.nextBefore ? "" : `&before=${encodeURIComponent(pagination.nextBefore)}`;
+            const response = await fetch(`/inbox/message/${current_conversation_id}?limit=20${beforeParam}`);
+            const result = await response.json();
+
+            if (!result.errors && result.data) {
+                if (reset) {
+                    chat_message_list.innerHTML = "";
+                }
+
+                const messages = result.data.messages || [];
+                const html = messages.map(renderMessage).join("");
+
+                if (messages.length === 0 && reset) {
+                    chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                                <h1 class="text-2xl font-bold">You don't have message</h1>
+                            </div>`;
+                } else if (reset) {
+                    chat_message_list.insertAdjacentHTML("beforeend", html);
+                } else {
+                    const prevScrollHeight = chat_message_list.scrollHeight;
+                    const prevScrollTop = chat_message_list.scrollTop;
+                    chat_message_list.insertAdjacentHTML("afterbegin", html);
+                    chat_message_list.scrollTop = chat_message_list.scrollHeight - prevScrollHeight + prevScrollTop;
+                }
+
+                pagination.hasMore = result.pagination?.hasMore || false;
+                pagination.nextBefore = result.pagination?.nextBefore || null;
+
+                participant = result.data.participant;
+                updateOnlineStatusText();
+                updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
+
+                if (reset) {
+                    chat_message_title_container.classList.remove("invisible");
+                    chat_form_container.classList.remove("invisible");
+                    chat_message_title_name.textContent = participant.name;
+                    chat_message_avatar_container.innerHTML = participant.avatar
+                        ? `<img src="./uploads/avatars/${participant.avatar}" alt="${escapeHtml(participant.name)}" class="w-10 h-10 rounded-full">`
+                        : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                <span class="text-3xl">${escapeHtml(participant.name[0]).toUpperCase()}</span>
+                           </div>`;
+                    toggleChatPanel(true);
+                    chat_message_list.scrollTop = chat_message_list.scrollHeight;
+                }
+            } else if (result.errors?.common?.msg) {
+                toastr.warning(result.errors.common.msg);
+            }
+            pagination.loading = false;
+        }
+
+        function openConversation(conversationId, participantId, participantName, participantAvatar) {
+            current_conversation_id = conversationId;
+            participant = {
+                id: participantId,
+                name: participantName,
+                avatar: participantAvatar || null,
+            };
+            pagination = { loading: false, hasMore: true, nextBefore: null };
+            renderConversationList(conversationDataset);
+            loadMessages(true);
+        }
+
+        chat_message_list?.addEventListener("scroll", () => {
+            if (chat_message_list.scrollTop <= 40) {
+                loadMessages(false);
+            }
+        });
+
+        socketRef.on("new_message", (data) => {
+            if (data.message.conversation_id !== current_conversation_id) return;
+            const html = renderMessage({
+                _id: data.message.message_id,
+                text: data.message.message,
+                attachments: data.message.attachments || [],
+                sender: data.message.sender,
+                createdAt: data.message.date_time,
+            });
+            const wasNearBottom =
+                chat_message_list.scrollTop + chat_message_list.clientHeight >=
+                chat_message_list.scrollHeight - 50;
+            chat_message_list.insertAdjacentHTML("beforeend", html);
+            if (wasNearBottom) {
+                chat_message_list.scrollTop = chat_message_list.scrollHeight;
+            }
+            const previewEl = document.querySelector(`.conversation-item[data-conversation-id="${current_conversation_id}"] .conversation-preview`);
+            const timeEl = document.querySelector(`.conversation-item[data-conversation-id="${current_conversation_id}"] .conversation-time`);
+            if (previewEl) previewEl.textContent = data.message.message || "Attachment";
+            if (timeEl) timeEl.textContent = moment(data.message.date_time).fromNow(true);
+        });
 
         const chat_send_message_form = document.querySelector("#chat-send-message-form");
-        chat_send_message_form.onsubmit = async function(event){
+        chat_send_message_form?.addEventListener("submit", async (event) => {
             event.preventDefault();
+            if (!current_conversation_id || !participant) return;
 
             const formData = new FormData(chat_send_message_form);
-            formData.append('conversation_id', current_conversation_id);
-            formData.append('receiver_id', participant.id);
-            formData.append('receiver_name', participant.name);
-            formData.append('receiver_avatar', participant.avatar || null);
+            formData.append("conversation_id", current_conversation_id);
+            formData.append("receiver_id", participant.id);
+            formData.append("receiver_name", participant.name);
+            formData.append("receiver_avatar", participant.avatar || null);
 
-            if(loggedInUserId){
-                socket.emit('user_online', loggedInUserId);
-            }
-
-            let response = await fetch('/inbox/message', {
-                method: 'POST',
-                body: formData
+            const response = await fetch("/inbox/message", {
+                method: "POST",
+                body: formData,
             });
 
-            let result = await response.json();
+            const result = await response.json();
 
-            if(!result.errors){
+            if (!result.errors) {
                 chat_send_message_form.reset();
-            }else{
+                clearAttachmentPreview();
+            } else {
                 toastr.warning(result.errors.common.msg);
             }
-        }
+        });
 
-        // message delete
-        async function deleteMeassage(){
-            if(!current_conversation_id){
-                toastr.warning("You don't have select any conversation to delete messages.");
-            }else{
-                if(confirm("Are you sure to delete this messages!") == true){
-                    let response = await fetch(`/inbox/message/delete/${current_conversation_id}`, {
-                        method: "DELETE"
-                    });
-                    let result = await response.json();
-                    if(!result.errors){
-                        toastr.success(result.message);
-                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
-                                    <h1 class="text-2xl font-bold">You don't have message</h1>
-                                </div>`;
-                    }else{
-                        toastr.error(result.errors.common.msg);
-                    }
-                }
-            }
-        }
-        // end message delete
-        
-        // message clear
-        async function clearMessage(){
-            if(!current_conversation_id){
-                toastr.warning("You don't have select any conversation to clear messages.");
-            }else{
-                if(confirm("Are you sure to clear this messages!") == true){
-                    let response = await fetch(`/inbox/message/clear/${current_conversation_id}`, {
-                        method: "DELETE"
-                    });
-                    let result = await response.json();
-                    if(!result.errors){
-                        toastr.success(result.message);
-                        chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
-                                    <h1 class="text-2xl font-bold">You don't have message</h1>
-                                </div>`;
-                    }else{
-                        toastr.error(result.errors.common.msg);
-                    }
-                }
-            }
-        }
-        // end message clear
-
-        // user block
-        const chat_message_block_container = document.querySelector('.chat-message-block-container');
-        async function userBlock(){
-            if(participant != null){
-                let response = await fetch('/users/block', {
-                    method: "POST",
-                    body: JSON.stringify({user_id: participant.id}),
-                    headers: {"Content-type": "application/json; charset=UTF-8"}
-                });
-                let result = await response.json();
-                if(!result.errors){
-                    toastr.success(result.message);
-                    updateBlockUnblockUi(loggedInUserId, result.participantUser.blockable)
-                }else{
-                    toastr.error(result.errors.common.msg);
-                    updateBlockUnblockUi(loggedInUserId, null);
-                }
-            }else{
-                toastr.warning("Please provide a valid person.");
-            }
-        }
-        // end user block
-    
-        function updateBlockUnblockUi(loggedInUserId, blockable){
-            console.log('loggedInUserId ', loggedInUserId)
-            console.log('blockable ', blockable)
-            if (loggedInUserId && blockable && blockable.some(blockedObj => blockedObj.id === loggedInUserId)) {
-            // The logged in user is blocked by the participant user
-            chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="userUnblock()">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" onclick="userUnblock()">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-                        </svg>Unblock</div>`;
-                document.querySelector('.blocked-message-form-container').innerHTML = `<h4></h4>`;
+        chat_message_list?.addEventListener("click", async (event) => {
+            const deleteBtn = event.target.closest(".message-delete-btn");
+            if (!deleteBtn) return;
+            const messageId = deleteBtn.dataset.messageId;
+            if (!messageId) return;
+            const response = await fetch(`/inbox/message/single/${messageId}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                const row = chat_message_list.querySelector(`.message-row[data-message-id="${messageId}"]`);
+                if (row) row.remove();
             } else {
-            // The logged in user is not blocked by the participant user
-                chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="userBlock()">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" onclick="userUnblock()">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-                        </svg>Block</div>`;
+                toastr.error(result.errors.common.msg);
+            }
+        });
+
+        async function deleteMeassage() {
+            if (!current_conversation_id) {
+                toastr.warning("You don't have select any conversation to delete messages.");
+                return;
+            }
+            if (confirm("Are you sure to delete this messages!") !== true) return;
+            const response = await fetch(`/inbox/message/delete/${current_conversation_id}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                            <h1 class="text-2xl font-bold">You don't have message</h1>
+                        </div>`;
+            } else {
+                toastr.error(result.errors.common.msg);
             }
         }
-    
-        // message search start
-        const message_search_input = document.getElementById("message-search-input");
-        message_search_input.addEventListener('keyup', function(event){
-            let user_typed_message_search_text = this.value.toLowerCase();
-            let message_row = document.querySelectorAll('.message-row:not(.message-nothing)');
-            if(message_row.length > 0){
-                message_row.forEach((message) => {
-                    let message_text = message.querySelector('.message-text').textContent.toLowerCase();
-                    if(message_text.includes(user_typed_message_search_text)){
-                        let highlightedText = message.querySelector('.message-text').textContent.replace(
-                                new RegExp(`\\b${user_typed_message_search_text}\\b`, 'gi'),
-                                    match => `<span style="background-color: yellow; color: #000;">${match}</span>`
-                                );
-                        message.querySelector('.message-text').innerHTML = highlightedText;
 
-                        message.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                })
-
-            }else{
-                toastr.warning("You don't have any message yet to search.");
+        async function clearMessage() {
+            if (!current_conversation_id) {
+                toastr.warning("You don't have select any conversation to clear messages.");
+                return;
             }
-        })
-        // message search end
-    
-    </script>
+            if (confirm("Are you sure to clear this messages!") !== true) return;
+            const response = await fetch(`/inbox/message/clear/${current_conversation_id}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                            <h1 class="text-2xl font-bold">You don't have message</h1>
+                        </div>`;
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        const chat_message_block_container = document.querySelector(".chat-message-block-container");
+        async function userBlock() {
+            if (!participant) {
+                toastr.warning("Please provide a valid person.");
+                return;
+            }
+            const response = await fetch("/users/block", {
+                method: "POST",
+                body: JSON.stringify({ user_id: participant.id }),
+                headers: { "Content-type": "application/json; charset=UTF-8" },
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        async function userUnblock() {
+            if (!participant) {
+                toastr.warning("Please provide a valid person.");
+                return;
+            }
+            const response = await fetch("/users/unblock", {
+                method: "POST",
+                body: JSON.stringify({ user_id: participant.id }),
+                headers: { "Content-type": "application/json; charset=UTF-8" },
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        function updateBlockUnblockUi(loggedInUserId, blockable) {
+            const blocked = loggedInUserId && blockable && blockable.some((blockedObj) => String(blockedObj.id) === String(loggedInUserId));
+            if (blocked) {
+                chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="userUnblock()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>Unblock</div>`;
+                document.querySelector(".blocked-message-form-container").innerHTML = `<h4 class="text-soft-color">You blocked this user.</h4>`;
+                chat_form_container.classList.add("hidden");
+                document.querySelector(".blocked-message-form-container").classList.remove("hidden");
+            } else {
+                chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="userBlock()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>Block</div>`;
+                document.querySelector(".blocked-message-form-container").innerHTML = "";
+                chat_form_container.classList.remove("hidden");
+                document.querySelector(".blocked-message-form-container").classList.add("hidden");
+            }
+        }
+
+        if (message_search_input) {
+            message_search_input.addEventListener("input", () => {
+                const query = message_search_input.value.trim().toLowerCase();
+                const rows = chat_message_list.querySelectorAll(".message-row:not(.message-nothing)");
+                rows.forEach((row) => {
+                    const textEl = row.querySelector(".message-text");
+                    if (!textEl) return;
+                    const raw = textEl.dataset.raw || textEl.textContent;
+                    textEl.dataset.raw = raw;
+                    textEl.innerHTML = escapeHtml(raw);
+                });
+                if (!query) return;
+
+                let firstMatch = null;
+                rows.forEach((row) => {
+                    const textEl = row.querySelector(".message-text");
+                    if (!textEl) return;
+                    const raw = textEl.dataset.raw || textEl.textContent;
+                    if (raw.toLowerCase().includes(query)) {
+                        const highlighted = raw.replace(new RegExp(escapeRegex(query), "gi"), (match) => `<span class="message-highlight">${match}</span>`);
+                        textEl.innerHTML = highlighted;
+                        if (!firstMatch) firstMatch = row;
+                    }
+                });
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+            });
+        }
+
+        function clearAttachmentPreview() {
+            if (!attachment_preview) return;
+            attachment_preview.innerHTML = "";
+            attachment_preview.classList.add("hidden");
+        }
+
+        if (attachment_input) {
+            attachment_input.addEventListener("change", () => {
+                if (!attachment_preview) return;
+                const files = Array.from(attachment_input.files || []);
+                if (!files.length) {
+                    clearAttachmentPreview();
+                    return;
+                }
+                const previews = files
+                    .map((file) => {
+                        const url = URL.createObjectURL(file);
+                        return `<div class="attachment-thumb">
+                                    <img src="${url}" alt="${escapeHtml(file.name)}">
+                                </div>`;
+                    })
+                    .join("");
+                attachment_preview.innerHTML = previews;
+                attachment_preview.classList.remove("hidden");
+            });
+        }
+</script>");
+        }
+
+        function getOtherUser(conversation) {
+            if (!conversation) return null;
+            const isCreator = String(conversation.creator.id) === String(currentUserId);
+            return isCreator ? conversation.participant : conversation.creator;
+        }
+
+        function renderConversationList(list) {
+            if (!conversation_content_wrapper) return;
+            if (!list || list.length === 0) {
+                conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
+                        <div>
+                            <img src="./images/no-conversation.png" alt="" class="w-32">
+                        </div>
+                        <div>
+                            <h3 class="text-md font-bold">No conversation yet</h3>
+                            <p>Create conversation to contact others</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            const html = list
+                .map((conversation) => {
+                    const other = getOtherUser(conversation);
+                    if (!other) return "";
+                    const previewText = conversation.message?.content || "You are joining this conversation.";
+                    const trimmed = previewText.length > 40 ? `${previewText.slice(0, 40)}...` : previewText;
+                    const isActive = String(current_conversation_id) === String(conversation._id);
+                    const avatarHtml = other.avatar
+                        ? `<img src="./uploads/avatars/${other.avatar}" alt="${escapeHtml(other.name)}" class="w-12 h-12 rounded-full">`
+                        : `<div class="bg-light-color hover-bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-12 h-12">
+                                <span class="text-2xl">${escapeHtml(other.name[0]).toUpperCase()}</span>
+                           </div>`;
+                    return `
+                    <div class="conversation-item ${isActive ? "active" : ""}" data-conversation-id="${conversation._id}" data-participant-id="${other.id}" data-participant-name="${escapeHtml(other.name)}" data-participant-avatar="${other.avatar || ""}">
+                        <div class="conversation-avatar">
+                            ${avatarHtml}
+                            <span class="user-status-badge absolute bottom-0 right-0 inline-block w-3 h-3 bg-gray-400 border-2 border-current rounded-full" data-user-id="${other.id}"></span>
+                        </div>
+                        <div class="conversation-meta">
+                            <div class="conversation-top">
+                                <h3 class="conversation-name">${escapeHtml(other.name)}</h3>
+                                <div class="conversation-time">${moment(conversation.message?.date_time || conversation.updatedAt).fromNow(true)}</div>
+                            </div>
+                            <div class="conversation-preview">${escapeHtml(trimmed)}</div>
+                        </div>
+                    </div>`;
+                })
+                .join("");
+
+            conversation_content_wrapper.innerHTML = html;
+        }
+
+        renderConversationList(conversationDataset);
+
+        conversation_content_wrapper?.addEventListener("click", (event) => {
+            const item = event.target.closest(".conversation-item");
+            if (!item) return;
+            const conversationId = item.dataset.conversationId;
+            const participantId = item.dataset.participantId;
+            const participantName = item.dataset.participantName;
+            const participantAvatar = item.dataset.participantAvatar;
+            openConversation(conversationId, participantId, participantName, participantAvatar);
+        });
+
+        function filterConversationDataset() {
+            const input = document.querySelector(".conversation-search-input");
+            const query = input ? input.value.toLowerCase() : "";
+            const filtered = (conversationDataset || []).filter((item) =>
+                query === "" ||
+                item.creator.name.toLowerCase().includes(query) ||
+                item.participant.name.toLowerCase().includes(query)
+            );
+            renderConversationList(filtered);
+        }
+
+        function updateOnlineStatusText() {
+            if (!participant) return;
+            const isOnline = onlineUsersList.includes(participant.id);
+            user_online_status_text_container.innerHTML = `<span class="text-sm text-dark-color user-online-status-text user-online-status-text${participant.id}" data-user-id="${participant.id}">${isOnline ? "Online" : "Offline"}</span>`;
+        }
+
+        function renderMessage(message) {
+            const isOwn = String(message.sender.id) === String(currentUserId);
+            const avatar = message.sender.avatar
+                ? `<img src="./uploads/avatars/${message.sender.avatar}" alt="${escapeHtml(message.sender.name)}" class="w-8 h-8 rounded-full">`
+                : `<div class="bg-light-color hover-bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-8 h-8">
+                        <span class="text-xl">${escapeHtml(message.sender.name[0]).toUpperCase()}</span>
+                   </div>`;
+
+            const attachments = (message.attachments || [])
+                .map((attachment) => `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-40 w-full object-cover">`)
+                .join("");
+
+            const attachmentGrid = attachments
+                ? `<div class="attachments grid gap-2 mt-2 bg-light-color/50 p-2 rounded-md">
+                        ${attachments}
+                   </div>`
+                : "";
+
+            const messageText = escapeHtml(message.text || "");
+            const messageId = message._id || message.message_id || "";
+            const time = moment(message.createdAt || message.date_time).fromNow();
+
+            return `
+                <div class="message-row ${isOwn ? "is-own" : ""}" data-message-id="${messageId}">
+                    ${isOwn ? "" : avatar}
+                    <div class="message-bubble">
+                        ${messageText ? `<div class="message-text" data-raw="${messageText}">${messageText}</div>` : ""}
+                        ${attachmentGrid}
+                        <div class="message-meta">
+                            <span>${time}</span>
+                            ${isOwn ? `<button class="message-delete-btn" data-message-id="${messageId}" type="button">Delete</button>` : ""}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function loadMessages(reset = false) {
+            if (!current_conversation_id || pagination.loading) return;
+            if (!reset && !pagination.hasMore) return;
+
+            pagination.loading = true;
+            const beforeParam = reset || !pagination.nextBefore ? "" : `&before=${encodeURIComponent(pagination.nextBefore)}`;
+            const response = await fetch(`/inbox/message/${current_conversation_id}?limit=20${beforeParam}`);
+            const result = await response.json();
+
+            if (!result.errors && result.data) {
+                if (reset) {
+                    chat_message_list.innerHTML = "";
+                }
+
+                const messages = result.data.messages || [];
+                const html = messages.map(renderMessage).join("");
+
+                if (messages.length === 0 && reset) {
+                    chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                                <h1 class="text-2xl font-bold">You don't have message</h1>
+                            </div>`;
+                } else if (reset) {
+                    chat_message_list.insertAdjacentHTML("beforeend", html);
+                } else {
+                    const prevScrollHeight = chat_message_list.scrollHeight;
+                    const prevScrollTop = chat_message_list.scrollTop;
+                    chat_message_list.insertAdjacentHTML("afterbegin", html);
+                    chat_message_list.scrollTop = chat_message_list.scrollHeight - prevScrollHeight + prevScrollTop;
+                }
+
+                pagination.hasMore = result.pagination?.hasMore || false;
+                pagination.nextBefore = result.pagination?.nextBefore || null;
+
+                participant = result.data.participant;
+                updateOnlineStatusText();
+                updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
+
+                if (reset) {
+                    chat_message_title_container.classList.remove("invisible");
+                    chat_form_container.classList.remove("invisible");
+                    chat_message_title_name.textContent = participant.name;
+                    chat_message_avatar_container.innerHTML = participant.avatar
+                        ? `<img src="./uploads/avatars/${participant.avatar}" alt="${escapeHtml(participant.name)}" class="w-10 h-10 rounded-full">`
+                        : `<div class="bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
+                                <span class="text-3xl">${escapeHtml(participant.name[0]).toUpperCase()}</span>
+                           </div>`;
+                    toggleChatPanel(true);
+                    chat_message_list.scrollTop = chat_message_list.scrollHeight;
+                }
+            } else if (result.errors?.common?.msg) {
+                toastr.warning(result.errors.common.msg);
+            }
+            pagination.loading = false;
+        }
+
+        function openConversation(conversationId, participantId, participantName, participantAvatar) {
+            current_conversation_id = conversationId;
+            participant = {
+                id: participantId,
+                name: participantName,
+                avatar: participantAvatar || null,
+            };
+            pagination = { loading: false, hasMore: true, nextBefore: null };
+            renderConversationList(conversationDataset);
+            loadMessages(true);
+        }
+
+        chat_message_list?.addEventListener("scroll", () => {
+            if (chat_message_list.scrollTop <= 40) {
+                loadMessages(false);
+            }
+        });
+
+        socketRef.on("new_message", (data) => {
+            if (data.message.conversation_id !== current_conversation_id) return;
+            const html = renderMessage({
+                _id: data.message.message_id,
+                text: data.message.message,
+                attachments: data.message.attachments || [],
+                sender: data.message.sender,
+                createdAt: data.message.date_time,
+            });
+            const wasNearBottom =
+                chat_message_list.scrollTop + chat_message_list.clientHeight >=
+                chat_message_list.scrollHeight - 50;
+            chat_message_list.insertAdjacentHTML("beforeend", html);
+            if (wasNearBottom) {
+                chat_message_list.scrollTop = chat_message_list.scrollHeight;
+            }
+            const previewEl = document.querySelector(`.conversation-item[data-conversation-id="${current_conversation_id}"] .conversation-preview`);
+            const timeEl = document.querySelector(`.conversation-item[data-conversation-id="${current_conversation_id}"] .conversation-time`);
+            if (previewEl) previewEl.textContent = data.message.message || "Attachment";
+            if (timeEl) timeEl.textContent = moment(data.message.date_time).fromNow(true);
+        });
+
+        const chat_send_message_form = document.querySelector("#chat-send-message-form");
+        chat_send_message_form?.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (!current_conversation_id || !participant) return;
+
+            const formData = new FormData(chat_send_message_form);
+            formData.append("conversation_id", current_conversation_id);
+            formData.append("receiver_id", participant.id);
+            formData.append("receiver_name", participant.name);
+            formData.append("receiver_avatar", participant.avatar || null);
+
+            const response = await fetch("/inbox/message", {
+                method: "POST",
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (!result.errors) {
+                chat_send_message_form.reset();
+                clearAttachmentPreview();
+            } else {
+                toastr.warning(result.errors.common.msg);
+            }
+        });
+
+        chat_message_list?.addEventListener("click", async (event) => {
+            const deleteBtn = event.target.closest(".message-delete-btn");
+            if (!deleteBtn) return;
+            const messageId = deleteBtn.dataset.messageId;
+            if (!messageId) return;
+            const response = await fetch(`/inbox/message/single/${messageId}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                const row = chat_message_list.querySelector(`.message-row[data-message-id="${messageId}"]`);
+                if (row) row.remove();
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        });
+
+        async function deleteMeassage() {
+            if (!current_conversation_id) {
+                toastr.warning("You don't have select any conversation to delete messages.");
+                return;
+            }
+            if (confirm("Are you sure to delete this messages!") !== true) return;
+            const response = await fetch(`/inbox/message/delete/${current_conversation_id}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                            <h1 class="text-2xl font-bold">You don't have message</h1>
+                        </div>`;
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        async function clearMessage() {
+            if (!current_conversation_id) {
+                toastr.warning("You don't have select any conversation to clear messages.");
+                return;
+            }
+            if (confirm("Are you sure to clear this messages!") !== true) return;
+            const response = await fetch(`/inbox/message/clear/${current_conversation_id}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
+                            <h1 class="text-2xl font-bold">You don't have message</h1>
+                        </div>`;
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        const chat_message_block_container = document.querySelector(".chat-message-block-container");
+        async function userBlock() {
+            if (!participant) {
+                toastr.warning("Please provide a valid person.");
+                return;
+            }
+            const response = await fetch("/users/block", {
+                method: "POST",
+                body: JSON.stringify({ user_id: participant.id }),
+                headers: { "Content-type": "application/json; charset=UTF-8" },
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        async function userUnblock() {
+            if (!participant) {
+                toastr.warning("Please provide a valid person.");
+                return;
+            }
+            const response = await fetch("/users/unblock", {
+                method: "POST",
+                body: JSON.stringify({ user_id: participant.id }),
+                headers: { "Content-type": "application/json; charset=UTF-8" },
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message);
+                updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        function updateBlockUnblockUi(loggedInUserId, blockable) {
+            const blocked = loggedInUserId && blockable && blockable.some((blockedObj) => String(blockedObj.id) === String(loggedInUserId));
+            if (blocked) {
+                chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="userUnblock()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>Unblock</div>`;
+                document.querySelector(".blocked-message-form-container").innerHTML = `<h4 class="text-soft-color">You blocked this user.</h4>`;
+                chat_form_container.classList.add("hidden");
+                document.querySelector(".blocked-message-form-container").classList.remove("hidden");
+            } else {
+                chat_message_block_container.innerHTML = `<div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="userBlock()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>Block</div>`;
+                document.querySelector(".blocked-message-form-container").innerHTML = "";
+                chat_form_container.classList.remove("hidden");
+                document.querySelector(".blocked-message-form-container").classList.add("hidden");
+            }
+        }
+
+        if (message_search_input) {
+            message_search_input.addEventListener("input", () => {
+                const query = message_search_input.value.trim().toLowerCase();
+                const rows = chat_message_list.querySelectorAll(".message-row:not(.message-nothing)");
+                rows.forEach((row) => {
+                    const textEl = row.querySelector(".message-text");
+                    if (!textEl) return;
+                    const raw = textEl.dataset.raw || textEl.textContent;
+                    textEl.dataset.raw = raw;
+                    textEl.innerHTML = escapeHtml(raw);
+                });
+                if (!query) return;
+
+                let firstMatch = null;
+                rows.forEach((row) => {
+                    const textEl = row.querySelector(".message-text");
+                    if (!textEl) return;
+                    const raw = textEl.dataset.raw || textEl.textContent;
+                    if (raw.toLowerCase().includes(query)) {
+                        const highlighted = raw.replace(new RegExp(escapeRegex(query), "gi"), (match) => `<span class="message-highlight">${match}</span>`);
+                        textEl.innerHTML = highlighted;
+                        if (!firstMatch) firstMatch = row;
+                    }
+                });
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+            });
+        }
+
+        function clearAttachmentPreview() {
+            if (!attachment_preview) return;
+            attachment_preview.innerHTML = "";
+            attachment_preview.classList.add("hidden");
+        }
+
+        if (attachment_input) {
+            attachment_input.addEventListener("change", () => {
+                if (!attachment_preview) return;
+                const files = Array.from(attachment_input.files || []);
+                if (!files.length) {
+                    clearAttachmentPreview();
+                    return;
+                }
+                const previews = files
+                    .map((file) => {
+                        const url = URL.createObjectURL(file);
+                        return `<div class="attachment-thumb">
+                                    <img src="${url}" alt="${escapeHtml(file.name)}">
+                                </div>`;
+                    })
+                    .join("");
+                attachment_preview.innerHTML = previews;
+                attachment_preview.classList.remove("hidden");
+            });
+        }
+</script>
 </body>
 </html>
+
+

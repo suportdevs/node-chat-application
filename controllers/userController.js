@@ -123,11 +123,14 @@ async function block(req, res, next) {
         { new: true }
       );
       if (!user) {
-        res.status(500).json({
-          errors: { common: { msg: "Something went wrong." } },
+        return res.status(404).json({
+          errors: { common: { msg: "User not found." } },
         });
       }
-      res.status(200).json({ message: "User blocked successfull." });
+      res.status(200).json({
+        message: "User blocked successfull.",
+        participantUser: { blockable: user.blockable },
+      });
     } catch (error) {
       res.status(500).json({ errors: { common: { msg: error.message } } });
     }
@@ -142,8 +145,16 @@ async function unblock(req, res, next) {
   if (req.body.user_id) {
     try {
       const user = await User.findById(req.body.user_id);
-      user.unblockUser(req.user.user_id);
-      res.status(200).json({ message: "User unblocked successfull" });
+      if (!user) {
+        return res.status(404).json({
+          errors: { common: { msg: "User not found." } },
+        });
+      }
+      const updated = await user.unblockUser(req.user.user_id);
+      res.status(200).json({
+        message: "User unblocked successfull",
+        participantUser: { blockable: updated.blockable },
+      });
     } catch (error) {
       res.status(500).json({ errors: { common: { msg: error.message } } });
     }

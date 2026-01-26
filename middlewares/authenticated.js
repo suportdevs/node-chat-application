@@ -21,7 +21,7 @@ const authenticated = (req, res, next) => {
           res.redirect("/");
         } else {
           res
-            .status(500)
+            .status(401)
             .json({ errors: { common: { msg: "Token is not valid!" } } });
         }
       }
@@ -30,7 +30,7 @@ const authenticated = (req, res, next) => {
         res.redirect("/");
       } else {
         res
-          .status(500)
+          .status(401)
           .json({ errors: { common: { msg: "Authenticated faild!" } } });
       }
     }
@@ -39,7 +39,7 @@ const authenticated = (req, res, next) => {
       res.redirect("/");
     } else {
       res
-        .status(500)
+        .status(401)
         .json({ errors: { common: { msg: "Authenticated faild!" } } });
     }
   }

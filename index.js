@@ -5,6 +5,9 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const moment = require("moment");
 const http = require("http");
+const helmet = require("helmet");
+const compression = require("compression");
+const rateLimit = require("express-rate-limit");
 
 // internal imports
 const { notFoundHandler, errorHandler } = require("./middlewares/errorHandler");
@@ -24,9 +27,29 @@ global.io = io;
 // Database connection
 dbConnection();
 
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
+
 // request parse
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+
+// basic hardening
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
+app.use(compression());
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 600,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+  })
+);
 
 // set view engine
 app.set("view engine", "ejs");
@@ -41,23 +64,61 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use("/", authRouter);
 app.use("/users", userRouter);
 app.use("/inbox", inboxRouter);
+
+app.get("/healthz", (req, res) => {
+  res.status(200).json({ ok: true, uptime: process.uptime() });
+});
 // Must be declared outside io.on()
+// Map<userId, Set<socketId>>
 const onlineUsers = new Map();
 
+function getAnySocketId(userId) {
+  const sockets = onlineUsers.get(userId);
+  if (!sockets || sockets.size === 0) return null;
+  return sockets.values().next().value;
+}
+
 io.on("connection", (socket) => {
-  socket.on("user-connected", (userId) => {
-    // Update or insert user socket
-    onlineUsers.set(userId, socket.id);
+  socket.on("user-connected", async (userId) => {
+    socket.data.userId = userId;
+    const sockets = onlineUsers.get(userId) || new Set();
+    sockets.add(socket.id);
+    onlineUsers.set(userId, sockets);
+
+    try {
+      await User.findByIdAndUpdate(
+        userId,
+        { onlineStatus: "Online", lastSeen: new Date() },
+        { new: false }
+      );
+    } catch (err) {
+      console.error("Online status update failed", err);
+    }
+
     // Broadcast updated online user IDs
     io.emit("online-users", Array.from(onlineUsers.keys()));
   });
 
-  socket.on("disconnect", () => {
-    // Find and remove disconnected socket
-    for (let [userId, socketId] of onlineUsers.entries()) {
-      if (socketId === socket.id) {
-        onlineUsers.delete(userId);
-        break;
+  socket.on("disconnect", async () => {
+    const userId = socket.data.userId;
+    if (userId) {
+      const sockets = onlineUsers.get(userId);
+      if (sockets) {
+        sockets.delete(socket.id);
+        if (sockets.size === 0) {
+          onlineUsers.delete(userId);
+          try {
+            await User.findByIdAndUpdate(
+              userId,
+              { onlineStatus: "Offline", lastSeen: new Date() },
+              { new: false }
+            );
+          } catch (err) {
+            console.error("Offline status update failed", err);
+          }
+        } else {
+          onlineUsers.set(userId, sockets);
+        }
       }
     }
     // Broadcast updated online users
@@ -67,10 +128,10 @@ io.on("connection", (socket) => {
   /* --- SIGNALING for WebRTC --- */
 
   // Caller wants to call targetUserId
-  socket.on("call-user", ({ from, to, offer /* sdp offer */ }) => {
-    const targetSocketId = onlineUsers.get(to);
+  socket.on("call-user", ({ from, to, offer, callType /* sdp offer */ }) => {
+    const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
-      io.to(targetSocketId).emit("incoming-call", { from, offer });
+      io.to(targetSocketId).emit("incoming-call", { from, offer, callType });
     } else {
       // target offline - inform caller
       socket.emit("user-unavailable", { to });
@@ -79,7 +140,7 @@ io.on("connection", (socket) => {
 
   // Callee sends answer back
   socket.on("make-answer", ({ to, answer }) => {
-    const targetSocketId = onlineUsers.get(to);
+    const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
       io.to(targetSocketId).emit("call-accepted", { answer });
     }
@@ -87,17 +148,33 @@ io.on("connection", (socket) => {
 
   // Exchanging ICE candidates
   socket.on("ice-candidate", ({ to, candidate }) => {
-    const targetSocketId = onlineUsers.get(to);
+    const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
       io.to(targetSocketId).emit("ice-candidate", { candidate });
     }
   });
 
   // Caller cancels or hangup
-  socket.on("end-call", ({ to }) => {
-    const targetSocketId = onlineUsers.get(to);
+  socket.on("end-call", ({ to, from }) => {
+    const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
-      io.to(targetSocketId).emit("call-ended");
+      io.to(targetSocketId).emit("call-ended", { from });
+    }
+  });
+
+  // Callee rejects a call
+  socket.on("reject-call", ({ to, from }) => {
+    const targetSocketId = getAnySocketId(to);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("call-rejected", { from });
+    }
+  });
+
+  // Callee is busy
+  socket.on("call-busy", ({ to, from }) => {
+    const targetSocketId = getAnySocketId(to);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("call-busy", { from });
     }
   });
 });
@@ -111,6 +188,17 @@ app.use(errorHandler);
 server.listen(process.env.PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
+
+function shutdown(signal) {
+  console.log(`Received ${signal}, shutting down...`);
+  server.close(() => {
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(1), 10_000).unref();
+}
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
 
 // server.listen(process.env.PORT, () => {
 //   console.log(`Application listen to port ${process.env.PORT}`);

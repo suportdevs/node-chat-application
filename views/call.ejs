@@ -1,30 +1,129 @@
 <!-- views/call.ejs -->
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <title>Video Call</title>
-  <style>
-    #videos { display:flex; gap:10px; }
-    video { width: 45%; border: 1px solid #ccc; background:#000; }
-    #controls { margin-top:10px; }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calls • NodeChat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheet/call.css">
 </head>
-<body>
-  <h3>Logged in as: <span id="my-id"><%= userId %></span></h3>
+<body class="call-page">
+  <div class="ambient"></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark"></div>
+        <div class="brand-text">NodeChat</div>
+      </div>
+      <div class="me-card">
+        <div class="avatar" id="meAvatar">NC</div>
+        <div class="me-meta">
+          <div class="me-label">You</div>
+          <div class="me-id" id="my-id"><%= userId %></div>
+        </div>
+      </div>
 
-  <div id="user-list"></div>
+      <div class="section-header">
+        <div class="section-title">Online now</div>
+        <div class="pill" id="onlineCount">0</div>
+      </div>
 
-  <div id="call-panel" style="display:none">
-    <div id="videos">
-      <video id="localVideo" autoplay playsinline muted></video>
-      <video id="remoteVideo" autoplay playsinline></video>
-    </div>
-    <div id="controls">
-      <button id="hangupBtn">Hang up</button>
+      <div class="user-list" id="user-list"></div>
+    </aside>
+
+    <main class="stage">
+      <div class="stage-header">
+        <div>
+          <div class="stage-title">Calling</div>
+          <div class="stage-subtitle">Start a voice or video call like WhatsApp.</div>
+        </div>
+        <div class="status-pill" id="callStatus">Ready</div>
+      </div>
+
+      <div class="stage-body">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon"></div>
+          <h3>Select a contact to start a call</h3>
+          <p>Choose voice or video from the list on the left.</p>
+        </div>
+
+        <div class="call-stage hidden" id="callStage" data-call-type="video">
+          <div class="call-top">
+            <div class="call-peer">
+              <div class="avatar avatar-lg" id="remoteAvatar">RT</div>
+              <div>
+                <div class="call-peer-name" id="callPeerName">Waiting...</div>
+                <div class="call-peer-meta" id="callMeta">Connecting</div>
+              </div>
+            </div>
+            <div class="call-timer" id="callTimer">00:00</div>
+          </div>
+
+          <div class="video-area" id="videoArea">
+            <div class="video-tile remote">
+              <video id="remoteVideo" autoplay playsinline></video>
+              <div class="video-fallback" id="remoteFallback">
+                <div class="avatar avatar-xl" id="remoteFallbackAvatar">RT</div>
+                <div class="fallback-label">Audio only</div>
+              </div>
+            </div>
+            <div class="video-tile local">
+              <video id="localVideo" autoplay playsinline muted></video>
+              <div class="video-fallback" id="localFallback">
+                <div class="avatar avatar-md" id="localFallbackAvatar">ME</div>
+                <div class="fallback-label">Camera off</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="call-controls">
+            <button class="control-btn" id="muteBtn" type="button">
+              <span class="icon mic"></span>
+              <span class="label">Mute</span>
+            </button>
+            <button class="control-btn" id="cameraBtn" type="button">
+              <span class="icon cam"></span>
+              <span class="label">Camera</span>
+            </button>
+            <button class="control-btn danger" id="endBtn" type="button">
+              <span class="icon end"></span>
+              <span class="label">End</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay hidden" id="incomingOverlay">
+    <div class="overlay-card">
+      <div class="avatar avatar-lg" id="incomingAvatar">IN</div>
+      <div class="overlay-title" id="incomingTitle">Incoming call</div>
+      <div class="overlay-subtitle" id="incomingSubtitle">From</div>
+      <div class="overlay-actions">
+        <button class="btn ghost" id="declineBtn" type="button">Decline</button>
+        <button class="btn accept" id="acceptBtn" type="button">Accept</button>
+      </div>
     </div>
   </div>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 
+  <div class="overlay hidden" id="outgoingOverlay">
+    <div class="overlay-card">
+      <div class="avatar avatar-lg" id="outgoingAvatar">OU</div>
+      <div class="overlay-title">Calling...</div>
+      <div class="overlay-subtitle" id="outgoingSubtitle">Waiting for answer</div>
+      <div class="overlay-actions">
+        <button class="btn danger" id="cancelBtn" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="callToast"></div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
   <script>
     // expose server-provided user id to client
     window.MY_USER_ID = "<%= userId %>";

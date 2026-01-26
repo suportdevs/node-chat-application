@@ -81,10 +81,24 @@ async function addConversation(req, res, next) {
 
 async function getMessages(req, res, next) {
   try {
-    let messages = await Message.find({
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 50);
+    const before = req.query.before ? new Date(req.query.before) : null;
+    const query = {
       conversation_id: req.params.conversation_id,
       hideable: { $nin: [req.user.user_id] },
-    }).sort("-createdAt");
+    };
+    if (before && !Number.isNaN(before.getTime())) {
+      query.createdAt = { $lt: before };
+    }
+
+    let messages = await Message.find(query)
+      .sort({ createdAt: -1 })
+      .limit(limit + 1);
+
+    const hasMore = messages.length > limit;
+    if (hasMore) messages = messages.slice(0, limit);
+    messages = messages.reverse();
+
     const { participant } = await Conversation.findById(
       req.params.conversation_id
     );
@@ -92,6 +106,10 @@ async function getMessages(req, res, next) {
 
     res.status(200).json({
       data: { messages, participant },
+      pagination: {
+        hasMore,
+        nextBefore: messages.length ? messages[0].createdAt : null,
+      },
       user_id: req.user.user_id,
       conversation_id: req.params.conversation_id,
       participantUser,
@@ -138,7 +156,7 @@ async function sendMessage(req, res, next) {
     conversation.message = {
       id: result._id,
       content: req.body.message,
-      date_time: Date.now(),
+      date_time: result.createdAt,
     };
 
     await conversation.save();
@@ -153,7 +171,8 @@ async function sendMessage(req, res, next) {
           avatar: req.user.avatar || null,
         },
         conversation_id: req.body.conversation_id,
-        date_time: result.date_id,
+        date_time: result.createdAt,
+        message_id: result._id,
       },
     });
 
@@ -178,7 +197,7 @@ async function deleteMessage(req, res, next) {
 
       // get lasted message
       const lastMessage = await Message.findOne({ conversation_id })
-        .sort({ created_at: -1 }) // Sort by created_at field in descending order
+        .sort({ createdAt: -1 })
         .limit(1);
 
       if (lastMessage) {
@@ -187,7 +206,7 @@ async function deleteMessage(req, res, next) {
           message: {
             id: lastMessage._id,
             content: lastMessage.text,
-            date_time: lastMessage.created_at,
+            date_time: lastMessage.createdAt,
           },
         });
       }
@@ -204,6 +223,61 @@ async function deleteMessage(req, res, next) {
         },
       },
     });
+  }
+}
+
+async function deleteSingleMessage(req, res, next) {
+  const messageId = req.params.message_id;
+  if (!messageId) {
+    return res.status(400).json({
+      errors: { common: { msg: "Message id is required." } },
+    });
+  }
+  try {
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({
+        errors: { common: { msg: "Message not found." } },
+      });
+    }
+    const isParticipant =
+      message.sender?.id?.toString() === req.user.user_id.toString() ||
+      message.receiver?.id?.toString() === req.user.user_id.toString();
+    if (!isParticipant) {
+      return res.status(403).json({
+        errors: { common: { msg: "Not allowed." } },
+      });
+    }
+    await Message.updateOne(
+      { _id: messageId },
+      { $addToSet: { hideable: req.user.user_id } }
+    );
+    res.status(200).json({ message: "Message removed." });
+  } catch (error) {
+    res.status(500).json({ errors: { common: { msg: error.message } } });
+  }
+}
+
+async function searchMessages(req, res, next) {
+  const { query } = req.query;
+  if (!query) {
+    return res.status(400).json({
+      errors: { common: { msg: "Search text is required." } },
+    });
+  }
+  try {
+    const regex = new RegExp(escape(query), "i");
+    const messages = await Message.find({
+      conversation_id: req.params.conversation_id,
+      hideable: { $nin: [req.user.user_id] },
+      text: regex,
+    })
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.status(200).json({ data: { messages } });
+  } catch (error) {
+    res.status(500).json({ errors: { common: { msg: error.message } } });
   }
 }
 
@@ -249,7 +323,9 @@ module.exports = {
   searchUsers,
   addConversation,
   getMessages,
+  searchMessages,
   sendMessage,
   deleteMessage,
   clearMessage,
+  deleteSingleMessage,
 };

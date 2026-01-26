@@ -5,7 +5,7 @@ let loggedInUserId = document
 let onlineUsers = [];
 
 // Initialize socket connection
-let socket = io("http://localhost:5000");
+let socket = io();
 
 socket.emit("user-connected", loggedInUserId);
 

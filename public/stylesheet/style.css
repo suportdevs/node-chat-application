@@ -222,6 +222,24 @@ div#widget-area {
     position: relative;
 }
 
+.group-count-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.85);
+    color: #0f172a;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-dark-color);
+}
+
 .conversation-meta {
     flex: 1;
     min-width: 0;
@@ -255,6 +273,12 @@ div#widget-area {
     text-overflow: ellipsis;
 }
 
+.conversation-sub {
+    font-size: 0.72rem;
+    color: var(--text-dark-color);
+    margin-top: 2px;
+}
+
 .chat-message-list {
     scrollbar-gutter: stable;
 }
@@ -280,6 +304,13 @@ div#widget-area {
 .message-text {
     white-space: pre-wrap;
     word-break: break-word;
+}
+
+.message-sender {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-dark-color);
+    margin-bottom: 4px;
 }
 
 .message-meta {

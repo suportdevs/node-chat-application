@@ -9,6 +9,7 @@
     <title><%= title %></title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="./stylesheet/style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
@@ -26,5 +27,9 @@
             timeOut: 5000
         };
     </script>
+    <script>
+        const savedTheme = localStorage.getItem("selectedTheme") || "default";
+        document.documentElement.className = savedTheme + "-theme";
+    </script>
 </head>
-<body style="background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('./images/bg-1.png'), no-repeat center; background-size: cover;">
+<body class="app-body">

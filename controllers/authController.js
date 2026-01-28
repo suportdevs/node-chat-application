@@ -21,6 +21,7 @@ async function doLogin(req, res, next) {
     const user = await User.findOne({
       $or: [{ email: email }, { mobile: email }],
     });
+    
     if (user && user._id) {
       const isPasswordValid = await bcript.compare(password, user.password);
       if (isPasswordValid) {

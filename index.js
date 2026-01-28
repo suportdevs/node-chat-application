@@ -16,6 +16,7 @@ const authRouter = require("./routes/authRouter");
 const inboxRouter = require("./routes/inboxRouter");
 const userRouter = require("./routes/userRouter");
 const User = require("./models/People");
+const Conversation = require("./models/Conversation");
 
 const app = express();
 const server = http.createServer(app);
@@ -76,6 +77,15 @@ function getAnySocketId(userId) {
   const sockets = onlineUsers.get(userId);
   if (!sockets || sockets.size === 0) return null;
   return sockets.values().next().value;
+}
+
+function emitToUserIds(userIds, event, payload) {
+  userIds.forEach((userId) => {
+    const socketId = getAnySocketId(userId);
+    if (socketId) {
+      io.to(socketId).emit(event, payload);
+    }
+  });
 }
 
 io.on("connection", (socket) => {
@@ -175,6 +185,62 @@ io.on("connection", (socket) => {
     const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
       io.to(targetSocketId).emit("call-busy", { from });
+    }
+  });
+
+  socket.on("typing", async ({ conversationId, senderId, senderName }) => {
+    if (!conversationId || !senderId) return;
+    try {
+      const conversation = await Conversation.findById(conversationId);
+      if (!conversation) return;
+      let targetIds = [];
+      if (conversation.isGroup) {
+        targetIds = (conversation.members || [])
+          .map((member) => member.id?.toString())
+          .filter((id) => id && id !== senderId.toString());
+      } else {
+        const creatorId = conversation.creator?.id?.toString();
+        const participantId = conversation.participant?.id?.toString();
+        const otherId =
+          creatorId === senderId.toString() ? participantId : creatorId;
+        if (otherId) targetIds = [otherId];
+      }
+      emitToUserIds(targetIds, "typing", {
+        conversationId,
+        senderId,
+        senderName,
+        isGroup: conversation.isGroup,
+      });
+    } catch (err) {
+      console.error("Typing event failed", err);
+    }
+  });
+
+  socket.on("stop-typing", async ({ conversationId, senderId, senderName }) => {
+    if (!conversationId || !senderId) return;
+    try {
+      const conversation = await Conversation.findById(conversationId);
+      if (!conversation) return;
+      let targetIds = [];
+      if (conversation.isGroup) {
+        targetIds = (conversation.members || [])
+          .map((member) => member.id?.toString())
+          .filter((id) => id && id !== senderId.toString());
+      } else {
+        const creatorId = conversation.creator?.id?.toString();
+        const participantId = conversation.participant?.id?.toString();
+        const otherId =
+          creatorId === senderId.toString() ? participantId : creatorId;
+        if (otherId) targetIds = [otherId];
+      }
+      emitToUserIds(targetIds, "stop-typing", {
+        conversationId,
+        senderId,
+        senderName,
+        isGroup: conversation.isGroup,
+      });
+    } catch (err) {
+      console.error("Stop typing event failed", err);
     }
   });
 });

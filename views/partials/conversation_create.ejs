@@ -1,21 +1,18 @@
 <div class="conversation-create-off-canvas absolute left-0 top-0 w-0 h-[90vh] transition-[weight] duration-700 ease-out bg-dark-color invisible overflow-y-scroll">
-    <div class="flex gap-3 items-center text-color p-4">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer conversation-create-off-canvas-close">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-          </svg>
-          <h2 class="text-2xl font-bold">Conversation Create</h2>                                      
+    <div class="flex items-center justify-between text-color p-4 border-b border-gray-200/20">
+        <div class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer conversation-create-off-canvas-close">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+              </svg>
+              <div>
+                  <h2 class="text-2xl font-bold">Conversation</h2>
+                  <p class="text-xs text-soft-color">Start a new chat or add members</p>
+              </div>
+        </div>
+        <span class="text-xs text-soft-color" id="conversation-mode-label">Create</span>
     </div>
-    <div class="flex flex-col text-color" >
-        <div class="px-3 pb-2">
-            <label class="text-sm text-soft-color" for="group-name-input">Group name</label>
-            <input type="text" id="group-name-input" placeholder="Group name (for multi-member)" class="w-full mt-1 px-3 py-2 rounded-md bg-light-color text-color focus:outline-none">
-        </div>
-        <div class="px-3 pb-3">
-            <div class="text-sm text-soft-color">Selected members</div>
-            <div id="conversation-selected-users" class="flex flex-wrap gap-2 mt-2"></div>
-            <button id="conversation-create-submit" class="mt-3 w-full py-2 rounded-md bg-dark-color hover-bg-dark-color text-color">Create conversation</button>
-        </div>
-        <div class="p-3">
+    <div class="flex flex-col text-color">
+        <div class="px-4 pt-3 pb-3">
             <div class="flex gap-4 items-center w-full bg-light-color rounded-md px-3 py-1">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -48,50 +45,28 @@
 </div>
 
 <script>
-    let selectedUsers = [];
-    let create_submit_btn = null;
-    let group_name_input = null;
+    let conversation_create_off_canvas = null;
     document.addEventListener('DOMContentLoaded', function() {
-        // conversation create off canvas menu start
         const conversation_create_btn = document.querySelector(".conversation-create-btn");
         const conversation_create_btn_from_profile = document.querySelector(".conversation-create-btn-from-profile");
-        const conversation_create_off_canvas = document.querySelector(".conversation-create-off-canvas");
+        conversation_create_off_canvas = document.querySelector(".conversation-create-off-canvas");
         const conversation_create_off_canvas_close = document.querySelector(".conversation-create-off-canvas-close");
-        // close conversation create off canvas menu
-        conversation_create_off_canvas_close.addEventListener("click", function(){
-            conversation_create_off_canvas.classList.remove('w-[95vw]', 'visible');
-            conversation_create_off_canvas.classList.add('invisible');
-        });
-        // conversation create off canvas menu end
-
-        // conversation off canvas menu toggle
-        conversation_create_btn.addEventListener("click", function(){
-            if(conversation_create_off_canvas.classList.contains('invisible')){
-                conversation_create_off_canvas.classList.remove('invisible');
-                conversation_create_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
-            }else{
-                conversation_create_off_canvas.classList.remove('w-[95vw]', 'sm:w-full', 'z-10');
-                conversation_create_off_canvas.classList.add('invisible');
-            }
-        });
-        conversation_create_btn_from_profile.addEventListener("click", function(){
-            if(conversation_create_off_canvas.classList.contains('invisible')){
-                conversation_create_off_canvas.classList.remove('invisible');
-                conversation_create_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
-            }else{
-                conversation_create_off_canvas.classList.remove('w-[95vw]', 'sm:w-full', 'z-10');
-                conversation_create_off_canvas.classList.add('invisible');
-            }
-        });
-
-        const conversation_users_placeholder = document.querySelector("#conversation-users-placeholder");
-        const conversation_users_list = document.querySelector("#conversation-users-list");
-        create_submit_btn = document.querySelector("#conversation-create-submit");
-        group_name_input = document.querySelector("#group-name-input");
         const conversation_search_input = document.querySelector("#conversation-search-input");
         const conversation_searched_placeholder = document.querySelector(".conversation-searched-placeholder");
         let typingTimer;
         const doneTypingInterval = 500;
+
+        conversation_create_off_canvas_close.addEventListener("click", function(){
+            conversation_create_off_canvas.classList.remove('w-[95vw]', 'visible');
+            conversation_create_off_canvas.classList.add('invisible');
+        });
+
+        conversation_create_btn.addEventListener("click", function(){
+            openConversationCreate();
+        });
+        conversation_create_btn_from_profile.addEventListener("click", function(){
+            openConversationCreate();
+        });
 
         conversation_search_input.addEventListener('keyup', function(){
             clearInterval(typingTimer);
@@ -105,46 +80,7 @@
         conversation_search_input.addEventListener("keydown", function(){
             clearInterval(typingTimer);
         });
-
     });
-
-    function renderSelectedUsers() {
-        const selected_users_container = document.querySelector("#conversation-selected-users");
-        if (!selected_users_container) return;
-        if (selectedUsers.length === 0) {
-            selected_users_container.innerHTML = `<span class="text-sm text-soft-color">No users selected</span>`;
-            return;
-        }
-        selected_users_container.innerHTML = selectedUsers
-            .map((user) => {
-                const avatar = user.avatar
-                    ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-6 h-6 rounded-full">`
-                    : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-6 h-6">
-                            <span class="text-xs">${user.name[0].toUpperCase()}</span>
-                       </div>`;
-                return `<div class="flex items-center gap-2 bg-light-color px-2 py-1 rounded-full">
-                            ${avatar}
-                            <span class="text-xs">${user.name}</span>
-                            <button class="text-xs text-soft-color" onclick="removeSelectedUser('${user.id}')">x</button>
-                        </div>`;
-            })
-            .join("");
-    }
-
-    function toggleSelectedUser(user) {
-        const exists = selectedUsers.find((item) => item.id === user.id);
-        if (exists) {
-            selectedUsers = selectedUsers.filter((item) => item.id !== user.id);
-        } else {
-            selectedUsers.push(user);
-        }
-        renderSelectedUsers();
-    }
-
-    function removeSelectedUser(userId) {
-        selectedUsers = selectedUsers.filter((item) => item.id !== userId);
-        renderSelectedUsers();
-    }
 
     async function searchUsers(){
         const conversation_users_placeholder = document.querySelector("#conversation-users-placeholder");
@@ -170,10 +106,9 @@
                     let avatar = user.avatar ? `<img src="./uploads/avatars/${user.avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">` : `<div class="bg-light-color hover:bg-dark-color flex items-center justify-center text-neutral-content rounded-full w-10 h-10">
                                 <span class="text-3xl">${user.name[0].toUpperCase()}</span>
                             </div>`;
-                    const isSelected = selectedUsers.some((item) => item.id === user._id);
-                    const safeName = String(user.name || '').replace(/'/g, \"\\\\'\");
-                    const safeAvatar = String(user.avatar || '').replace(/'/g, \"\\\\'\");
-                    generateHtml += `<div class="conversation-users-item flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer ${isSelected ? 'bg-dark-color/40' : ''}" onclick="toggleSelectedUser({id: '${user._id}', name: '${safeName}', avatar: '${safeAvatar}'})">
+                    const safeName = String(user.name || '').replace(/'/g, "\\'");
+                    const safeAvatar = String(user.avatar || '').replace(/'/g, "\\'");
+                    generateHtml += `<div class="conversation-users-item flex items-center gap-3 p-2 sm:px-3 py-2 h-14 text-soft-color hover-bg-light-color cursor-pointer" onclick="handleUserClick({id: '${user._id}', name: '${safeName}', avatar: '${safeAvatar}'})">
                             <div>
                                 ${avatar}
                             </div>
@@ -218,49 +153,17 @@
         }
     }
 
-    async function createGroupConversation(name, memberIds){
-        const response = await fetch('/inbox/conversation/group', {
-            method: "POST",
-            body: JSON.stringify({
-                name,
-                memberIds,
-            }),
-            headers: {"content-type": "application/json; charset=UTF-8"}
-        });
+    async function handleUserClick(user) {
+        await addConversation(user.name, user.id, user.avatar);
+    }
 
-        const result = await response.json();
-
-        if(!result.errors){
-            toastr.success(result.message || "Group conversation created.");
-            setTimeout(() => {
-                location.reload();
-            }, 100)
-        }else{
-            toastr.warning(result.errors.common.msg);
+    function openConversationCreate() {
+        if (!conversation_create_off_canvas) return;
+        if (conversation_create_off_canvas.classList.contains('invisible')) {
+            conversation_create_off_canvas.classList.remove('invisible');
+            conversation_create_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        renderSelectedUsers();
-        if (create_submit_btn) {
-            create_submit_btn.addEventListener("click", async () => {
-                if (selectedUsers.length === 0) {
-                    toastr.warning("Please select at least one user.");
-                    return;
-                }
-                if (selectedUsers.length === 1) {
-                    const user = selectedUsers[0];
-                    await addConversation(user.name, user.id, user.avatar);
-                    return;
-                }
-                const groupName = group_name_input?.value?.trim();
-                if (!groupName) {
-                    toastr.warning("Group name is required for multiple members.");
-                    return;
-                }
-                const memberIds = selectedUsers.map((user) => user.id);
-                await createGroupConversation(groupName, memberIds);
-            });
-        }
-    });
+    window.openConversationCreate = openConversationCreate;
 </script>

@@ -135,11 +135,9 @@ async function addConversation(req, res, next) {
 
 async function createGroupConversation(req, res, next) {
   try {
-    const { name, memberIds } = req.body;
+    let { name, memberIds } = req.body;
     if (!name || !name.trim()) {
-      return res
-        .status(400)
-        .json({ errors: { common: { msg: "Group name is required." } } });
+      name = "Group";
     }
     const membersToAdd = Array.isArray(memberIds) ? memberIds : [];
     const uniqueMemberIds = new Set(
@@ -183,24 +181,76 @@ async function addGroupMembers(req, res, next) {
   const { memberIds } = req.body;
   try {
     const conversation = await Conversation.findById(conversation_id);
-    if (!conversation || !conversation.isGroup) {
+    if (!conversation) {
       return res
         .status(404)
-        .json({ errors: { common: { msg: "Group not found." } } });
-    }
-    const isAdmin = (conversation.admins || []).some(
-      (id) => id.toString() === req.user.user_id.toString()
-    );
-    if (!isAdmin) {
-      return res
-        .status(403)
-        .json({ errors: { common: { msg: "Only admins can add members." } } });
+        .json({ errors: { common: { msg: "Conversation not found." } } });
     }
     const ids = Array.isArray(memberIds) ? memberIds : [];
     if (ids.length === 0) {
       return res
         .status(400)
         .json({ errors: { common: { msg: "No members provided." } } });
+    }
+
+    if (!conversation.isGroup) {
+      const isParticipant =
+        conversation.creator?.id?.toString() ===
+          req.user.user_id.toString() ||
+        conversation.participant?.id?.toString() ===
+          req.user.user_id.toString();
+      if (!isParticipant) {
+        return res
+          .status(403)
+          .json({ errors: { common: { msg: "Not allowed." } } });
+      }
+      const existingIds = new Set(
+        [conversation.creator?.id, conversation.participant?.id]
+          .filter(Boolean)
+          .map((id) => id.toString())
+      );
+      const targetIds = ids
+        .map((id) => id.toString())
+        .filter((id) => !existingIds.has(id));
+      if (targetIds.length === 0) {
+        return res.status(200).json({ message: "Members already exist." });
+      }
+      const combinedIds = Array.from(
+        new Set([...existingIds, ...targetIds])
+      );
+      const users = await User.find(
+        { _id: { $in: combinedIds } },
+        "name avatar"
+      );
+      conversation.isGroup = true;
+      const nextName = req.body.name || conversation.name || "Group";
+      conversation.name = nextName.trim();
+      conversation.members = users.map((user) => ({
+        id: user._id,
+        name: user.name,
+        avatar: user.avatar || null,
+      }));
+      conversation.admins = [req.user.user_id];
+      conversation.createdBy = {
+        id: req.user.user_id,
+        name: req.user.username,
+        avatar: req.user.avatar || null,
+      };
+      await conversation.save();
+      return res.status(200).json({
+        message: "Group created.",
+        conversation_id: conversation._id,
+      });
+    }
+
+    const isAdmin = (conversation.admins || []).some(
+      (id) => id.toString() === req.user.user_id.toString()
+    );
+    const isConversationMember = isMember(conversation, req.user.user_id);
+    if (!isAdmin && !isConversationMember) {
+      return res
+        .status(403)
+        .json({ errors: { common: { msg: "Not allowed." } } });
     }
     const currentIds = new Set(
       (conversation.members || []).map((member) => member.id.toString())

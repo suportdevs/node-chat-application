@@ -8,6 +8,7 @@
                     <button class="p-2 rounded-md" style="background-color: rgb(31 41 55);" onclick="setTheme('dark')">Dark</button>
                     <button class="p-2 rounded-md" style="background-color: rgb(29 78 216);" onclick="setTheme('blue')">Blue</button>
                     <button class="p-2 rounded-md" style="background-color: #29a12e;" onclick="setTheme('green')">Green</button>
+                    <button class="p-2 rounded-md" style="background-color: #1b3632;" onclick="setTheme('call')">Call</button>
                 </div>
             </div>
         </div>
@@ -127,6 +128,22 @@
                                 </div>
                             </div>
                             <div class="flex gap-4 items-center justify-end ">
+                                <button type="button" class="call-action-btn hidden" id="add-members-icon" title="Add member">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                                    </svg>
+                                </button>
+                                <a href="/call" class="call-action-btn" data-call-type="voice" title="Voice call">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 7.284 5.716 13 13 13h1.5a2.25 2.25 0 0 0 2.25-2.25v-1.372a1.125 1.125 0 0 0-.852-1.091l-4.423-1.106a1.125 1.125 0 0 0-1.173.417l-.97 1.293a1.125 1.125 0 0 1-1.21.38 12.035 12.035 0 0 1-7.143-7.143 1.125 1.125 0 0 1 .38-1.21l1.293-.97a1.125 1.125 0 0 0 .417-1.173L4.716 3.102A1.125 1.125 0 0 0 3.625 2.25H2.25v4.5Z" />
+                                    </svg>
+                                </a>
+                                <a href="/call" class="call-action-btn" data-call-type="video" title="Video call">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-2.36A1.125 1.125 0 0 1 22.5 9.147v5.706a1.125 1.125 0 0 1-2.03 1.007l-4.72-2.36m0 0v-3Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5A2.25 2.25 0 0 1 6 5.25h6A2.25 2.25 0 0 1 14.25 7.5v9A2.25 2.25 0 0 1 12 18.75H6A2.25 2.25 0 0 1 3.75 16.5v-9Z" />
+                                    </svg>
+                                </a>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color" id="message-search-icon">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                     </svg>
@@ -181,7 +198,24 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="pinned-message-container" class="pinned-message hidden"></div>
                         <div id="chat-message-list" class="chat-message-list flex flex-col gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
+                            <div id="inline-add-member-panel" class="inline-add-member hidden">
+                                <div class="inline-add-member-header">
+                                    <span>Add member</span>
+                                    <button id="inline-add-member-close" type="button" aria-label="Close">×</button>
+                                </div>
+                                <div class="inline-add-member-input">
+                                    <input type="text" id="inline-add-member-input" placeholder="Search member" autocomplete="off">
+                                </div>
+                                <div id="inline-add-member-results" class="inline-add-member-results"></div>
+                            </div>
+                            <div id="typing-indicator" class="typing-indicator hidden">
+                                <div class="typing-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <span class="typing-label">Typing...</span>
+                            </div>
                             
                             <div class="flex gap-2 text-soft-color items-center justify-center h-full">
                                 <h1 class="text-2xl font-bold">Select a conversation</h1>
@@ -211,7 +245,7 @@
                             </div> -->
                         </div>
                         <!-- chat-form-container start -->
-                        <div id="chat-form-container" class="h-14 bg-light-color text-soft-color invisible">
+                        <div id="chat-form-container" class="bg-light-color text-soft-color invisible relative">
                             <div class="blocked-message-form-container grid grid-cols-1 content-center text-center hidden"></div>
                             <div id="attachment-preview" class="attachment-preview hidden"></div>
                             <form id="chat-send-message-form" method="post" enctype="multipart/form-data" class="grid grid-cols-12 gap-2 px-3 content-center items-center">
@@ -224,7 +258,7 @@
                                     <input type="file" name="attachment" id="attachment" multiple accept="image/*" class="hidden">
                                 </div>
                                 <div  class="col-span-10">
-                                    <textarea type="text" name="message" placeholder="Type a message" autocomplete="off" class="w-full border-none outline-none h-auto bg-transparent  content-center placeholder:text-soft-color"></textarea>
+                                    <textarea type="text" id="chat-message-input" name="message" placeholder="Type a message" autocomplete="off" class="w-full border-none outline-none h-auto bg-transparent  content-center placeholder:text-soft-color"></textarea>
                                 </div>
                                 <div class="flex items-center justify-end">
                                     <button type="submit">
@@ -245,6 +279,13 @@
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script src="./js/app.js"></script>
 
+    <div id="attachment-viewer" class="attachment-viewer">
+        <div class="attachment-viewer-card">
+            <button id="attachment-viewer-close" class="attachment-viewer-close" type="button">×</button>
+            <img id="attachment-viewer-img" src="" alt="Attachment preview">
+        </div>
+    </div>
+
     <script>
         const conversationDataset = <%- JSON.stringify(data || []) %>;
         const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
@@ -253,16 +294,27 @@
         const chat_message_title_name = document.querySelector("#chat-message-title-name");
         const user_online_status_text_container = document.querySelector("#user-online-status-text-container");
         const chat_message_list = document.querySelector("#chat-message-list");
+        const pinned_message_container = document.querySelector("#pinned-message-container");
         const chat_form_container = document.querySelector("#chat-form-container");
         const chat_back_btn = document.querySelector("#chat-back-btn");
         const main_content_wrapper = document.querySelector(".main-content-wrapper");
         const attachment_input = document.getElementById("attachment");
         const attachment_preview = document.getElementById("attachment-preview");
+        const chat_message_input = document.getElementById("chat-message-input");
         const message_search_input = document.getElementById("message-search-input");
         const chat_message_block_container = document.querySelector(".chat-message-block-container");
         const blocked_message_form_container = document.querySelector(".blocked-message-form-container");
         const leave_group_item = document.querySelector("#leave-group-item");
         const clear_message_item = document.querySelector("#clear-message-item");
+        const add_members_icon = document.querySelector("#add-members-icon");
+        const inline_add_member_panel = document.querySelector("#inline-add-member-panel");
+        const inline_add_member_input = document.querySelector("#inline-add-member-input");
+        const inline_add_member_results = document.querySelector("#inline-add-member-results");
+        const inline_add_member_close = document.querySelector("#inline-add-member-close");
+        const attachment_viewer = document.querySelector("#attachment-viewer");
+        const attachment_viewer_img = document.querySelector("#attachment-viewer-img");
+        const attachment_viewer_close = document.querySelector("#attachment-viewer-close");
+        const currentUserName = <%- JSON.stringify(loggedInUser?.username || "") %>;
 
         const currentUserId = window.loggedInUserId || document.querySelector("meta[name=\"userId\"]")?.getAttribute("content");
         const socketRef = typeof socket !== "undefined" ? socket : io();
@@ -272,11 +324,40 @@
         let participant = null;
         let currentConversation = null;
         let pagination = { loading: false, hasMore: false, nextBefore: null };
+        let pinnedMessage = null;
+        let attachmentFiles = [];
+        let inlineMemberTimer = null;
+        let typingTimeout = null;
+        const typingByConversation = new Map();
 
         socketRef.on("online-users", (onlineUserIds) => {
             onlineUsersList = onlineUserIds || [];
             updateOnlineStatusText();
             updateConversationStatusBadges();
+        });
+
+        socketRef.on("typing", ({ conversationId, senderId, senderName, isGroup }) => {
+            if (!conversationId || senderId === currentUserId) return;
+            const entry = typingByConversation.get(conversationId) || {
+                senders: new Map(),
+                isGroup: !!isGroup,
+            };
+            entry.isGroup = !!isGroup;
+            entry.senders.set(senderId, senderName || "Someone");
+            typingByConversation.set(conversationId, entry);
+            updateTypingForConversation(conversationId);
+        });
+
+        socketRef.on("stop-typing", ({ conversationId, senderId }) => {
+            if (!conversationId || !typingByConversation.has(conversationId)) return;
+            const entry = typingByConversation.get(conversationId);
+            entry.senders.delete(senderId);
+            if (entry.senders.size === 0) {
+                typingByConversation.delete(conversationId);
+            } else {
+                typingByConversation.set(conversationId, entry);
+            }
+            updateTypingForConversation(conversationId);
         });
 
         function toggleChatPanel(show) {
@@ -292,6 +373,210 @@
             chat_back_btn.addEventListener("click", () => toggleChatPanel(false));
         }
 
+        if (add_members_icon) {
+            add_members_icon.addEventListener("click", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (!current_conversation_id || !participant) return;
+                openInlineAddMember();
+            });
+        }
+
+        function openInlineAddMember() {
+            if (!inline_add_member_panel || !inline_add_member_input) return;
+            inline_add_member_panel.classList.remove("hidden");
+            inline_add_member_input.value = "";
+            if (inline_add_member_results) inline_add_member_results.innerHTML = "";
+            if (chat_message_list) {
+                chat_message_list.scrollTop = 0;
+            }
+            inline_add_member_input.focus();
+        }
+
+        function closeInlineAddMember() {
+            if (!inline_add_member_panel) return;
+            inline_add_member_panel.classList.add("hidden");
+            if (inline_add_member_results) inline_add_member_results.innerHTML = "";
+        }
+
+        function ensureTypingIndicator() {
+            if (!chat_message_list) return null;
+            const indicator = document.querySelector("#typing-indicator");
+            if (indicator && !chat_message_list.contains(indicator)) {
+                chat_message_list.appendChild(indicator);
+            }
+            return indicator;
+        }
+
+        function setConversationPreview(conversationId, text, isTyping = false) {
+            const previewEl = document.querySelector(
+                `.conversation-item[data-conversation-id="${conversationId}"] .conversation-preview`
+            );
+            if (!previewEl) return;
+            previewEl.textContent = text;
+            previewEl.classList.toggle("is-typing", isTyping);
+        }
+
+        function restoreConversationPreview(conversationId) {
+            const previewEl = document.querySelector(
+                `.conversation-item[data-conversation-id="${conversationId}"] .conversation-preview`
+            );
+            if (!previewEl) return;
+            const original = previewEl.getAttribute("data-preview") || "";
+            previewEl.textContent = original;
+            previewEl.classList.remove("is-typing");
+        }
+
+        function getTypingLabel(entry) {
+            if (!entry || entry.senders.size === 0) return "";
+            if (!entry.isGroup) return "Typing...";
+            const names = Array.from(entry.senders.values());
+            if (names.length === 1) return `${names[0]} typing...`;
+            return `${names[0]} +${names.length - 1} typing...`;
+        }
+
+        function updateTypingForConversation(conversationId) {
+            const entry = typingByConversation.get(conversationId);
+            if (!entry || entry.senders.size === 0) {
+                restoreConversationPreview(conversationId);
+            } else {
+                setConversationPreview(conversationId, getTypingLabel(entry), true);
+            }
+
+            if (conversationId === current_conversation_id) {
+                const indicator = ensureTypingIndicator();
+                if (!indicator) return;
+                const labelEl = indicator.querySelector(".typing-label");
+                if (!entry || entry.senders.size === 0) {
+                    indicator.classList.add("hidden");
+                } else {
+                    indicator.classList.remove("hidden");
+                    if (labelEl) labelEl.textContent = getTypingLabel(entry);
+                }
+            }
+        }
+
+        function applyTypingToList() {
+            typingByConversation.forEach((_, conversationId) => {
+                updateTypingForConversation(conversationId);
+            });
+        }
+
+        function emitTypingStatus() {
+            if (!current_conversation_id || !currentUserId) return;
+            socketRef.emit("typing", {
+                conversationId: current_conversation_id,
+                senderId: currentUserId,
+                senderName: currentUserName,
+            });
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                socketRef.emit("stop-typing", {
+                    conversationId: current_conversation_id,
+                    senderId: currentUserId,
+                    senderName: currentUserName,
+                });
+            }, 1200);
+        }
+
+        function emitStopTyping() {
+            if (!current_conversation_id || !currentUserId) return;
+            socketRef.emit("stop-typing", {
+                conversationId: current_conversation_id,
+                senderId: currentUserId,
+                senderName: currentUserName,
+            });
+        }
+
+        function getCurrentMemberIds() {
+            if (participant?.isGroup && Array.isArray(participant.members)) {
+                return participant.members.map((member) => String(member.id));
+            }
+            const ids = [];
+            if (participant?.id) ids.push(String(participant.id));
+            if (currentUserId) ids.push(String(currentUserId));
+            return ids;
+        }
+
+        async function addMemberToConversation(memberId) {
+            if (!current_conversation_id || !memberId) return;
+            const response = await fetch(`/inbox/conversation/group/${current_conversation_id}/add`, {
+                method: "POST",
+                body: JSON.stringify({ memberIds: [memberId] }),
+                headers: { "content-type": "application/json; charset=UTF-8" },
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                toastr.success(result.message || "Member added.");
+                setTimeout(() => location.reload(), 100);
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        async function searchInlineMembers(query) {
+            if (!inline_add_member_results) return;
+            const response = await fetch("/inbox/search", {
+                method: "POST",
+                body: JSON.stringify({ user: query }),
+                headers: { "content-type": "application/json; charset=UTF-8" },
+            });
+            const result = await response.json();
+            if (result.errors) {
+                inline_add_member_results.innerHTML = `<div class="inline-add-member-empty">${result.errors.common.msg}</div>`;
+                return;
+            }
+            const existingIds = new Set(getCurrentMemberIds());
+            if (!Array.isArray(result) || result.length === 0) {
+                inline_add_member_results.innerHTML = `<div class="inline-add-member-empty">No user found</div>`;
+                return;
+            }
+            inline_add_member_results.innerHTML = result
+                .map((user) => {
+                    const isExisting = existingIds.has(String(user._id));
+                    const avatar = user.avatar
+                        ? `<img src="./uploads/avatars/${user.avatar}" alt="${escapeHtml(user.name)}">`
+                        : `<div class="inline-add-member-avatar">${escapeHtml(user.name[0] || "?").toUpperCase()}</div>`;
+                    return `<div class="inline-add-member-row ${isExisting ? "is-disabled" : ""}" ${isExisting ? "" : `data-user-id="${user._id}"`}>
+                                ${avatar}
+                                <div class="inline-add-member-name">
+                                    <div>${escapeHtml(user.name)}</div>
+                                    ${isExisting ? `<span>Already in conversation</span>` : ""}
+                                </div>
+                            </div>`;
+                })
+                .join("");
+        }
+
+        if (inline_add_member_input) {
+            inline_add_member_input.addEventListener("keyup", () => {
+                const query = inline_add_member_input.value.trim();
+                clearTimeout(inlineMemberTimer);
+                if (!query) {
+                    if (inline_add_member_results) {
+                        inline_add_member_results.innerHTML = `<div class="inline-add-member-empty">Type to search</div>`;
+                    }
+                    return;
+                }
+                inlineMemberTimer = setTimeout(() => searchInlineMembers(query), 400);
+            });
+        }
+
+        if (inline_add_member_close) {
+            inline_add_member_close.addEventListener("click", () => closeInlineAddMember());
+        }
+
+        if (inline_add_member_results) {
+            inline_add_member_results.addEventListener("click", (event) => {
+                const row = event.target.closest(".inline-add-member-row");
+                if (!row || row.classList.contains("is-disabled")) return;
+                const userId = row.getAttribute("data-user-id");
+                if (userId) {
+                    addMemberToConversation(userId);
+                }
+            });
+        }
+
         function escapeHtml(text) {
             return String(text || "")
                 .replace(/&/g, "&amp;")
@@ -303,6 +588,100 @@
 
         function escapeRegex(text) {
             return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        function renderPinnedMessage() {
+            if (!pinned_message_container) return;
+            if (!pinnedMessage) {
+                pinned_message_container.classList.add("hidden");
+                pinned_message_container.innerHTML = "";
+                return;
+            }
+
+            const pinnedText = pinnedMessage.text || "Attachment";
+            const attachmentCount = pinnedMessage.attachments?.length || 0;
+            const attachmentLabel = attachmentCount ? `${attachmentCount} attachment${attachmentCount > 1 ? "s" : ""}` : "";
+            pinned_message_container.innerHTML = `
+                <div class="pinned-content">
+                    <div class="pinned-label">Pinned</div>
+                    <div class="pinned-text">${escapeHtml(pinnedText)}</div>
+                    ${attachmentLabel ? `<div class="pinned-meta">${escapeHtml(attachmentLabel)}</div>` : ""}
+                </div>
+                <button class="pinned-remove-btn" type="button" aria-label="Unpin message">×</button>
+            `;
+            pinned_message_container.classList.remove("hidden");
+        }
+
+        function setPinnedMessage(message) {
+            if (pinnedMessage && message && pinnedMessage.id === message.id) {
+                pinnedMessage = null;
+            } else {
+                pinnedMessage = message;
+            }
+            renderPinnedMessage();
+        }
+
+        function closeMessageMenus() {
+            document.querySelectorAll(".message-menu.active").forEach((menu) => {
+                menu.classList.remove("active");
+            });
+        }
+
+        function getMessageData(row) {
+            if (!row) return null;
+            const attachments = row.dataset.messageAttachments
+                ? JSON.parse(decodeURIComponent(row.dataset.messageAttachments))
+                : [];
+            return {
+                id: row.dataset.messageId,
+                text: row.dataset.messageText || "",
+                attachments,
+            };
+        }
+
+        async function copyToClipboard(text) {
+            if (!text) return false;
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.setAttribute("readonly", "");
+            textarea.style.position = "absolute";
+            textarea.style.left = "-9999px";
+            document.body.appendChild(textarea);
+            textarea.select();
+            const success = document.execCommand("copy");
+            document.body.removeChild(textarea);
+            return success;
+        }
+
+        function syncAttachmentInput() {
+            if (!attachment_input) return;
+            const dataTransfer = new DataTransfer();
+            attachmentFiles.forEach((file) => dataTransfer.items.add(file));
+            attachment_input.files = dataTransfer.files;
+        }
+
+        function renderAttachmentPreview() {
+            if (!attachment_preview) return;
+            if (!attachmentFiles.length) {
+                attachment_preview.innerHTML = "";
+                attachment_preview.classList.add("hidden");
+                return;
+            }
+            const previews = attachmentFiles
+                .map((file, index) => {
+                    const url = URL.createObjectURL(file);
+                    return `<div class="attachment-thumb">
+                                <img src="${url}" alt="${escapeHtml(file.name)}" onload="URL.revokeObjectURL('${url}')">
+                                <button class="attachment-remove-btn" type="button" data-index="${index}" aria-label="Remove attachment">×</button>
+                            </div>`;
+                })
+                .join("");
+            attachment_preview.innerHTML = previews;
+            attachment_preview.classList.remove("hidden");
         }
 
         function getConversationDisplay(conversation) {
@@ -371,7 +750,7 @@
                                 <h3 class="conversation-name">${escapeHtml(display.name)}</h3>
                                 <div class="conversation-time">${moment(conversation.message?.date_time || conversation.updatedAt).fromNow(true)}</div>
                             </div>
-                            <div class="conversation-preview">${escapeHtml(trimmed)}</div>
+                            <div class="conversation-preview" data-preview="${escapeHtml(trimmed)}">${escapeHtml(trimmed)}</div>
                             ${display.isGroup ? `<div class="conversation-sub">${display.memberCount} members</div>` : ""}
                         </div>
                     </div>`;
@@ -380,6 +759,7 @@
 
             conversation_content_wrapper.innerHTML = html;
             updateConversationStatusBadges();
+            applyTypingToList();
         }
 
         function updateConversationStatusBadges() {
@@ -443,16 +823,24 @@
             if (!participant) return;
             if (participant.isGroup) {
                 if (leave_group_item) leave_group_item.style.display = "flex";
+                if (add_members_icon) add_members_icon.classList.remove("hidden");
                 if (chat_message_block_container) chat_message_block_container.innerHTML = "";
                 if (blocked_message_form_container) blocked_message_form_container.classList.add("hidden");
                 if (chat_form_container) chat_form_container.classList.remove("hidden");
                 if (clear_message_item) {
                     const isAdmin = (participant.admins || []).some((id) => String(id) === String(currentUserId));
                     clear_message_item.style.display = isAdmin ? "flex" : "none";
+                    if (chat_message_title_name) {
+                        chat_message_title_name.classList.toggle("chat-title-editable", isAdmin);
+                    }
                 }
             } else {
                 if (leave_group_item) leave_group_item.style.display = "none";
+                if (add_members_icon) add_members_icon.classList.remove("hidden");
                 if (clear_message_item) clear_message_item.style.display = "flex";
+                if (chat_message_title_name) {
+                    chat_message_title_name.classList.remove("chat-title-editable");
+                }
             }
         }
 
@@ -474,13 +862,15 @@
                    </div>`
                 : "";
 
-            const messageText = escapeHtml(message.text || "");
+            const rawText = String(message.text || "");
+            const messageText = escapeHtml(rawText);
             const messageId = message._id || message.message_id || "";
             const time = moment(message.createdAt || message.date_time).fromNow();
             const showSender = participant?.isGroup && !isOwn;
+            const attachmentsEncoded = encodeURIComponent(JSON.stringify(message.attachments || []));
 
             return `
-                <div class="message-row ${isOwn ? "is-own" : ""}" data-message-id="${messageId}">
+                <div class="message-row ${isOwn ? "is-own" : ""}" data-message-id="${messageId}" data-message-text="${escapeHtml(rawText)}" data-message-attachments="${attachmentsEncoded}">
                     ${isOwn ? "" : avatar}
                     <div class="message-bubble">
                         ${showSender ? `<div class="message-sender">${escapeHtml(message.sender.name)}</div>` : ""}
@@ -488,7 +878,18 @@
                         ${attachmentGrid}
                         <div class="message-meta">
                             <span>${time}</span>
-                            ${isOwn ? `<button class="message-delete-btn" data-message-id="${messageId}" type="button">Delete</button>` : ""}
+                            <div class="message-actions">
+                                <button class="message-menu-btn" type="button" data-message-id="${messageId}" aria-label="Message options">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                    </svg>
+                                </button>
+                                <div class="message-menu dropdown" data-message-id="${messageId}">
+                                    <button class="message-menu-item" data-action="copy" type="button">Copy</button>
+                                    ${isOwn ? `<button class="message-menu-item" data-action="delete" type="button">Delete</button>` : ""}
+                                    <button class="message-menu-item" data-action="pin" type="button">Pin</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -524,6 +925,8 @@
                     chat_message_list.scrollTop = chat_message_list.scrollHeight - prevScrollHeight + prevScrollTop;
                 }
 
+                ensureTypingIndicator();
+
                 pagination.hasMore = result.pagination?.hasMore || false;
                 pagination.nextBefore = result.pagination?.nextBefore || null;
 
@@ -554,6 +957,8 @@
         function openConversation(conversationId, meta) {
             current_conversation_id = conversationId;
             currentConversation = meta;
+            pinnedMessage = null;
+            renderPinnedMessage();
             participant = {
                 id: meta.participantId,
                 name: meta.name,
@@ -564,6 +969,7 @@
             pagination = { loading: false, hasMore: true, nextBefore: null };
             renderConversationList(conversationDataset);
             loadMessages(true);
+            updateTypingForConversation(conversationId);
         }
 
         chat_message_list?.addEventListener("scroll", () => {
@@ -571,6 +977,56 @@
                 loadMessages(false);
             }
         });
+
+        if (chat_message_title_name) {
+            chat_message_title_name.addEventListener("click", () => {
+                if (!participant?.isGroup) return;
+                const isAdmin = (participant.admins || []).some((id) => String(id) === String(currentUserId));
+                if (!isAdmin) {
+                    toastr.warning("Only admins can rename group.");
+                    return;
+                }
+                const currentName = participant.name || "";
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = currentName;
+                input.className = "group-title-input";
+                chat_message_title_name.replaceWith(input);
+                input.focus();
+                input.select();
+
+                const save = async () => {
+                    const nextName = input.value.trim();
+                    if (!nextName || nextName === currentName) {
+                        input.replaceWith(chat_message_title_name);
+                        chat_message_title_name.textContent = currentName;
+                        return;
+                    }
+                    const response = await fetch(`/inbox/conversation/group/${current_conversation_id}/name`, {
+                        method: "PATCH",
+                        body: JSON.stringify({ name: nextName }),
+                        headers: { "content-type": "application/json; charset=UTF-8" },
+                    });
+                    const result = await response.json();
+                    if (!result.errors) {
+                        participant.name = nextName;
+                        chat_message_title_name.textContent = nextName;
+                        toastr.success(result.message || "Group name updated.");
+                    } else {
+                        toastr.error(result.errors.common.msg);
+                    }
+                    input.replaceWith(chat_message_title_name);
+                };
+
+                input.addEventListener("blur", save);
+                input.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        save();
+                    }
+                });
+            });
+        }
 
         socketRef.on("new_message", (data) => {
             const conversationId = data.message.conversation_id;
@@ -592,14 +1048,30 @@
             }
             const previewEl = document.querySelector(`.conversation-item[data-conversation-id="${conversationId}"] .conversation-preview`);
             const timeEl = document.querySelector(`.conversation-item[data-conversation-id="${conversationId}"] .conversation-time`);
-            if (previewEl) previewEl.textContent = data.message.message || "Attachment";
+            if (previewEl) {
+                const previewText = data.message.message || "Attachment";
+                previewEl.textContent = previewText;
+                previewEl.setAttribute("data-preview", previewText);
+                previewEl.classList.remove("is-typing");
+            }
             if (timeEl) timeEl.textContent = moment(data.message.date_time).fromNow(true);
+            if (typingByConversation.has(conversationId)) {
+                const entry = typingByConversation.get(conversationId);
+                entry.senders.delete(String(data.message.sender.id));
+                if (entry.senders.size === 0) {
+                    typingByConversation.delete(conversationId);
+                } else {
+                    typingByConversation.set(conversationId, entry);
+                }
+                updateTypingForConversation(conversationId);
+            }
         });
 
         const chat_send_message_form = document.querySelector("#chat-send-message-form");
         chat_send_message_form?.addEventListener("submit", async (event) => {
             event.preventDefault();
             if (!current_conversation_id || !participant) return;
+            emitStopTyping();
 
             const formData = new FormData(chat_send_message_form);
             formData.append("conversation_id", current_conversation_id);
@@ -624,20 +1096,76 @@
             }
         });
 
-        chat_message_list?.addEventListener("click", async (event) => {
-            const deleteBtn = event.target.closest(".message-delete-btn");
-            if (!deleteBtn) return;
-            const messageId = deleteBtn.dataset.messageId;
-            if (!messageId) return;
-            const response = await fetch(`/inbox/message/single/${messageId}`, {
-                method: "DELETE",
+        if (chat_message_input && chat_send_message_form) {
+            chat_message_input.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    chat_send_message_form.requestSubmit();
+                }
             });
-            const result = await response.json();
-            if (!result.errors) {
-                const row = chat_message_list.querySelector(`.message-row[data-message-id="${messageId}"]`);
-                if (row) row.remove();
-            } else {
-                toastr.error(result.errors.common.msg);
+            chat_message_input.addEventListener("input", () => {
+                emitTypingStatus();
+            });
+            chat_message_input.addEventListener("blur", () => {
+                emitStopTyping();
+            });
+        }
+
+        chat_message_list?.addEventListener("click", async (event) => {
+            const menuBtn = event.target.closest(".message-menu-btn");
+            if (menuBtn) {
+                const menu = menuBtn.parentElement?.querySelector(".message-menu");
+                const isActive = menu?.classList.contains("active");
+                closeMessageMenus();
+                if (!isActive && menu) {
+                    menu.classList.add("active");
+                }
+                return;
+            }
+
+            const menuItem = event.target.closest(".message-menu-item");
+            if (!menuItem) return;
+            const action = menuItem.dataset.action;
+            const row = menuItem.closest(".message-row");
+            const data = getMessageData(row);
+            if (!data) return;
+            closeMessageMenus();
+
+            if (action === "copy") {
+                const text = data.text?.trim();
+                if (!text) {
+                    toastr.warning("No text to copy.");
+                    return;
+                }
+                try {
+                    const ok = await copyToClipboard(text);
+                    ok ? toastr.success("Message copied.") : toastr.error("Copy failed.");
+                } catch (err) {
+                    toastr.error("Copy failed.");
+                }
+                return;
+            }
+
+            if (action === "delete") {
+                if (!data.id) return;
+                const response = await fetch(`/inbox/message/single/${data.id}`, {
+                    method: "DELETE",
+                });
+                const result = await response.json();
+                if (!result.errors) {
+                    if (row) row.remove();
+                    if (pinnedMessage?.id === data.id) {
+                        pinnedMessage = null;
+                        renderPinnedMessage();
+                    }
+                } else {
+                    toastr.error(result.errors.common.msg);
+                }
+                return;
+            }
+
+            if (action === "pin") {
+                setPinnedMessage(data);
             }
         });
 
@@ -797,28 +1325,99 @@
             if (!attachment_preview) return;
             attachment_preview.innerHTML = "";
             attachment_preview.classList.add("hidden");
+            attachmentFiles = [];
+            if (attachment_input) {
+                attachment_input.value = "";
+            }
         }
 
         if (attachment_input) {
             attachment_input.addEventListener("change", () => {
-                if (!attachment_preview) return;
-                const files = Array.from(attachment_input.files || []);
-                if (!files.length) {
+                attachmentFiles = Array.from(attachment_input.files || []);
+                if (!attachmentFiles.length) {
                     clearAttachmentPreview();
                     return;
                 }
-                const previews = files
-                    .map((file) => {
-                        const url = URL.createObjectURL(file);
-                        return `<div class="attachment-thumb">
-                                    <img src="${url}" alt="${escapeHtml(file.name)}">
-                                </div>`;
-                    })
-                    .join("");
-                attachment_preview.innerHTML = previews;
-                attachment_preview.classList.remove("hidden");
+                renderAttachmentPreview();
             });
         }
+
+        if (attachment_preview) {
+            attachment_preview.addEventListener("click", (event) => {
+                const removeBtn = event.target.closest(".attachment-remove-btn");
+                if (!removeBtn) return;
+                const index = Number(removeBtn.dataset.index);
+                if (Number.isNaN(index)) return;
+                attachmentFiles.splice(index, 1);
+                syncAttachmentInput();
+                renderAttachmentPreview();
+            });
+        }
+
+        function openAttachmentViewer(src) {
+            if (!attachment_viewer || !attachment_viewer_img || !src) return;
+            attachment_viewer_img.src = src;
+            attachment_viewer.classList.add("show");
+        }
+
+        function closeAttachmentViewer() {
+            if (!attachment_viewer || !attachment_viewer_img) return;
+            attachment_viewer.classList.remove("show");
+            attachment_viewer_img.src = "";
+        }
+
+        if (chat_message_list) {
+            chat_message_list.addEventListener("click", (event) => {
+                const img = event.target.closest(".attachments img");
+                if (img) {
+                    openAttachmentViewer(img.getAttribute("src"));
+                }
+            });
+        }
+
+        if (attachment_preview) {
+            attachment_preview.addEventListener("click", (event) => {
+                const img = event.target.closest(".attachment-thumb img");
+                if (img) {
+                    openAttachmentViewer(img.getAttribute("src"));
+                }
+            });
+        }
+
+        if (attachment_viewer_close) {
+            attachment_viewer_close.addEventListener("click", closeAttachmentViewer);
+        }
+
+        if (attachment_viewer) {
+            attachment_viewer.addEventListener("click", (event) => {
+                if (event.target.id === "attachment-viewer") {
+                    closeAttachmentViewer();
+                }
+            });
+        }
+
+        if (pinned_message_container) {
+            pinned_message_container.addEventListener("click", (event) => {
+                if (event.target.closest(".pinned-remove-btn")) {
+                    pinnedMessage = null;
+                    renderPinnedMessage();
+                }
+            });
+        }
+
+        document.addEventListener("click", (event) => {
+            if (!event.target.closest(".message-actions")) {
+                closeMessageMenus();
+            }
+            if (
+                inline_add_member_panel &&
+                !inline_add_member_panel.classList.contains("hidden") &&
+                !event.target.closest("#inline-add-member-panel") &&
+                !event.target.closest("#add-members-icon")
+            ) {
+                closeInlineAddMember();
+            }
+        });
 </script>
 </body>
 </html>

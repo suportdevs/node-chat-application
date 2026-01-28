@@ -247,6 +247,12 @@
                         <!-- chat-form-container start -->
                         <div id="chat-form-container" class="bg-light-color text-soft-color invisible relative">
                             <div class="blocked-message-form-container grid grid-cols-1 content-center text-center hidden"></div>
+                            <div id="typing-indicator-input" class="typing-indicator hidden typing-indicator-input">
+                                <div class="typing-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <span class="typing-label">Typing...</span>
+                            </div>
                             <div id="attachment-preview" class="attachment-preview hidden"></div>
                             <form id="chat-send-message-form" method="post" enctype="multipart/form-data" class="grid grid-cols-12 gap-2 px-3 content-center items-center">
                                 <div >
@@ -315,6 +321,7 @@
         const attachment_viewer_img = document.querySelector("#attachment-viewer-img");
         const attachment_viewer_close = document.querySelector("#attachment-viewer-close");
         const currentUserName = <%- JSON.stringify(loggedInUser?.username || "") %>;
+        const typing_input_indicator = document.querySelector("#typing-indicator-input");
 
         const currentUserId = window.loggedInUserId || document.querySelector("meta[name=\"userId\"]")?.getAttribute("content");
         const socketRef = typeof socket !== "undefined" ? socket : io();
@@ -329,6 +336,20 @@
         let inlineMemberTimer = null;
         let typingTimeout = null;
         const typingByConversation = new Map();
+
+        socketRef.on("conversation_created", ({ conversation }) => {
+            if (!conversation || !conversation._id) return;
+            const isMember =
+                String(conversation.creator?.id) === String(currentUserId) ||
+                String(conversation.participant?.id) === String(currentUserId) ||
+                (conversation.members || []).some((member) => String(member.id) === String(currentUserId));
+            if (!isMember) return;
+            const exists = (conversationDataset || []).some((item) => String(item._id) === String(conversation._id));
+            if (!exists) {
+                conversationDataset.unshift(conversation);
+                renderConversationList(conversationDataset);
+            }
+        });
 
         socketRef.on("online-users", (onlineUserIds) => {
             onlineUsersList = onlineUserIds || [];
@@ -449,9 +470,15 @@
                 const labelEl = indicator.querySelector(".typing-label");
                 if (!entry || entry.senders.size === 0) {
                     indicator.classList.add("hidden");
+                    if (typing_input_indicator) typing_input_indicator.classList.add("hidden");
                 } else {
                     indicator.classList.remove("hidden");
                     if (labelEl) labelEl.textContent = getTypingLabel(entry);
+                    if (typing_input_indicator) {
+                        typing_input_indicator.classList.remove("hidden");
+                        const inputLabel = typing_input_indicator.querySelector(".typing-label");
+                        if (inputLabel) inputLabel.textContent = getTypingLabel(entry);
+                    }
                 }
             }
         }

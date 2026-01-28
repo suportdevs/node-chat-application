@@ -124,6 +124,9 @@ async function addConversation(req, res, next) {
       },
     });
     const result = await newConversation.save();
+    if (global.io) {
+      global.io.emit("conversation_created", { conversation: result });
+    }
     res.status(200).json({
       message: "Conversation was created successfull.",
       conversation_id: result._id,

@@ -667,6 +667,10 @@ div#widget-area {
     font-size: 0.8rem;
 }
 
+.typing-indicator-input {
+    margin: 6px 12px 0;
+}
+
 .typing-indicator.hidden {
     display: none;
 }

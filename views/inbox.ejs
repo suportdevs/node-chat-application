@@ -111,7 +111,32 @@
                         <!-- conversation list end -->
 
                     </div>
-                    <div class="chat-panel flex flex-col w-full sm:w-8/12 justify-between ">
+                    <div class="chat-panel relative flex flex-col w-full sm:w-8/12 justify-between ">
+                        <div id="inline-add-member-panel" class="member-add-off-canvas absolute right-0 top-0 w-0 h-[90vh] transition-[width] duration-700 ease-out bg-dark-color invisible overflow-hidden app-shadow-2xl border-l border-gray-200/20">
+                            <div class="flex items-center justify-between text-color p-4 border-b border-gray-200/20">
+                                <div class="flex items-center gap-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer" id="inline-add-member-close">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                    </svg>
+                                    <div>
+                                        <h2 class="text-2xl font-bold">Members</h2>
+                                        <p class="text-xs text-soft-color">Add members to this conversation</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-soft-color">Add</span>
+                            </div>
+                            <div class="flex flex-col text-color h-full">
+                                <div class="px-4 pt-3 pb-3">
+                                    <div class="flex gap-4 items-center w-full bg-light-color rounded-md px-3 py-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                        </svg>
+                                        <input type="text" id="inline-add-member-input" placeholder="Search member" autocomplete="off" class="bg-transparent focus:outline-none border-none w-full">
+                                    </div>
+                                </div>
+                                <div id="inline-add-member-results" class="inline-add-member-results flex-1"></div>
+                            </div>
+                        </div>
                         <div id="chat-message-title-container" class="flex items-center justify-between px-3 h-14 bg-light-color invisible">
                             <div class="flex items-center gap-2 text-color">
                                 <button id="chat-back-btn" class="sm:hidden p-2 rounded-md bg-dark-color hover-bg-dark-color" type="button" aria-label="Back to conversations">
@@ -200,16 +225,6 @@
                         </div>
                         <div id="pinned-message-container" class="pinned-message hidden"></div>
                         <div id="chat-message-list" class="chat-message-list flex flex-col gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
-                            <div id="inline-add-member-panel" class="inline-add-member hidden">
-                                <div class="inline-add-member-header">
-                                    <span>Add member</span>
-                                    <button id="inline-add-member-close" type="button" aria-label="Close">×</button>
-                                </div>
-                                <div class="inline-add-member-input">
-                                    <input type="text" id="inline-add-member-input" placeholder="Search member" autocomplete="off">
-                                </div>
-                                <div id="inline-add-member-results" class="inline-add-member-results"></div>
-                            </div>
                             <div id="typing-indicator" class="typing-indicator hidden">
                                 <div class="typing-dots">
                                     <span></span><span></span><span></span>
@@ -405,18 +420,21 @@
 
         function openInlineAddMember() {
             if (!inline_add_member_panel || !inline_add_member_input) return;
-            inline_add_member_panel.classList.remove("hidden");
+            if (inline_add_member_panel.classList.contains("invisible")) {
+                inline_add_member_panel.classList.remove("invisible", "w-0");
+                inline_add_member_panel.classList.add("w-[95vw]", "sm:w-full", "visible", "z-10");
+            }
             inline_add_member_input.value = "";
-            if (inline_add_member_results) inline_add_member_results.innerHTML = "";
-            if (chat_message_list) {
-                chat_message_list.scrollTop = 0;
+            if (inline_add_member_results) {
+                inline_add_member_results.innerHTML = `<div class="inline-add-member-empty">Type to search</div>`;
             }
             inline_add_member_input.focus();
         }
 
         function closeInlineAddMember() {
             if (!inline_add_member_panel) return;
-            inline_add_member_panel.classList.add("hidden");
+            inline_add_member_panel.classList.remove("w-[95vw]", "sm:w-full", "visible", "z-10");
+            inline_add_member_panel.classList.add("w-0", "invisible");
             if (inline_add_member_results) inline_add_member_results.innerHTML = "";
         }
 
@@ -1438,7 +1456,7 @@
             }
             if (
                 inline_add_member_panel &&
-                !inline_add_member_panel.classList.contains("hidden") &&
+                !inline_add_member_panel.classList.contains("invisible") &&
                 !event.target.closest("#inline-add-member-panel") &&
                 !event.target.closest("#add-members-icon")
             ) {

@@ -1,6 +1,6 @@
 // public/js/call.js
 
-const socket = io(); // assumes /socket.io/socket.io.js loaded
+const socket = window.socket || io(); // assumes /socket.io/socket.io.js loaded
 const myUserId = window.MY_USER_ID; // from server-rendered EJS
 
 // UI elements
@@ -35,6 +35,7 @@ const outgoingSubtitle = document.getElementById("outgoingSubtitle");
 const outgoingAvatar = document.getElementById("outgoingAvatar");
 const cancelBtn = document.getElementById("cancelBtn");
 const toastEl = document.getElementById("callToast");
+const inlineShell = document.getElementById("inlineCallShell");
 
 let pc = null;
 let localStream = null;
@@ -67,7 +68,7 @@ socket.on("online-users", (list) => {
 });
 
 socket.on("user-unavailable", ({ to }) => {
-  showToast(`User unavailable: ${to}`);
+  showToast(`User offline: ${to}`);
   endCall(true);
 });
 
@@ -176,6 +177,7 @@ declineBtn.addEventListener("click", () => {
   socket.emit("reject-call", { to: pendingIncoming.from, from: myUserId });
   pendingIncoming = null;
   hideIncomingOverlay();
+  setInlineVisible(false);
 });
 
 cancelBtn.addEventListener("click", () => {
@@ -337,6 +339,7 @@ async function startCall(targetUserId, type) {
 }
 
 function showCallStage(visible) {
+  setInlineVisible(visible);
   callStage.classList.toggle("hidden", !visible);
   emptyState.classList.toggle("hidden", visible);
 }
@@ -361,6 +364,7 @@ function setCallMode(type) {
 }
 
 function showIncomingOverlay({ from, callType: incomingType }) {
+  setInlineVisible(true);
   incomingTitle.textContent = incomingType === "audio" ? "Incoming voice call" : "Incoming video call";
   incomingSubtitle.textContent = `From ${from}`;
   incomingAvatar.textContent = getInitials(from);
@@ -372,6 +376,7 @@ function hideIncomingOverlay() {
 }
 
 function showOutgoingOverlay(to, type) {
+  setInlineVisible(true);
   outgoingSubtitle.textContent = type === "audio" ? `Voice calling ${to}` : `Video calling ${to}`;
   outgoingAvatar.textContent = getInitials(to);
   outgoingOverlay.classList.remove("hidden");
@@ -430,6 +435,7 @@ function endCall(resetUI) {
   if (resetUI) {
     showCallStage(false);
     setCallStatus("Ready");
+    setInlineVisible(false);
   }
 }
 
@@ -439,9 +445,19 @@ function showToast(message) {
   setTimeout(() => toastEl.classList.remove("show"), 2400);
 }
 
+function setInlineVisible(visible) {
+  if (!inlineShell) return;
+  inlineShell.classList.toggle("hidden", !visible);
+}
+
 function getInitials(value) {
   if (!value) return "NA";
   const cleaned = String(value).replace(/[^a-zA-Z0-9]/g, "");
   if (!cleaned) return "NA";
   return cleaned.slice(0, 2).toUpperCase();
 }
+
+window.CallUI = {
+  startCall,
+  endCall,
+};

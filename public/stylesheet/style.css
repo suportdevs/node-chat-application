@@ -792,3 +792,334 @@ div#widget-area {
         grid-template-columns: 1fr;
     }
 }
+
+.inline-call {
+    background: #0e1b19;
+    color: #eaf6f2;
+}
+
+.inline-call-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+}
+
+.inline-call-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #142a26;
+    border-radius: 16px;
+    padding: 12px 16px;
+}
+
+.inline-call-me {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.inline-call-me-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.inline-call-label {
+    font-size: 12px;
+    color: #98b8b0;
+}
+
+.inline-call-id {
+    font-size: 12px;
+    color: #98b8b0;
+    word-break: break-all;
+}
+
+.inline-call-body {
+    flex: 1;
+    display: grid;
+}
+
+.inline-call .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(140deg, #1d4c43, #15332f);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #25d366;
+    text-transform: uppercase;
+}
+
+.inline-call .avatar-lg {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    font-size: 16px;
+}
+
+.inline-call .avatar-xl {
+    width: 110px;
+    height: 110px;
+    border-radius: 26px;
+    font-size: 26px;
+}
+
+.inline-call .avatar-md {
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+    font-size: 18px;
+}
+
+.inline-call .status-pill {
+    background: rgba(152, 184, 176, 0.18);
+    color: #98b8b0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.inline-call .empty-state {
+    margin: auto;
+    text-align: center;
+    color: #98b8b0;
+}
+
+.inline-call .empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 12px;
+    border-radius: 18px;
+    background: rgba(37, 211, 102, 0.12);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+}
+
+.inline-call .call-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.inline-call .call-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inline-call .call-peer {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.inline-call .call-peer-name {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.inline-call .call-peer-meta {
+    color: #98b8b0;
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+.inline-call .call-timer {
+    font-size: 14px;
+    font-weight: 600;
+    color: #25d366;
+}
+
+.inline-call .video-area {
+    flex: 1;
+    background: #0b1412;
+    border-radius: 20px;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.inline-call .video-area.audio-only {
+    grid-template-columns: 1fr;
+}
+
+.inline-call .video-area.audio-only video {
+    display: none;
+}
+
+.inline-call .video-area.audio-only .video-tile.local {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    bottom: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+.inline-call .video-tile {
+    background: #0f1b19;
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+.inline-call .video-tile video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.inline-call .video-tile.local {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.inline-call .video-fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    gap: 8px;
+    background: rgba(8, 16, 15, 0.85);
+    text-align: center;
+}
+
+.inline-call .fallback-label {
+    color: #98b8b0;
+    font-size: 12px;
+}
+
+.inline-call .call-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.inline-call .control-btn {
+    background: rgba(37, 211, 102, 0.16);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    color: #eaf6f2;
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.inline-call .control-btn:hover {
+    background: rgba(37, 211, 102, 0.28);
+}
+
+.inline-call .control-btn.is-off {
+    background: rgba(152, 184, 176, 0.2);
+    border-color: rgba(152, 184, 176, 0.4);
+    color: #98b8b0;
+}
+
+.inline-call .control-btn.danger {
+    background: rgba(255, 92, 92, 0.18);
+    border-color: rgba(255, 92, 92, 0.4);
+    color: #ffd7d7;
+}
+
+.inline-call .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 16, 15, 0.7);
+    display: grid;
+    place-items: center;
+    z-index: 2;
+}
+
+.inline-call .overlay-card {
+    background: #142a26;
+    padding: 24px;
+    border-radius: 20px;
+    min-width: 260px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(3, 20, 18, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.inline-call .overlay-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.inline-call .overlay-subtitle {
+    color: #98b8b0;
+    font-size: 13px;
+}
+
+.inline-call .overlay-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.inline-call .btn {
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.inline-call .btn.accept {
+    background: #25d366;
+    color: #0b1412;
+}
+
+.inline-call .btn.ghost {
+    background: rgba(255, 255, 255, 0.08);
+    color: #eaf6f2;
+}
+
+.inline-call .btn.danger {
+    background: rgba(255, 92, 92, 0.2);
+    color: #ffd7d7;
+}
+
+.inline-call .toast {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    background: #142a26;
+    padding: 10px 16px;
+    border-radius: 12px;
+    color: #eaf6f2;
+    box-shadow: 0 20px 40px rgba(3, 20, 18, 0.45);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+    z-index: 3;
+}
+
+.inline-call .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 900px) {
+    .inline-call .video-area {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 180px;
+    }
+}

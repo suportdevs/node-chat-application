@@ -158,17 +158,17 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                                     </svg>
                                 </button>
-                                <a href="/call" class="call-action-btn" data-call-type="voice" title="Voice call">
+                                <button type="button" class="call-action-btn" data-call-type="voice" title="Voice call">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 7.284 5.716 13 13 13h1.5a2.25 2.25 0 0 0 2.25-2.25v-1.372a1.125 1.125 0 0 0-.852-1.091l-4.423-1.106a1.125 1.125 0 0 0-1.173.417l-.97 1.293a1.125 1.125 0 0 1-1.21.38 12.035 12.035 0 0 1-7.143-7.143 1.125 1.125 0 0 1 .38-1.21l1.293-.97a1.125 1.125 0 0 0 .417-1.173L4.716 3.102A1.125 1.125 0 0 0 3.625 2.25H2.25v4.5Z" />
                                     </svg>
-                                </a>
-                                <a href="/call" class="call-action-btn" data-call-type="video" title="Video call">
+                                </button>
+                                <button type="button" class="call-action-btn" data-call-type="video" title="Video call">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-2.36A1.125 1.125 0 0 1 22.5 9.147v5.706a1.125 1.125 0 0 1-2.03 1.007l-4.72-2.36m0 0v-3Z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5A2.25 2.25 0 0 1 6 5.25h6A2.25 2.25 0 0 1 14.25 7.5v9A2.25 2.25 0 0 1 12 18.75H6A2.25 2.25 0 0 1 3.75 16.5v-9Z" />
                                     </svg>
-                                </a>
+                                </button>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color" id="message-search-icon">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                     </svg>
@@ -222,6 +222,90 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div id="inlineCallShell" class="inline-call hidden absolute inset-0 z-40">
+                            <div class="inline-call-panel">
+                                <div class="inline-call-header">
+                                    <div class="inline-call-me">
+                                        <div class="avatar" id="meAvatar">ME</div>
+                                        <div class="inline-call-me-meta">
+                                            <div class="inline-call-label">You</div>
+                                            <div class="inline-call-id"><%= loggedInUser.user_id %></div>
+                                        </div>
+                                    </div>
+                                    <div class="status-pill" id="callStatus">Ready</div>
+                                </div>
+                                <div class="inline-call-body">
+                                    <div class="empty-state" id="emptyState">
+                                        <div class="empty-icon"></div>
+                                        <h3>Start a call</h3>
+                                        <p>Choose voice or video to call from this chat.</p>
+                                    </div>
+                                    <div class="call-stage hidden" id="callStage" data-call-type="video">
+                                        <div class="call-top">
+                                            <div class="call-peer">
+                                                <div class="avatar avatar-lg" id="remoteAvatar">RT</div>
+                                                <div>
+                                                    <div class="call-peer-name" id="callPeerName">Waiting...</div>
+                                                    <div class="call-peer-meta" id="callMeta">Connecting</div>
+                                                </div>
+                                            </div>
+                                            <div class="call-timer" id="callTimer">00:00</div>
+                                        </div>
+                                        <div class="video-area" id="videoArea">
+                                            <div class="video-tile remote">
+                                                <video id="remoteVideo" autoplay playsinline></video>
+                                                <div class="video-fallback" id="remoteFallback">
+                                                    <div class="avatar avatar-xl" id="remoteFallbackAvatar">RT</div>
+                                                    <div class="fallback-label">Audio only</div>
+                                                </div>
+                                            </div>
+                                            <div class="video-tile local">
+                                                <video id="localVideo" autoplay playsinline muted></video>
+                                                <div class="video-fallback" id="localFallback">
+                                                    <div class="avatar avatar-md" id="localFallbackAvatar">ME</div>
+                                                    <div class="fallback-label">Camera off</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="call-controls">
+                                            <button class="control-btn" id="muteBtn" type="button">
+                                                <span class="label">Mute</span>
+                                            </button>
+                                            <button class="control-btn" id="cameraBtn" type="button">
+                                                <span class="label">Camera</span>
+                                            </button>
+                                            <button class="control-btn danger" id="endBtn" type="button">
+                                                <span class="label">End</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overlay hidden" id="incomingOverlay">
+                                <div class="overlay-card">
+                                    <div class="avatar avatar-lg" id="incomingAvatar">IN</div>
+                                    <div class="overlay-title" id="incomingTitle">Incoming call</div>
+                                    <div class="overlay-subtitle" id="incomingSubtitle">From</div>
+                                    <div class="overlay-actions">
+                                        <button class="btn ghost" id="declineBtn" type="button">Decline</button>
+                                        <button class="btn accept" id="acceptBtn" type="button">Accept</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overlay hidden" id="outgoingOverlay">
+                                <div class="overlay-card">
+                                    <div class="avatar avatar-lg" id="outgoingAvatar">OU</div>
+                                    <div class="overlay-title">Calling...</div>
+                                    <div class="overlay-subtitle" id="outgoingSubtitle">Waiting for answer</div>
+                                    <div class="overlay-actions">
+                                        <button class="btn danger" id="cancelBtn" type="button">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="toast" id="callToast"></div>
+                            <div class="hidden" id="user-list"></div>
+                            <div class="hidden" id="onlineCount">0</div>
                         </div>
                         <div id="pinned-message-container" class="pinned-message hidden"></div>
                         <div id="chat-message-list" class="chat-message-list flex flex-col gap-4 h-[calc(85vh-112px)] p-3 overflow-y-scroll">
@@ -299,6 +383,10 @@
     <!-- import socket io client from cdn -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script src="./js/app.js"></script>
+    <script>
+        window.MY_USER_ID = "<%= loggedInUser.user_id %>";
+    </script>
+    <script src="/js/call.js"></script>
 
     <div id="attachment-viewer" class="attachment-viewer">
         <div class="attachment-viewer-card">
@@ -337,6 +425,8 @@
         const attachment_viewer_close = document.querySelector("#attachment-viewer-close");
         const currentUserName = <%- JSON.stringify(loggedInUser?.username || "") %>;
         const typing_input_indicator = document.querySelector("#typing-indicator-input");
+        const callButtons = document.querySelectorAll(".call-action-btn[data-call-type]");
+        const inlineCallShell = document.getElementById("inlineCallShell");
 
         const currentUserId = window.loggedInUserId || document.querySelector("meta[name=\"userId\"]")?.getAttribute("content");
         const socketRef = typeof socket !== "undefined" ? socket : io();
@@ -351,6 +441,40 @@
         let inlineMemberTimer = null;
         let typingTimeout = null;
         const typingByConversation = new Map();
+
+        function startInlineCall(type) {
+            if (!participant || !current_conversation_id) {
+                toastr.warning("Select a conversation to start a call.");
+                return;
+            }
+            if (participant.isGroup) {
+                toastr.warning("Group calls are not available.");
+                return;
+            }
+            const targetId = String(participant.id || "");
+            if (!targetId) {
+                toastr.error("User not found for this conversation.");
+                return;
+            }
+            if (!onlineUsersList.includes(targetId)) {
+                toastr.warning("User offline.");
+                if (inlineCallShell) inlineCallShell.classList.add("hidden");
+                return;
+            }
+            if (!window.CallUI || typeof window.CallUI.startCall !== "function") {
+                toastr.error("Call system not ready.");
+                return;
+            }
+            window.CallUI.startCall(targetId, type);
+        }
+
+        callButtons.forEach((btn) => {
+            btn.addEventListener("click", (event) => {
+                event.preventDefault();
+                const callType = btn.dataset.callType === "voice" ? "audio" : "video";
+                startInlineCall(callType);
+            });
+        });
 
         socketRef.on("conversation_created", ({ conversation }) => {
             if (!conversation || !conversation._id) return;

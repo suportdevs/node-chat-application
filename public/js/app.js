@@ -6,6 +6,7 @@ let onlineUsers = [];
 
 // Initialize socket connection
 let socket = io();
+window.socket = socket;
 
 socket.emit("user-connected", loggedInUserId);
 

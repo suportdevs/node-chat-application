@@ -35,6 +35,21 @@ async function getUsers(req, res, next) {
   }
 }
 
+async function getProfile(req, res, next) {
+  try {
+    const user = await User.findById(req.user.user_id).select(
+      "-password -blockable -isDeleted -deletedAt -deletedBy -__v"
+    );
+    if (!user) {
+      return res.redirect("/");
+    }
+    res.locals.profileUser = user;
+    res.render("profile");
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function updateUser(req, res, next) {
   const userId = req.params.id; // Using req.params.id to get user ID from the URL
   const newImage = req.file;
@@ -42,6 +57,14 @@ async function updateUser(req, res, next) {
   if (!userId) {
     return res.status(400).json({
       errors: { common: { msg: "User ID and image are required." } },
+    });
+  }
+  if (
+    userId.toString() !== req.user.user_id.toString() &&
+    req.user.role !== "Admin"
+  ) {
+    return res.status(403).json({
+      errors: { common: { msg: "You are not allowed to update this user." } },
     });
   }
   try {
@@ -193,4 +216,4 @@ async function userDelete(req, res) {
   }
 }
 
-module.exports = { getUsers, updateUser, block, unblock, userDelete };
+module.exports = { getUsers, getProfile, updateUser, block, unblock, userDelete };

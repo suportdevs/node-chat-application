@@ -107,6 +107,11 @@ io.on("connection", (socket) => {
 
     // Broadcast updated online user IDs
     io.emit("online-users", Array.from(onlineUsers.keys()));
+    io.emit("user_status", {
+      userId,
+      onlineStatus: "Online",
+      lastSeen: new Date(),
+    });
   });
 
   socket.on("disconnect", async () => {
@@ -133,15 +138,28 @@ io.on("connection", (socket) => {
     }
     // Broadcast updated online users
     io.emit("online-users", Array.from(onlineUsers.keys()));
+    if (userId) {
+      io.emit("user_status", {
+        userId,
+        onlineStatus: "Offline",
+        lastSeen: new Date(),
+      });
+    }
   });
 
   /* --- SIGNALING for WebRTC --- */
 
   // Caller wants to call targetUserId
-  socket.on("call-user", ({ from, to, offer, callType /* sdp offer */ }) => {
+  socket.on("call-user", ({ from, to, offer, callType, callerName, callerAvatar }) => {
     const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
-      io.to(targetSocketId).emit("incoming-call", { from, offer, callType });
+      io.to(targetSocketId).emit("incoming-call", {
+        from,
+        offer,
+        callType,
+        callerName,
+        callerAvatar,
+      });
     } else {
       // target offline - inform caller
       socket.emit("user-unavailable", { to });
@@ -149,18 +167,18 @@ io.on("connection", (socket) => {
   });
 
   // Callee sends answer back
-  socket.on("make-answer", ({ to, answer }) => {
+  socket.on("make-answer", ({ to, from, answer }) => {
     const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
-      io.to(targetSocketId).emit("call-accepted", { answer });
+      io.to(targetSocketId).emit("call-accepted", { from, answer });
     }
   });
 
   // Exchanging ICE candidates
-  socket.on("ice-candidate", ({ to, candidate }) => {
+  socket.on("ice-candidate", ({ to, from, candidate }) => {
     const targetSocketId = getAnySocketId(to);
     if (targetSocketId) {
-      io.to(targetSocketId).emit("ice-candidate", { candidate });
+      io.to(targetSocketId).emit("ice-candidate", { from, candidate });
     }
   });
 

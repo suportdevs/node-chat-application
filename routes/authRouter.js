@@ -9,6 +9,7 @@ const {
   doLogin,
   doLogout,
 } = require("../controllers/authController");
+const { getProfile } = require("../controllers/userController");
 const decoratedHtmlResponse = require("../middlewares/decoratedHtmlResponse");
 const {
   doLoginValidator,
@@ -53,10 +54,15 @@ router.post(
 
 router.delete("/logout", authenticated, doLogout);
 
-router.get('/call', (req, res) => {
-  // adapt: get user id from your auth cookie/session
-  const userId = req.user ? req.user._id.toString() : 'guest-' + Date.now();
-  res.render('call', { userId });
+router.get(
+  "/profile",
+  decoratedHtmlResponse("Profile"),
+  authenticated,
+  getProfile
+);
+
+router.get("/call", decoratedHtmlResponse("Inbox"), authenticated, (req, res) => {
+  res.redirect("/inbox");
 });
 
 module.exports = router;

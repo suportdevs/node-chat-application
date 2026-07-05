@@ -1,0 +1,134 @@
+<%- include('./layouts/app') %>
+<%
+  const profile = profileUser || {};
+  const initial = (profile.name || loggedInUser.username || "?").charAt(0).toUpperCase();
+%>
+<main class="profile-page">
+  <section class="profile-shell">
+    <div class="profile-topbar">
+      <a href="/inbox" class="profile-back" aria-label="Back to inbox">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+      </a>
+      <div>
+        <h1>Profile</h1>
+        <p>Manage your account details</p>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <aside class="profile-summary">
+        <div class="profile-avatar-wrap">
+          <% if (profile.avatar) { %>
+            <img id="profile-avatar-preview" src="/uploads/avatars/<%= profile.avatar %>" alt="<%= profile.name %>">
+          <% } else { %>
+            <div id="profile-avatar-preview" class="profile-avatar-fallback"><%= initial %></div>
+          <% } %>
+        </div>
+        <h2 id="profile-summary-name"><%= profile.name || loggedInUser.username %></h2>
+        <div id="profile-summary-status" class="profile-summary-status"><%= profile.status || "Available" %></div>
+        <div class="profile-presence">
+          <span class="<%= profile.onlineStatus === 'Online' ? 'is-online' : '' %>"></span>
+          <%= profile.onlineStatus || "Offline" %>
+        </div>
+      </aside>
+
+      <section class="profile-editor">
+        <form id="profile-form" enctype="multipart/form-data">
+          <label class="profile-upload">
+            <span>Profile Photo</span>
+            <input type="file" id="profile-avatar-input" name="avatar" accept="image/png,image/jpeg,image/jpg">
+          </label>
+
+          <div class="profile-fields">
+            <label>
+              <span>Name</span>
+              <input type="text" name="name" value="<%= profile.name || '' %>" required>
+            </label>
+            <label>
+              <span>About</span>
+              <input type="text" name="status" value="<%= profile.status || '' %>" placeholder="Hey there! I am using NodeChat.">
+            </label>
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" value="<%= profile.email || '' %>" required>
+            </label>
+            <label>
+              <span>Mobile</span>
+              <input type="text" name="mobile" value="<%= profile.mobile || '' %>" required>
+            </label>
+            <label class="profile-field-wide">
+              <span>Address</span>
+              <textarea name="address" rows="4" placeholder="Add your address"><%= profile.address || '' %></textarea>
+            </label>
+          </div>
+
+          <div class="profile-actions">
+            <a href="/inbox" class="profile-secondary">Cancel</a>
+            <button type="submit" id="profile-save-btn">Save Changes</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script>
+  const profileForm = document.getElementById("profile-form");
+  const profileAvatarInput = document.getElementById("profile-avatar-input");
+  const profileAvatarPreview = document.getElementById("profile-avatar-preview");
+  const profileSummaryName = document.getElementById("profile-summary-name");
+  const profileSummaryStatus = document.getElementById("profile-summary-status");
+  const profileSaveBtn = document.getElementById("profile-save-btn");
+  const profileUserId = "<%= profile._id %>";
+
+  if (profileAvatarInput) {
+    profileAvatarInput.addEventListener("change", () => {
+      const file = profileAvatarInput.files && profileAvatarInput.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      if (profileAvatarPreview.tagName === "IMG") {
+        profileAvatarPreview.src = url;
+      } else {
+        const img = document.createElement("img");
+        img.id = "profile-avatar-preview";
+        img.src = url;
+        img.alt = "Profile preview";
+        profileAvatarPreview.replaceWith(img);
+      }
+    });
+  }
+
+  if (profileForm) {
+    profileForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      profileSaveBtn.disabled = true;
+      profileSaveBtn.textContent = "Saving...";
+      try {
+        const formData = new FormData(profileForm);
+        const response = await fetch(`/users/${profileUserId}`, {
+          method: "PUT",
+          body: formData,
+        });
+        const result = await response.json();
+        if (result.errors) {
+          toastr.error(result.errors.common.msg);
+          return;
+        }
+        if (result.user) {
+          profileSummaryName.textContent = result.user.name || "";
+          profileSummaryStatus.textContent = result.user.status || "Available";
+        }
+        toastr.success(result.message || "Profile updated.");
+      } catch (error) {
+        toastr.error("Profile update failed.");
+      } finally {
+        profileSaveBtn.disabled = false;
+        profileSaveBtn.textContent = "Save Changes";
+      }
+    });
+  }
+</script>
+</body>
+</html>

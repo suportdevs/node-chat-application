@@ -49,19 +49,19 @@
                                     </svg>
                                     <div class="dropdown min-w-max absolute right-0 top-8 py-3 bg-light-color app-shadow-2xl hidden opacity-0 rounded-md" id="header-dots-dropdown">
                                         <div class="text-color">
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-header-action="new-message">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                               </svg>
-                                               New Message</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">Select Chats</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
+                                               New Message</button>
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-header-action="select-chats">Select Chats</button>
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-header-action="settings">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                   </svg>
                                                   
-                                                  Settings</a>
+                                                  Settings</button>
                                             <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="logout()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
@@ -86,7 +86,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                 </svg>
-                                <input type="text" placeholder="Search" class="conversation-search-input bg-transparent focus:outline-none border-none" onkeyup="filterConversationDataset(event)">
+                                <input type="text" id="conversation-search-input" placeholder="Search" class="conversation-search-input bg-transparent focus:outline-none border-none">
                             </div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
@@ -158,17 +158,17 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                                     </svg>
                                 </button>
-                                <a href="/call" class="call-action-btn" data-call-type="voice" title="Voice call">
+                                <button type="button" class="call-action-btn" data-call-type="voice" title="Voice call">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 7.284 5.716 13 13 13h1.5a2.25 2.25 0 0 0 2.25-2.25v-1.372a1.125 1.125 0 0 0-.852-1.091l-4.423-1.106a1.125 1.125 0 0 0-1.173.417l-.97 1.293a1.125 1.125 0 0 1-1.21.38 12.035 12.035 0 0 1-7.143-7.143 1.125 1.125 0 0 1 .38-1.21l1.293-.97a1.125 1.125 0 0 0 .417-1.173L4.716 3.102A1.125 1.125 0 0 0 3.625 2.25H2.25v4.5Z" />
                                     </svg>
-                                </a>
-                                <a href="/call" class="call-action-btn" data-call-type="video" title="Video call">
+                                </button>
+                                <button type="button" class="call-action-btn" data-call-type="video" title="Video call">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-2.36A1.125 1.125 0 0 1 22.5 9.147v5.706a1.125 1.125 0 0 1-2.03 1.007l-4.72-2.36m0 0v-3Z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5A2.25 2.25 0 0 1 6 5.25h6A2.25 2.25 0 0 1 14.25 7.5v9A2.25 2.25 0 0 1 12 18.75H6A2.25 2.25 0 0 1 3.75 16.5v-9Z" />
                                     </svg>
-                                </a>
+                                </button>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-soft-color cursor-pointer hover:text-color" id="message-search-icon">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                     </svg>
@@ -181,43 +181,43 @@
                                     </svg>
                                     <div class="dropdown min-w-max absolute right-0 top-8 py-3 bg-light-color app-shadow-2xl hidden opacity-0 rounded-md" id="message-dots-dropdown">
                                         <div class="text-color">
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="info">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                                </svg>Contact Info</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">Select Messages</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
+                                                </svg>Contact Info</button>
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="select-messages">Select Messages</button>
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="close">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                                                </svg>Close Chat</a>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
+                                                </svg>Close Chat</button>
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="mute">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-                                                </svg>Mute Notifications</a>
-                                            <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="deleteMeassage()">
+                                                </svg>Mute Notifications</button>
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="delete">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>Delete Chat</a>
+                                                </svg>Delete Chat</button>
                                                 <% if(loggedInUser.role == 'Admin'){ %>
-                                                <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="clearMessage()" id="clear-message-item">
+                                                <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="clear" id="clear-message-item">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                                    </svg>Clear Chat</a>
+                                                    </svg>Clear Chat</button>
                                                 <% } %>
-                                            <a class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" onclick="leaveGroup()" id="leave-group-item" style="display: none;">
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="leave" id="leave-group-item" style="display: none;">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                                                </svg>Leave Group</a>
+                                                </svg>Leave Group</button>
                                             <div class="chat-message-block-container">
                                                 <div class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer " onclick="userBlock()">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
                                                     </svg>Block</div>
                                             </div>
-                                            <a href="" class="flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer">
+                                            <button type="button" class="dropdown-action flex items-center gap-3 px-4 py-1 hover-bg-dark-color cursor-pointer" data-conversation-action="report">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                                                </svg>Report</a>
+                                                </svg>Report</button>
                                         </div>
                                     </div>
                                 </div>
@@ -276,12 +276,18 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                                           </svg>                                          
                                     </label>
-                                    <input type="file" name="attachment" id="attachment" multiple accept="image/*" class="hidden">
+                                    <input type="file" name="attachment" id="attachment" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip" class="hidden">
                                 </div>
-                                <div  class="col-span-10">
+                                <div class="col-span-9">
                                     <textarea type="text" id="chat-message-input" name="message" placeholder="Type a message" autocomplete="off" class="w-full border-none outline-none h-auto bg-transparent  content-center placeholder:text-soft-color"></textarea>
                                 </div>
-                                <div class="flex items-center justify-end">
+                                <div class="col-span-2 flex items-center justify-end gap-2">
+                                    <button type="button" id="audio-record-btn" class="audio-record-btn" title="Record audio" aria-label="Record audio message">
+                                        <span id="audio-record-dot"></span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-12 0v1.5a6 6 0 0 0 6 6Zm0 0v3.75m-3.75 0h7.5M12 15a3 3 0 0 1-3-3V5.25a3 3 0 1 1 6 0V12a3 3 0 0 1-3 3Z" />
+                                        </svg>
+                                    </button>
                                     <button type="submit">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
@@ -307,6 +313,58 @@
         </div>
     </div>
 
+    <div id="inbox-call-overlay" class="inbox-call-overlay hidden">
+        <div class="inbox-call-card" data-call-type="video">
+            <div class="inbox-call-video-area">
+                <video id="inbox-remote-video" autoplay playsinline></video>
+                <div id="inbox-remote-fallback" class="inbox-call-fallback">
+                    <div id="inbox-call-avatar" class="inbox-call-avatar">--</div>
+                    <div id="inbox-call-name" class="inbox-call-name">Contact</div>
+                    <div id="inbox-call-status" class="inbox-call-status">Calling...</div>
+                    <div id="inbox-call-timer" class="inbox-call-timer">00:00</div>
+                </div>
+                <div id="inbox-local-preview" class="inbox-local-preview">
+                    <video id="inbox-local-video" autoplay playsinline muted></video>
+                    <div id="inbox-local-fallback" class="inbox-local-fallback">Me</div>
+                </div>
+            </div>
+            <div class="inbox-call-controls">
+                <button type="button" id="inbox-call-mute" class="inbox-call-control" title="Mute" aria-label="Mute microphone">
+                    <span class="inbox-call-icon mic"></span>
+                    <span>Mute</span>
+                </button>
+                <button type="button" id="inbox-call-camera" class="inbox-call-control" title="Camera" aria-label="Turn camera off">
+                    <span class="inbox-call-icon camera"></span>
+                    <span>Camera</span>
+                </button>
+                <button type="button" id="inbox-call-speaker" class="inbox-call-control" title="Speaker" aria-label="Mute remote audio">
+                    <span class="inbox-call-icon speaker"></span>
+                    <span>Speaker</span>
+                </button>
+                <button type="button" id="inbox-call-end" class="inbox-call-control danger" title="End call" aria-label="End call">
+                    <span class="inbox-call-icon end"></span>
+                    <span>End</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="inbox-incoming-call" class="inbox-ringing-overlay hidden">
+        <div class="inbox-ringing-card">
+            <div id="inbox-incoming-avatar" class="inbox-call-avatar">--</div>
+            <div id="inbox-incoming-title" class="inbox-ringing-title">Incoming call</div>
+            <div id="inbox-incoming-subtitle" class="inbox-ringing-subtitle">Contact</div>
+            <div class="inbox-ringing-actions">
+                <button type="button" id="inbox-decline-call" class="inbox-round-call danger" title="Decline" aria-label="Decline call">
+                    <span class="inbox-call-icon end"></span>
+                </button>
+                <button type="button" id="inbox-accept-call" class="inbox-round-call accept" title="Accept" aria-label="Accept call">
+                    <span class="inbox-call-icon phone"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const conversationDataset = <%- JSON.stringify(data || []) %>;
         const conversation_content_wrapper = document.querySelector("#conversation-content-wrapper");
@@ -321,8 +379,10 @@
         const main_content_wrapper = document.querySelector(".main-content-wrapper");
         const attachment_input = document.getElementById("attachment");
         const attachment_preview = document.getElementById("attachment-preview");
+        const audio_record_btn = document.getElementById("audio-record-btn");
         const chat_message_input = document.getElementById("chat-message-input");
         const message_search_input = document.getElementById("message-search-input");
+        const conversation_search_input = document.getElementById("conversation-search-input");
         const chat_message_block_container = document.querySelector(".chat-message-block-container");
         const blocked_message_form_container = document.querySelector(".blocked-message-form-container");
         const leave_group_item = document.querySelector("#leave-group-item");
@@ -336,11 +396,36 @@
         const attachment_viewer_img = document.querySelector("#attachment-viewer-img");
         const attachment_viewer_close = document.querySelector("#attachment-viewer-close");
         const currentUserName = <%- JSON.stringify(loggedInUser?.username || "") %>;
+        const currentUserAvatar = <%- JSON.stringify(loggedInUser?.avatar || "") %>;
         const typing_input_indicator = document.querySelector("#typing-indicator-input");
+        const inbox_call_overlay = document.querySelector("#inbox-call-overlay");
+        const inbox_call_card = document.querySelector(".inbox-call-card");
+        const inbox_remote_video = document.querySelector("#inbox-remote-video");
+        const inbox_local_video = document.querySelector("#inbox-local-video");
+        const inbox_remote_fallback = document.querySelector("#inbox-remote-fallback");
+        const inbox_local_fallback = document.querySelector("#inbox-local-fallback");
+        const inbox_local_preview = document.querySelector("#inbox-local-preview");
+        const inbox_call_avatar = document.querySelector("#inbox-call-avatar");
+        const inbox_call_name = document.querySelector("#inbox-call-name");
+        const inbox_call_status = document.querySelector("#inbox-call-status");
+        const inbox_call_timer = document.querySelector("#inbox-call-timer");
+        const inbox_call_mute = document.querySelector("#inbox-call-mute");
+        const inbox_call_camera = document.querySelector("#inbox-call-camera");
+        const inbox_call_speaker = document.querySelector("#inbox-call-speaker");
+        const inbox_call_end = document.querySelector("#inbox-call-end");
+        const inbox_incoming_call = document.querySelector("#inbox-incoming-call");
+        const inbox_incoming_avatar = document.querySelector("#inbox-incoming-avatar");
+        const inbox_incoming_title = document.querySelector("#inbox-incoming-title");
+        const inbox_incoming_subtitle = document.querySelector("#inbox-incoming-subtitle");
+        const inbox_accept_call = document.querySelector("#inbox-accept-call");
+        const inbox_decline_call = document.querySelector("#inbox-decline-call");
+        const header_dots_dropdown = document.querySelector("#header-dots-dropdown");
+        const message_dots_dropdown = document.querySelector("#message-dots-dropdown");
 
         const currentUserId = window.loggedInUserId || document.querySelector("meta[name=\"userId\"]")?.getAttribute("content");
         const socketRef = typeof socket !== "undefined" ? socket : io();
         let onlineUsersList = [];
+        const userPresence = new Map();
 
         let current_conversation_id = null;
         let participant = null;
@@ -348,9 +433,33 @@
         let pagination = { loading: false, hasMore: false, nextBefore: null };
         let pinnedMessage = null;
         let attachmentFiles = [];
+        let mediaRecorder = null;
+        let audioRecordChunks = [];
+        let audioRecordStream = null;
+        let audioRecordStartedAt = null;
         let inlineMemberTimer = null;
         let typingTimeout = null;
+        let conversationSearchTimer = null;
+        let messageSelectionMode = false;
+        let activeParticipantUser = null;
         const typingByConversation = new Map();
+        let callPeerConnection = null;
+        let callLocalStream = null;
+        let callRemoteStream = null;
+        let callTargetId = null;
+        let callPeerName = "";
+        let inboxCallType = "video";
+        let pendingIncomingCall = null;
+        let callRingingTimeout = null;
+        let callTimerInterval = null;
+        let callStartedAt = null;
+        let queuedCallCandidates = [];
+        let isCallMuted = false;
+        let isCallCameraOff = false;
+        let isRemoteAudioMuted = false;
+        const CALL_ICE_CONFIG = {
+            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        };
 
         socketRef.on("conversation_created", ({ conversation }) => {
             if (!conversation || !conversation._id) return;
@@ -367,7 +476,30 @@
         });
 
         socketRef.on("online-users", (onlineUserIds) => {
-            onlineUsersList = onlineUserIds || [];
+            onlineUsersList = (onlineUserIds || []).map(String);
+            onlineUsersList.forEach((userId) => {
+                userPresence.set(String(userId), {
+                    onlineStatus: "Online",
+                    lastSeen: new Date().toISOString(),
+                });
+            });
+            updateOnlineStatusText();
+            updateConversationStatusBadges();
+        });
+
+        socketRef.on("user_status", ({ userId, onlineStatus, lastSeen }) => {
+            if (!userId) return;
+            const id = String(userId);
+            userPresence.set(id, {
+                onlineStatus: onlineStatus || (onlineUsersList.includes(id) ? "Online" : "Offline"),
+                lastSeen: lastSeen || new Date().toISOString(),
+            });
+            if (onlineStatus === "Online" && !onlineUsersList.includes(id)) {
+                onlineUsersList.push(id);
+            }
+            if (onlineStatus === "Offline") {
+                onlineUsersList = onlineUsersList.filter((onlineId) => onlineId !== id);
+            }
             updateOnlineStatusText();
             updateConversationStatusBadges();
         });
@@ -377,9 +509,23 @@
             const entry = typingByConversation.get(conversationId) || {
                 senders: new Map(),
                 isGroup: !!isGroup,
+                timers: new Map(),
             };
             entry.isGroup = !!isGroup;
             entry.senders.set(senderId, senderName || "Someone");
+            if (entry.timers?.has(senderId)) clearTimeout(entry.timers.get(senderId));
+            entry.timers.set(senderId, setTimeout(() => {
+                const nextEntry = typingByConversation.get(conversationId);
+                if (!nextEntry) return;
+                nextEntry.senders.delete(senderId);
+                nextEntry.timers?.delete(senderId);
+                if (nextEntry.senders.size === 0) {
+                    typingByConversation.delete(conversationId);
+                } else {
+                    typingByConversation.set(conversationId, nextEntry);
+                }
+                updateTypingForConversation(conversationId);
+            }, 3500));
             typingByConversation.set(conversationId, entry);
             updateTypingForConversation(conversationId);
         });
@@ -387,6 +533,10 @@
         socketRef.on("stop-typing", ({ conversationId, senderId }) => {
             if (!conversationId || !typingByConversation.has(conversationId)) return;
             const entry = typingByConversation.get(conversationId);
+            if (entry.timers?.has(senderId)) {
+                clearTimeout(entry.timers.get(senderId));
+                entry.timers.delete(senderId);
+            }
             entry.senders.delete(senderId);
             if (entry.senders.size === 0) {
                 typingByConversation.delete(conversationId);
@@ -416,6 +566,496 @@
                 if (!current_conversation_id || !participant) return;
                 openInlineAddMember();
             });
+        }
+
+        document.querySelectorAll(".call-action-btn[data-call-type]").forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                if (!participant || participant.isGroup || !participant.id) {
+                    showCallNotice("Select a one-to-one chat to call.");
+                    return;
+                }
+                const type = button.dataset.callType === "voice" ? "audio" : "video";
+                startInboxCall(participant.id, type, participant.name || participant.id);
+            });
+        });
+
+        if (inbox_call_mute) {
+            inbox_call_mute.addEventListener("click", () => {
+                if (!callLocalStream) return;
+                isCallMuted = !isCallMuted;
+                callLocalStream.getAudioTracks().forEach((track) => {
+                    track.enabled = !isCallMuted;
+                });
+                updateInboxCallControls();
+            });
+        }
+
+        if (inbox_call_camera) {
+            inbox_call_camera.addEventListener("click", () => {
+                if (inboxCallType !== "video") {
+                    showCallNotice("Video is off for this call");
+                    return;
+                }
+                if (!callLocalStream) return;
+                isCallCameraOff = !isCallCameraOff;
+                callLocalStream.getVideoTracks().forEach((track) => {
+                    track.enabled = !isCallCameraOff;
+                });
+                if (inbox_local_fallback) inbox_local_fallback.classList.toggle("hidden", !isCallCameraOff);
+                updateInboxCallControls();
+            });
+        }
+
+        if (inbox_call_speaker) {
+            inbox_call_speaker.addEventListener("click", () => {
+                isRemoteAudioMuted = !isRemoteAudioMuted;
+                if (inbox_remote_video) inbox_remote_video.muted = isRemoteAudioMuted;
+                updateInboxCallControls();
+            });
+        }
+
+        if (inbox_call_end) {
+            inbox_call_end.addEventListener("click", () => endInboxCall({ notifyPeer: true }));
+        }
+
+        if (inbox_accept_call) {
+            inbox_accept_call.addEventListener("click", () => acceptInboxCall());
+        }
+
+        if (inbox_decline_call) {
+            inbox_decline_call.addEventListener("click", () => {
+                if (!pendingIncomingCall) return;
+                socketRef.emit("reject-call", { to: pendingIncomingCall.from, from: currentUserId });
+                pendingIncomingCall = null;
+                clearCallRingingTimeout();
+                hideIncomingCallOverlay();
+            });
+        }
+
+        window.addEventListener("beforeunload", () => {
+            if (callTargetId) {
+                socketRef.emit("end-call", { to: callTargetId, from: currentUserId });
+            }
+        });
+
+        if (header_dots_dropdown) {
+            header_dots_dropdown.addEventListener("click", (event) => {
+                const actionBtn = event.target.closest("[data-header-action]");
+                if (!actionBtn) return;
+                event.preventDefault();
+                handleHeaderDropdownAction(actionBtn.dataset.headerAction);
+                header_dots_dropdown.classList.remove("active");
+            });
+        }
+
+        if (message_dots_dropdown) {
+            message_dots_dropdown.addEventListener("click", (event) => {
+                const actionBtn = event.target.closest("[data-conversation-action]");
+                if (!actionBtn) return;
+                event.preventDefault();
+                handleConversationDropdownAction(actionBtn.dataset.conversationAction);
+                message_dots_dropdown.classList.remove("active");
+            });
+        }
+
+        function handleHeaderDropdownAction(action) {
+            if (action === "new-message") {
+                const trigger = document.querySelector(".conversation-create-btn");
+                if (trigger) trigger.dispatchEvent(new Event("click", { bubbles: true }));
+                return;
+            }
+            if (action === "select-chats") {
+                document.body.classList.toggle("conversation-select-mode");
+                toastr.info(document.body.classList.contains("conversation-select-mode") ? "Select chats mode on." : "Select chats mode off.");
+                return;
+            }
+            if (action === "settings") {
+                const widgetToggle = document.querySelector(".widget-toggle");
+                if (widgetToggle) widgetToggle.click();
+            }
+        }
+
+        function handleConversationDropdownAction(action) {
+            if (!action) return;
+            if (!current_conversation_id && !["close", "report"].includes(action)) {
+                toastr.warning("Select a conversation first.");
+                return;
+            }
+            if (action === "info") {
+                if (!participant) {
+                    toastr.warning("Select a conversation first.");
+                    return;
+                }
+                const info = participant.isGroup
+                    ? `${participant.name}: ${participant.members?.length || participant.memberCount || 0} members`
+                    : `${participant.name}: ${getPresenceLabel(participant.id).label}`;
+                toastr.info(info);
+                return;
+            }
+            if (action === "select-messages") {
+                messageSelectionMode = !messageSelectionMode;
+                chat_message_list?.classList.toggle("message-select-mode", messageSelectionMode);
+                toastr.info(messageSelectionMode ? "Message selection enabled." : "Message selection disabled.");
+                return;
+            }
+            if (action === "close") {
+                closeCurrentConversation();
+                return;
+            }
+            if (action === "mute") {
+                const key = `muted-conversation-${current_conversation_id}`;
+                const muted = localStorage.getItem(key) === "1";
+                localStorage.setItem(key, muted ? "0" : "1");
+                toastr.success(muted ? "Notifications unmuted." : "Notifications muted.");
+                return;
+            }
+            if (action === "delete") {
+                deleteMeassage();
+                return;
+            }
+            if (action === "clear") {
+                clearMessage();
+                return;
+            }
+            if (action === "leave") {
+                leaveGroup();
+                return;
+            }
+            if (action === "report") {
+                toastr.info("Report noted. Admin review workflow can be connected later.");
+            }
+        }
+
+        function closeCurrentConversation() {
+            emitStopTyping();
+            current_conversation_id = null;
+            participant = null;
+            currentConversation = null;
+            activeParticipantUser = null;
+            pagination = { loading: false, hasMore: false, nextBefore: null };
+            pinnedMessage = null;
+            renderPinnedMessage();
+            chat_message_title_container.classList.add("invisible");
+            chat_form_container.classList.add("invisible");
+            user_online_status_text_container.innerHTML = "";
+            chat_message_list.innerHTML = `<div class="flex gap-2 text-soft-color items-center justify-center h-full">
+                    <h1 class="text-2xl font-bold">Select a conversation</h1>
+                </div>`;
+            renderConversationList(conversationDataset);
+            toggleChatPanel(false);
+        }
+
+        async function startInboxCall(targetId, type, displayName) {
+            if (callTargetId || pendingIncomingCall) {
+                showCallNotice("Already in a call");
+                return;
+            }
+            if (!onlineUsersList.includes(String(targetId))) {
+                showCallNotice(`${displayName || "User"} is offline`);
+                return;
+            }
+            callTargetId = targetId;
+            callPeerName = displayName || targetId;
+            inboxCallType = type;
+            setInboxCallPeer(callPeerName);
+            setInboxCallMode(type);
+            setInboxCallStatus("Ringing...");
+            showInboxCallOverlay();
+
+            try {
+                await startInboxLocalStream(type);
+                callPeerConnection = createInboxPeerConnection();
+                const offer = await callPeerConnection.createOffer();
+                await callPeerConnection.setLocalDescription(offer);
+                socketRef.emit("call-user", {
+                    from: currentUserId,
+                    to: targetId,
+                    offer: callPeerConnection.localDescription,
+                    callType: type,
+                    callerName: currentUserName,
+                    callerAvatar: currentUserAvatar,
+                });
+                startCallRingingTimeout();
+            } catch (error) {
+                console.warn("Call start failed", error);
+                showCallNotice("Could not access camera or microphone");
+                endInboxCall({ notifyPeer: false });
+            }
+        }
+
+        async function acceptInboxCall() {
+            if (!pendingIncomingCall) return;
+            const incoming = pendingIncomingCall;
+            pendingIncomingCall = null;
+            clearCallRingingTimeout();
+            hideIncomingCallOverlay();
+            callTargetId = incoming.from;
+            callPeerName = incoming.callerName || incoming.from;
+            inboxCallType = incoming.callType || "video";
+            setInboxCallPeer(callPeerName);
+            setInboxCallMode(inboxCallType);
+            setInboxCallStatus("Connecting...");
+            showInboxCallOverlay();
+
+            try {
+                await startInboxLocalStream(inboxCallType);
+                callPeerConnection = createInboxPeerConnection();
+                await callPeerConnection.setRemoteDescription(new RTCSessionDescription(incoming.offer));
+                await flushCallCandidates();
+                const answer = await callPeerConnection.createAnswer();
+                await callPeerConnection.setLocalDescription(answer);
+                socketRef.emit("make-answer", {
+                    to: incoming.from,
+                    from: currentUserId,
+                    answer: callPeerConnection.localDescription,
+                });
+            } catch (error) {
+                console.warn("Call accept failed", error);
+                showCallNotice("Could not access camera or microphone");
+                endInboxCall({ notifyPeer: true });
+            }
+        }
+
+        async function startInboxLocalStream(type) {
+            if (callLocalStream) return;
+            const constraints = {
+                audio: { echoCancellation: true, noiseSuppression: true },
+                video:
+                    type === "video"
+                        ? { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" }
+                        : false,
+            };
+            callLocalStream = await navigator.mediaDevices.getUserMedia(constraints);
+            if (inbox_local_video) inbox_local_video.srcObject = callLocalStream;
+            isCallMuted = false;
+            isCallCameraOff = type !== "video";
+            isRemoteAudioMuted = false;
+            if (inbox_local_fallback) {
+                inbox_local_fallback.textContent = getInitials(currentUserName || currentUserId);
+                inbox_local_fallback.classList.toggle("hidden", type === "video");
+            }
+            updateInboxCallControls();
+        }
+
+        function createInboxPeerConnection() {
+            const connection = new RTCPeerConnection(CALL_ICE_CONFIG);
+            callRemoteStream = new MediaStream();
+            if (inbox_remote_video) inbox_remote_video.srcObject = callRemoteStream;
+
+            callLocalStream.getTracks().forEach((track) => {
+                connection.addTrack(track, callLocalStream);
+            });
+
+            connection.ontrack = (event) => {
+                if (event.streams && event.streams[0]) {
+                    inbox_remote_video.srcObject = event.streams[0];
+                } else if (event.track) {
+                    callRemoteStream.addTrack(event.track);
+                }
+                if (event.track.kind === "video" && inboxCallType === "video") {
+                    inbox_remote_fallback.classList.add("is-video-ready");
+                }
+            };
+
+            connection.onicecandidate = (event) => {
+                if (event.candidate && callTargetId) {
+                    socketRef.emit("ice-candidate", {
+                        to: callTargetId,
+                        from: currentUserId,
+                        candidate: event.candidate,
+                    });
+                }
+            };
+
+            connection.onconnectionstatechange = () => {
+                if (connection.connectionState === "connected") {
+                    clearCallRingingTimeout();
+                    setInboxCallStatus("Connected");
+                    startInboxCallTimer();
+                }
+                if (["disconnected", "failed", "closed"].includes(connection.connectionState)) {
+                    endInboxCall({ notifyPeer: false });
+                }
+            };
+
+            return connection;
+        }
+
+        async function flushCallCandidates() {
+            if (!callPeerConnection || !callPeerConnection.remoteDescription || !queuedCallCandidates.length) return;
+            const candidates = queuedCallCandidates;
+            queuedCallCandidates = [];
+            for (const candidate of candidates) {
+                try {
+                    await callPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                } catch (error) {
+                    console.warn("Queued ICE candidate failed", error);
+                }
+            }
+        }
+
+        function showIncomingCallOverlay(incoming) {
+            const name = incoming.callerName || incoming.from;
+            if (inbox_incoming_title) {
+                inbox_incoming_title.textContent = incoming.callType === "audio" ? "Incoming audio call" : "Incoming video call";
+            }
+            if (inbox_incoming_subtitle) inbox_incoming_subtitle.textContent = name;
+            if (inbox_incoming_avatar) inbox_incoming_avatar.textContent = getInitials(name);
+            if (inbox_incoming_call) inbox_incoming_call.classList.remove("hidden");
+            if (navigator.vibrate) navigator.vibrate([160, 80, 160, 80, 160]);
+            startCallRingingTimeout(() => {
+                if (!pendingIncomingCall) return;
+                socketRef.emit("reject-call", { to: pendingIncomingCall.from, from: currentUserId });
+                pendingIncomingCall = null;
+                hideIncomingCallOverlay();
+                showCallNotice("Missed call");
+            });
+        }
+
+        function hideIncomingCallOverlay() {
+            if (inbox_incoming_call) inbox_incoming_call.classList.add("hidden");
+        }
+
+        function showInboxCallOverlay() {
+            if (inbox_call_overlay) inbox_call_overlay.classList.remove("hidden");
+        }
+
+        function hideInboxCallOverlay() {
+            if (inbox_call_overlay) inbox_call_overlay.classList.add("hidden");
+        }
+
+        function setInboxCallPeer(name) {
+            if (inbox_call_name) inbox_call_name.textContent = name || "Contact";
+            if (inbox_call_avatar) inbox_call_avatar.textContent = getInitials(name);
+        }
+
+        function setInboxCallStatus(status) {
+            if (inbox_call_status) inbox_call_status.textContent = status;
+        }
+
+        function setInboxCallMode(type) {
+            if (inbox_call_card) inbox_call_card.dataset.callType = type;
+            if (inbox_remote_fallback) {
+                inbox_remote_fallback.classList.remove("is-video-ready");
+                inbox_remote_fallback.classList.toggle("audio-only", type === "audio");
+            }
+            if (inbox_local_preview) inbox_local_preview.classList.toggle("audio-only", type === "audio");
+            if (inbox_call_camera) inbox_call_camera.disabled = type !== "video";
+        }
+
+        function startCallRingingTimeout(onTimeout) {
+            clearCallRingingTimeout();
+            callRingingTimeout = setTimeout(() => {
+                if (typeof onTimeout === "function") {
+                    onTimeout();
+                    return;
+                }
+                showCallNotice("No answer");
+                endInboxCall({ notifyPeer: true });
+            }, 45000);
+        }
+
+        function clearCallRingingTimeout() {
+            if (callRingingTimeout) {
+                clearTimeout(callRingingTimeout);
+                callRingingTimeout = null;
+            }
+        }
+
+        function startInboxCallTimer() {
+            if (callTimerInterval) return;
+            callStartedAt = Date.now();
+            callTimerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - callStartedAt) / 1000);
+                const mins = String(Math.floor(elapsed / 60)).padStart(2, "0");
+                const secs = String(elapsed % 60).padStart(2, "0");
+                if (inbox_call_timer) inbox_call_timer.textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopInboxCallTimer() {
+            if (callTimerInterval) {
+                clearInterval(callTimerInterval);
+                callTimerInterval = null;
+            }
+            callStartedAt = null;
+            if (inbox_call_timer) inbox_call_timer.textContent = "00:00";
+        }
+
+        function updateInboxCallControls() {
+            if (inbox_call_mute) {
+                inbox_call_mute.classList.toggle("is-off", isCallMuted);
+                const label = inbox_call_mute.querySelector("span:last-child");
+                if (label) label.textContent = isCallMuted ? "Unmute" : "Mute";
+            }
+            if (inbox_call_camera) {
+                inbox_call_camera.classList.toggle("is-off", isCallCameraOff);
+                const label = inbox_call_camera.querySelector("span:last-child");
+                if (label) label.textContent = isCallCameraOff ? "Camera off" : "Camera";
+            }
+            if (inbox_call_speaker) {
+                inbox_call_speaker.classList.toggle("is-off", isRemoteAudioMuted);
+                const label = inbox_call_speaker.querySelector("span:last-child");
+                if (label) label.textContent = isRemoteAudioMuted ? "Speaker off" : "Speaker";
+            }
+        }
+
+        function endInboxCall({ notifyPeer }) {
+            const peer = callTargetId || pendingIncomingCall?.from;
+            if (notifyPeer && peer) {
+                socketRef.emit("end-call", { to: peer, from: currentUserId });
+            }
+            clearCallRingingTimeout();
+            if (callPeerConnection) {
+                try {
+                    callPeerConnection.onconnectionstatechange = null;
+                    callPeerConnection.close();
+                } catch (error) {
+                    console.warn("Call close failed", error);
+                }
+                callPeerConnection = null;
+            }
+            if (callLocalStream) {
+                callLocalStream.getTracks().forEach((track) => track.stop());
+                callLocalStream = null;
+            }
+            if (callRemoteStream) {
+                callRemoteStream.getTracks().forEach((track) => track.stop());
+                callRemoteStream = null;
+            }
+            if (inbox_local_video) inbox_local_video.srcObject = null;
+            if (inbox_remote_video) {
+                inbox_remote_video.srcObject = null;
+                inbox_remote_video.muted = false;
+            }
+            stopInboxCallTimer();
+            hideInboxCallOverlay();
+            hideIncomingCallOverlay();
+            callTargetId = null;
+            callPeerName = "";
+            pendingIncomingCall = null;
+            queuedCallCandidates = [];
+            isCallMuted = false;
+            isCallCameraOff = false;
+            isRemoteAudioMuted = false;
+            updateInboxCallControls();
+        }
+
+        function showCallNotice(message) {
+            if (typeof toastr !== "undefined") {
+                toastr.info(message);
+            } else {
+                console.log(message);
+            }
+        }
+
+        function getInitials(value) {
+            if (!value) return "--";
+            const parts = String(value).trim().split(/\s+/).filter(Boolean);
+            if (parts.length > 1) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+            const cleaned = String(value).replace(/[^a-zA-Z0-9]/g, "");
+            return cleaned ? cleaned.slice(0, 2).toUpperCase() : "--";
         }
 
         function openInlineAddMember() {
@@ -709,6 +1349,52 @@
             attachment_input.files = dataTransfer.files;
         }
 
+        function getFileKind(fileNameOrType) {
+            const value = String(fileNameOrType || "").toLowerCase();
+            if (value.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(value)) return "image";
+            if (value.startsWith("video/") || /\.(mp4|webm|mov|m4v)$/i.test(value)) return "video";
+            if (value.startsWith("audio/") || /\.(mp3|wav|webm|ogg|m4a|aac)$/i.test(value)) return "audio";
+            if (/\.(pdf)$/i.test(value)) return "pdf";
+            return "doc";
+        }
+
+        function getReadableFileName(fileName) {
+            return decodeURIComponent(String(fileName || "Attachment").split("/").pop());
+        }
+
+        function renderAttachmentPreviewItem(file, index) {
+            const url = URL.createObjectURL(file);
+            const kind = getFileKind(file.type || file.name);
+            const safeName = escapeHtml(file.name);
+            const removeBtn = `<button class="attachment-remove-btn" type="button" data-index="${index}" aria-label="Remove attachment">×</button>`;
+            if (kind === "image") {
+                return `<div class="attachment-thumb" data-kind="image">
+                            <img src="${url}" alt="${safeName}" onload="URL.revokeObjectURL('${url}')">
+                            <div class="attachment-name">${safeName}</div>
+                            ${removeBtn}
+                        </div>`;
+            }
+            if (kind === "video") {
+                return `<div class="attachment-thumb" data-kind="video">
+                            <video src="${url}" muted playsinline></video>
+                            <div class="attachment-name">${safeName}</div>
+                            ${removeBtn}
+                        </div>`;
+            }
+            if (kind === "audio") {
+                return `<div class="attachment-thumb attachment-file-thumb" data-kind="audio">
+                            <audio src="${url}" controls></audio>
+                            <div class="attachment-name">${safeName}</div>
+                            ${removeBtn}
+                        </div>`;
+            }
+            return `<div class="attachment-thumb attachment-file-thumb" data-kind="${kind}">
+                        <div class="attachment-file-icon">${kind === "pdf" ? "PDF" : "DOC"}</div>
+                        <div class="attachment-name">${safeName}</div>
+                        ${removeBtn}
+                    </div>`;
+        }
+
         function renderAttachmentPreview() {
             if (!attachment_preview) return;
             if (!attachmentFiles.length) {
@@ -717,13 +1403,7 @@
                 return;
             }
             const previews = attachmentFiles
-                .map((file, index) => {
-                    const url = URL.createObjectURL(file);
-                    return `<div class="attachment-thumb">
-                                <img src="${url}" alt="${escapeHtml(file.name)}" onload="URL.revokeObjectURL('${url}')">
-                                <button class="attachment-remove-btn" type="button" data-index="${index}" aria-label="Remove attachment">×</button>
-                            </div>`;
-                })
+                .map((file, index) => renderAttachmentPreviewItem(file, index))
                 .join("");
             attachment_preview.innerHTML = previews;
             attachment_preview.classList.remove("hidden");
@@ -753,16 +1433,17 @@
             };
         }
 
-        function renderConversationList(list) {
+        function renderConversationList(list, searchQuery = "") {
             if (!conversation_content_wrapper) return;
             if (!list || list.length === 0) {
+                const isSearching = !!searchQuery;
                 conversation_content_wrapper.innerHTML = `<div class="flex flex-col items-center gap-3 justify-center text-center p-2 sm:px-3 py-2 h-full text-soft-color hover-bg-light-color cursor-pointer">
                         <div>
                             <img src="./images/no-conversation.png" alt="" class="w-32">
                         </div>
                         <div>
-                            <h3 class="text-md font-bold">No conversation yet</h3>
-                            <p>Create conversation to contact others</p>
+                            <h3 class="text-md font-bold">${isSearching ? "No chats found" : "No conversation yet"}</h3>
+                            <p>${isSearching ? "Try another name or message." : "Create conversation to contact others"}</p>
                         </div>
                     </div>`;
                 return;
@@ -798,6 +1479,18 @@
                             <div class="conversation-preview" data-preview="${escapeHtml(trimmed)}">${escapeHtml(trimmed)}</div>
                             ${display.isGroup ? `<div class="conversation-sub">${display.memberCount} members</div>` : ""}
                         </div>
+                        <div class="conversation-actions">
+                            <button type="button" class="conversation-menu-btn" aria-label="Conversation options">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                </svg>
+                            </button>
+                            <div class="conversation-row-menu dropdown">
+                                <button type="button" class="conversation-row-menu-item" data-row-action="open">Open chat</button>
+                                <button type="button" class="conversation-row-menu-item" data-row-action="mute">Mute notifications</button>
+                                <button type="button" class="conversation-row-menu-item danger" data-row-action="delete">Delete chat</button>
+                            </div>
+                        </div>
                     </div>`;
                 })
                 .join("");
@@ -813,15 +1506,40 @@
                 const userId = badge.dataset.userId;
                 if (!userId) return;
                 const isOnline = onlineUsersList.includes(userId);
-                badge.style.background = isOnline ? "#22c55e" : "#9ca3af";
+                badge.classList.toggle("is-online", isOnline);
+                badge.classList.toggle("is-offline", !isOnline);
             });
         }
 
         renderConversationList(conversationDataset);
 
         conversation_content_wrapper?.addEventListener("click", (event) => {
+            const menuBtn = event.target.closest(".conversation-menu-btn");
+            if (menuBtn) {
+                event.stopPropagation();
+                const menu = menuBtn.parentElement?.querySelector(".conversation-row-menu");
+                const isActive = menu?.classList.contains("active");
+                closeConversationRowMenus();
+                if (!isActive && menu) menu.classList.add("active");
+                return;
+            }
+
+            const rowAction = event.target.closest(".conversation-row-menu-item");
+            if (rowAction) {
+                event.stopPropagation();
+                const item = rowAction.closest(".conversation-item");
+                const action = rowAction.dataset.rowAction;
+                handleConversationRowAction(action, item);
+                closeConversationRowMenus();
+                return;
+            }
+
             const item = event.target.closest(".conversation-item");
             if (!item) return;
+            openConversationFromItem(item);
+        });
+
+        function openConversationFromItem(item) {
             const conversationId = item.dataset.conversationId;
             const isGroup = item.dataset.isGroup === "true";
             const participantId = item.dataset.participantId || null;
@@ -835,33 +1553,83 @@
                 avatar: participantAvatar,
                 memberCount,
             });
-        });
+        }
+
+        function closeConversationRowMenus() {
+            document.querySelectorAll(".conversation-row-menu.active").forEach((menu) => {
+                menu.classList.remove("active");
+            });
+        }
+
+        function handleConversationRowAction(action, item) {
+            if (!item || !action) return;
+            if (action === "open") {
+                openConversationFromItem(item);
+                return;
+            }
+            if (action === "mute") {
+                const conversationId = item.dataset.conversationId;
+                const key = `muted-conversation-${conversationId}`;
+                const muted = localStorage.getItem(key) === "1";
+                localStorage.setItem(key, muted ? "0" : "1");
+                toastr.success(muted ? "Notifications unmuted." : "Notifications muted.");
+                return;
+            }
+            if (action === "delete") {
+                openConversationFromItem(item);
+                deleteMeassage();
+            }
+        }
 
         function filterConversationDataset() {
-            const input = document.querySelector(".conversation-search-input");
-            const query = input ? input.value.toLowerCase() : "";
+            const query = conversation_search_input ? conversation_search_input.value.trim().toLowerCase() : "";
             const filtered = (conversationDataset || []).filter((item) => {
                 if (query === "") return true;
+                const preview = item.message?.content || "";
                 if (item.isGroup && item.name) {
-                    return item.name.toLowerCase().includes(query);
+                    return item.name.toLowerCase().includes(query) || preview.toLowerCase().includes(query);
                 }
                 return (
                     item.creator?.name?.toLowerCase().includes(query) ||
-                    item.participant?.name?.toLowerCase().includes(query)
+                    item.participant?.name?.toLowerCase().includes(query) ||
+                    item.creator?.mobile?.toLowerCase?.().includes(query) ||
+                    item.participant?.mobile?.toLowerCase?.().includes(query) ||
+                    preview.toLowerCase().includes(query)
                 );
             });
-            renderConversationList(filtered);
+            renderConversationList(filtered, query);
+        }
+
+        if (conversation_search_input) {
+            conversation_search_input.addEventListener("input", () => {
+                clearTimeout(conversationSearchTimer);
+                conversationSearchTimer = setTimeout(filterConversationDataset, 120);
+            });
         }
 
         function updateOnlineStatusText() {
             if (!participant) return;
             if (participant.isGroup) {
                 const count = participant.members ? participant.members.length : currentConversation?.memberCount || 0;
-                user_online_status_text_container.innerHTML = `<span class="text-sm text-dark-color">${count} members</span>`;
+                user_online_status_text_container.innerHTML = `<span class="chat-presence is-group">${count} members</span>`;
                 return;
             }
-            const isOnline = onlineUsersList.includes(participant.id);
-            user_online_status_text_container.innerHTML = `<span class="text-sm text-dark-color user-online-status-text user-online-status-text${participant.id}" data-user-id="${participant.id}">${isOnline ? "Online" : "Offline"}</span>`;
+            const status = getPresenceLabel(participant.id);
+            user_online_status_text_container.innerHTML = `<span class="chat-presence ${status.online ? "is-online" : "is-offline"} user-online-status-text user-online-status-text${participant.id}" data-user-id="${participant.id}">
+                    <span class="presence-dot"></span>${status.label}
+                </span>`;
+        }
+
+        function getPresenceLabel(userId) {
+            const id = String(userId || "");
+            const presence = userPresence.get(id);
+            const isOnline = onlineUsersList.includes(id) || presence?.onlineStatus === "Online";
+            if (isOnline) return { online: true, label: "Online" };
+            const lastSeen = presence?.lastSeen || activeParticipantUser?.lastSeen;
+            if (lastSeen) {
+                return { online: false, label: `last seen ${moment(lastSeen).fromNow()}` };
+            }
+            return { online: false, label: "Offline" };
         }
 
         function updateConversationMenu() {
@@ -898,7 +1666,7 @@
                    </div>`;
 
             const attachments = (message.attachments || [])
-                .map((attachment) => `<img src="./uploads/attachments/${attachment}" alt="" class="rounded-md h-40 w-full object-cover">`)
+                .map((attachment) => renderMessageAttachment(attachment))
                 .join("");
 
             const attachmentGrid = attachments
@@ -940,6 +1708,31 @@
                 </div>`;
         }
 
+        function renderMessageAttachment(attachment) {
+            const fileName = getReadableFileName(attachment);
+            const safeName = escapeHtml(fileName);
+            const src = `/uploads/attachments/${encodeURIComponent(attachment)}`;
+            const kind = getFileKind(fileName);
+            if (kind === "image") {
+                return `<button type="button" class="attachment-open" data-src="${src}" data-kind="image" aria-label="Open image">
+                            <img src="${src}" alt="${safeName}" class="rounded-md h-40 w-full object-cover">
+                        </button>`;
+            }
+            if (kind === "video") {
+                return `<video src="${src}" class="message-video" controls playsinline></video>`;
+            }
+            if (kind === "audio") {
+                return `<div class="message-audio">
+                            <audio src="${src}" controls></audio>
+                            <a href="${src}" download="${safeName}">${safeName}</a>
+                        </div>`;
+            }
+            return `<a href="${src}" download="${safeName}" target="_blank" class="message-document">
+                        <span class="message-document-icon">${kind === "pdf" ? "PDF" : "DOC"}</span>
+                        <span>${safeName}</span>
+                    </a>`;
+        }
+
         async function loadMessages(reset = false) {
             if (!current_conversation_id || pagination.loading) return;
             if (!reset && !pagination.hasMore) return;
@@ -977,6 +1770,13 @@
 
                 participant = result.data.participant;
                 currentConversation = participant;
+                activeParticipantUser = result.participantUser || null;
+                if (activeParticipantUser?._id) {
+                    userPresence.set(String(activeParticipantUser._id), {
+                        onlineStatus: activeParticipantUser.onlineStatus || "Offline",
+                        lastSeen: activeParticipantUser.lastSeen || null,
+                    });
+                }
                 updateOnlineStatusText();
                 updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
                 updateConversationMenu();
@@ -1112,10 +1912,73 @@
             }
         });
 
+        socketRef.on("incoming-call", (payload) => {
+            const { from, offer, callType, callerName, callerAvatar } = payload || {};
+            if (!from || !offer) return;
+            if (callTargetId || pendingIncomingCall) {
+                socketRef.emit("call-busy", { to: from, from: currentUserId });
+                return;
+            }
+            pendingIncomingCall = {
+                from,
+                offer,
+                callType: callType || "video",
+                callerName: callerName || from,
+                callerAvatar: callerAvatar || "",
+            };
+            showIncomingCallOverlay(pendingIncomingCall);
+        });
+
+        socketRef.on("call-accepted", async ({ answer }) => {
+            if (!callPeerConnection || !answer) return;
+            try {
+                await callPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                await flushCallCandidates();
+                clearCallRingingTimeout();
+                setInboxCallStatus("Connecting...");
+            } catch (error) {
+                console.warn("Call answer failed", error);
+                showCallNotice("Call connection failed");
+                endInboxCall({ notifyPeer: true });
+            }
+        });
+
+        socketRef.on("ice-candidate", async ({ candidate }) => {
+            if (!candidate) return;
+            if (!callPeerConnection || !callPeerConnection.remoteDescription) {
+                queuedCallCandidates.push(candidate);
+                return;
+            }
+            try {
+                await callPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (error) {
+                console.warn("ICE candidate failed", error);
+            }
+        });
+
+        socketRef.on("call-ended", () => {
+            showCallNotice("Call ended");
+            endInboxCall({ notifyPeer: false });
+        });
+
+        socketRef.on("call-rejected", () => {
+            showCallNotice("Call declined");
+            endInboxCall({ notifyPeer: false });
+        });
+
+        socketRef.on("call-busy", () => {
+            showCallNotice("User is on another call");
+            endInboxCall({ notifyPeer: false });
+        });
+
         const chat_send_message_form = document.querySelector("#chat-send-message-form");
         chat_send_message_form?.addEventListener("submit", async (event) => {
             event.preventDefault();
             if (!current_conversation_id || !participant) return;
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                toastr.info("Stop recording before sending.");
+                return;
+            }
             emitStopTyping();
 
             const formData = new FormData(chat_send_message_form);
@@ -1387,6 +2250,84 @@
             });
         }
 
+        function getAudioMimeType() {
+            const candidates = [
+                "audio/webm;codecs=opus",
+                "audio/webm",
+                "audio/ogg;codecs=opus",
+                "audio/ogg",
+                "audio/mp4",
+            ];
+            return candidates.find((type) => window.MediaRecorder && MediaRecorder.isTypeSupported(type)) || "";
+        }
+
+        async function startAudioRecording() {
+            if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+                toastr.error("Audio recording is not supported in this browser.");
+                return;
+            }
+            try {
+                audioRecordStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioRecordChunks = [];
+                const mimeType = getAudioMimeType();
+                mediaRecorder = new MediaRecorder(audioRecordStream, mimeType ? { mimeType } : undefined);
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) audioRecordChunks.push(event.data);
+                };
+                mediaRecorder.onstop = () => {
+                    const type = mediaRecorder.mimeType || "audio/webm";
+                    const extension = type.includes("ogg") ? "ogg" : type.includes("mp4") ? "m4a" : "webm";
+                    const blob = new Blob(audioRecordChunks, { type });
+                    const seconds = Math.max(1, Math.round((Date.now() - audioRecordStartedAt) / 1000));
+                    const file = new File([blob], `voice-message-${Date.now()}.${extension}`, { type });
+                    attachmentFiles.push(file);
+                    syncAttachmentInput();
+                    renderAttachmentPreview();
+                    stopAudioTracks();
+                    audioRecordChunks = [];
+                    audioRecordStartedAt = null;
+                    toastr.success(`Audio recorded (${seconds}s).`);
+                };
+                audioRecordStartedAt = Date.now();
+                mediaRecorder.start();
+                audio_record_btn.classList.add("is-recording");
+                audio_record_btn.setAttribute("aria-label", "Stop recording");
+                toastr.info("Recording audio...");
+            } catch (error) {
+                stopAudioTracks();
+                toastr.error("Microphone permission denied.");
+            }
+        }
+
+        function stopAudioTracks() {
+            if (audioRecordStream) {
+                audioRecordStream.getTracks().forEach((track) => track.stop());
+                audioRecordStream = null;
+            }
+            if (audio_record_btn) {
+                audio_record_btn.classList.remove("is-recording");
+                audio_record_btn.setAttribute("aria-label", "Record audio message");
+            }
+        }
+
+        function stopAudioRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+            } else {
+                stopAudioTracks();
+            }
+        }
+
+        if (audio_record_btn) {
+            audio_record_btn.addEventListener("click", () => {
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    stopAudioRecording();
+                } else {
+                    startAudioRecording();
+                }
+            });
+        }
+
         if (attachment_preview) {
             attachment_preview.addEventListener("click", (event) => {
                 const removeBtn = event.target.closest(".attachment-remove-btn");
@@ -1454,6 +2395,9 @@
             if (!event.target.closest(".message-actions")) {
                 closeMessageMenus();
             }
+            if (!event.target.closest(".conversation-actions")) {
+                closeConversationRowMenus();
+            }
             if (
                 inline_add_member_panel &&
                 !inline_add_member_panel.classList.contains("invisible") &&
@@ -1466,7 +2410,3 @@
 </script>
 </body>
 </html>
-
-
-
-

@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+const createError = require("http-errors");
 
 function uploader(
   subfolder_path,
@@ -34,17 +35,18 @@ function uploader(
     storage: storage,
     limits: { fileSize: file_size },
     fileFilter: (req, file, cb) => {
-      if (req.files.length > allowed_max_files) {
+      const uploadedCount = Array.isArray(req.files) ? req.files.length : 0;
+      if (uploadedCount >= allowed_max_files) {
         cb(
           createError(
-            `Maxium ${allowed_max_files} files are allowed to upload.`
+            `Maximum ${allowed_max_files} files are allowed to upload.`
           )
         );
       } else {
         if (allowed_file_types.includes(file.mimetype)) {
           cb(null, true);
         } else {
-          cb(error_msg);
+          cb(createError(error_msg));
         }
       }
     },

@@ -40,6 +40,7 @@
             <span class="text-sm text-dark-color">Address</span>
             <p class="text-md"><%= loggedInUser.address %></p>
         </div>
+        <a href="/profile" class="profile-open-link">Open full profile</a>
     </div>
 </div>
 
@@ -47,20 +48,18 @@
     const user_avatar = document.getElementById("user-avatar");
     const user_avatar_off_canvas = document.querySelector(".user-avatar-off-canvas");
     const user_avatar_off_canvas_close = document.querySelector(".user-avatar-off-canvas-close");
-    // user off canvas menu toggle
-    user_avatar.addEventListener("click", function(){
-        if(user_avatar_off_canvas.classList.contains('invisible')){
-            user_avatar_off_canvas.classList.remove('invisible');
-            user_avatar_off_canvas.classList.add('w-[95vw]', 'sm:w-full', 'visible', 'z-10');
-        }else{
-            user_avatar_off_canvas.classList.remove('w-[95vw]', 'sm:w-full','z-10');
-            user_avatar_off_canvas.classList.add('invisible');
-        }
-    });
+    // open full profile page
+    if (user_avatar) {
+        user_avatar.addEventListener("click", function(){
+            window.location.href = "/profile";
+        });
+    }
     // close user off canvas menu
-    user_avatar_off_canvas_close.addEventListener("click", function(){
-        user_avatar_off_canvas.classList.remove('w-[95vw]', 'visible');
-        user_avatar_off_canvas.classList.add('invisible');
-    });
+    if (user_avatar_off_canvas_close && user_avatar_off_canvas) {
+        user_avatar_off_canvas_close.addEventListener("click", function(){
+            user_avatar_off_canvas.classList.remove('w-[95vw]', 'visible');
+            user_avatar_off_canvas.classList.add('invisible');
+        });
+    }
     // profile off canvas menu end
 </script>

@@ -1,6 +1,7 @@
 const {
   block,
   unblock,
+  getProfile,
   getUsers,
   updateUser,
   userDelete,
@@ -12,6 +13,13 @@ const decoratedHtmlResponse = require("../middlewares/decoratedHtmlResponse");
 const router = require("express").Router();
 
 router.get("/", decoratedHtmlResponse("Users"), authenticated, getUsers);
+
+router.get(
+  "/profile",
+  decoratedHtmlResponse("Profile"),
+  authenticated,
+  getProfile
+);
 
 router.post("/", authenticated, getUsers);
 

@@ -1281,41 +1281,85 @@
             if (!pinnedMessages.length) {
                 pinned_message_container.classList.add("hidden");
                 pinned_message_container.innerHTML = "";
+                chat_message_list?.classList.remove("has-pinned");
                 return;
             }
 
-            const listHtml = pinnedMessages
-                .map((message, index) => {
-                    const pinnedText = message.text || "Attachment";
-                    const attachmentCount = message.attachments?.length || 0;
-                    const attachmentLabel = attachmentCount ? `${attachmentCount} attachment${attachmentCount > 1 ? "s" : ""}` : "";
-                    const senderName = message.sender?.name ? `${message.sender.name}: ` : "";
-                    return `<div class="pinned-item" data-message-id="${message.id}" data-pinned-index="${index}">
-                                <button class="pinned-content" type="button">
-                                    <div class="pinned-label">${index === 0 ? "Pinned" : "Previous pinned"}</div>
-                                    <div class="pinned-text">${escapeHtml(senderName)}${escapeHtml(pinnedText)}</div>
-                                    ${attachmentLabel ? `<div class="pinned-meta">${escapeHtml(attachmentLabel)}</div>` : ""}
-                                </button>
-                                <button class="pinned-remove-btn" type="button" data-message-id="${message.id}" aria-label="Unpin message">x</button>
-                            </div>`;
-                })
-                .join("");
-            pinned_message_container.innerHTML = `<div class="pinned-list">${listHtml}</div>`;
-            pinned_message_container.classList.remove("hidden");
-            return;
-
+            if (activePinnedIndex >= pinnedMessages.length) activePinnedIndex = 0;
+            const pinnedMessage = pinnedMessages[activePinnedIndex] || pinnedMessages[0];
             const pinnedText = pinnedMessage.text || "Attachment";
             const attachmentCount = pinnedMessage.attachments?.length || 0;
             const attachmentLabel = attachmentCount ? `${attachmentCount} attachment${attachmentCount > 1 ? "s" : ""}` : "";
+            const senderName = pinnedMessage.sender?.name ? `${pinnedMessage.sender.name}: ` : "";
+            const expiresLabel = formatPinExpiry(pinnedMessage.expiresAt);
+            const countLabel = pinnedMessages.length > 1 ? ` ${activePinnedIndex + 1} of ${pinnedMessages.length}` : "";
             pinned_message_container.innerHTML = `
-                <div class="pinned-content">
-                    <div class="pinned-label">Pinned</div>
-                    <div class="pinned-text">${escapeHtml(pinnedText)}</div>
-                    ${attachmentLabel ? `<div class="pinned-meta">${escapeHtml(attachmentLabel)}</div>` : ""}
+                <div class="pinned-item" data-message-id="${pinnedMessage.id}">
+                    <button class="pinned-content" type="button">
+                        <span class="pinned-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652l-9.193 9.193a4.5 4.5 0 0 1-1.897 1.13L6 16.875l1.102-4.111a4.5 4.5 0 0 1 1.13-1.897l8.63-8.63ZM19.5 7.125 16.875 4.5M18 14v4.75A2.25 2.25 0 0 1 15.75 21h-10.5A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                            </svg>
+                        </span>
+                        <span class="pinned-copy">
+                            <span class="pinned-label">Pinned message${countLabel}</span>
+                            <span class="pinned-text">${escapeHtml(senderName)}${escapeHtml(pinnedText)}</span>
+                            ${attachmentLabel || expiresLabel ? `<span class="pinned-meta">${escapeHtml([attachmentLabel, expiresLabel].filter(Boolean).join(" - "))}</span>` : ""}
+                        </span>
+                    </button>
+                    ${pinnedMessages.length > 1 ? `<button class="pinned-next-btn" type="button" aria-label="Show next pinned message">v</button>` : ""}
+                    <button class="pinned-remove-btn" type="button" data-message-id="${pinnedMessage.id}" aria-label="Unpin message">×</button>
                 </div>
-                <button class="pinned-remove-btn" type="button" aria-label="Unpin message">×</button>
             `;
             pinned_message_container.classList.remove("hidden");
+            chat_message_list?.classList.add("has-pinned");
+        }
+
+        function jumpToPinnedMessage(messageId) {
+            if (!messageId || !chat_message_list) return;
+            const row = chat_message_list.querySelector(`.message-row[data-message-id="${messageId}"]`);
+            if (!row) {
+                toastr.info("Pinned message isn't loaded. Scroll up to load older messages.");
+                return;
+            }
+            pinned_message_container?.querySelector(".pinned-detail")?.remove();
+            row.scrollIntoView({ behavior: "smooth", block: "center" });
+            row.classList.add("message-focus");
+            setTimeout(() => row.classList.remove("message-focus"), 1400);
+        }
+
+        function askPinDuration() {
+            return new Promise((resolve) => {
+                document.querySelector(".pin-duration-overlay")?.remove();
+                const overlay = document.createElement("div");
+                overlay.className = "pin-duration-overlay";
+                overlay.innerHTML = `
+                    <div class="pin-duration-dialog" role="dialog" aria-modal="true">
+                        <div class="pin-duration-title">Pin message</div>
+                        <div class="pin-duration-subtitle">Choose how long your pin lasts</div>
+                        <button class="pin-duration-option" type="button" data-duration="24h">24 hours</button>
+                        <button class="pin-duration-option" type="button" data-duration="7d">7 days</button>
+                        <button class="pin-duration-option" type="button" data-duration="30d">30 days</button>
+                        <button class="pin-duration-cancel" type="button" data-duration="">Cancel</button>
+                    </div>`;
+                document.body.appendChild(overlay);
+
+                const cleanup = (value) => {
+                    document.removeEventListener("keydown", onKey);
+                    overlay.remove();
+                    resolve(value);
+                };
+                const onKey = (event) => {
+                    if (event.key === "Escape") cleanup(null);
+                };
+                document.addEventListener("keydown", onKey);
+                overlay.addEventListener("click", (event) => {
+                    if (event.target === overlay) return cleanup(null);
+                    const btn = event.target.closest("[data-duration]");
+                    if (!btn) return;
+                    cleanup(btn.dataset.duration || null);
+                });
+            });
         }
 
         function normalizePinnedMessage(message) {
@@ -1326,15 +1370,23 @@
                 attachments: message.attachments || [],
                 sender: message.sender || null,
                 createdAt: message.createdAt || message.date_time || null,
+                expiresAt: message.expiresAt || null,
             };
         }
 
         function normalizePinnedMessages(messages) {
             if (!Array.isArray(messages)) return [];
-            return messages.map(normalizePinnedMessage).filter((message) => message?.id);
+            return messages.map(normalizePinnedMessage).filter((message) => message?.id).slice(0, 3);
         }
 
-        async function setPinnedMessage(message) {
+        function formatPinExpiry(expiresAt) {
+            if (!expiresAt) return "";
+            const expiry = moment(expiresAt);
+            if (!expiry.isValid()) return "";
+            return `expires ${expiry.fromNow()}`;
+        }
+
+        async function setPinnedMessage(message, duration) {
             if (pinnedMessages.some((item) => item.id === message?.id)) {
                 await unpinPinnedMessage(message.id);
                 return;
@@ -1342,16 +1394,20 @@
             if (!current_conversation_id || !message?.id) return;
             const response = await fetch(`/inbox/message/${current_conversation_id}/pin`, {
                 method: "POST",
-                body: JSON.stringify({ message_id: message.id }),
+                body: JSON.stringify({ message_id: message.id, duration }),
                 headers: { "content-type": "application/json; charset=UTF-8" },
             });
             const result = await response.json();
             if (!result.errors) {
-                const pinned = normalizePinnedMessage(result.data?.pinnedMessage) || message;
-                pinnedMessages = [
-                    pinned,
-                    ...pinnedMessages.filter((item) => item.id !== pinned.id),
-                ];
+                pinnedMessages = normalizePinnedMessages(result.data?.pinnedMessages || []);
+                if (!pinnedMessages.length) {
+                    const pinned = normalizePinnedMessage(result.data?.pinnedMessage) || message;
+                    pinnedMessages = [
+                        pinned,
+                        ...pinnedMessages.filter((item) => item.id !== pinned.id),
+                    ].slice(0, 3);
+                }
+                activePinnedIndex = 0;
                 renderPinnedMessage();
                 toastr.success(result.message || "Message pinned.");
             } else {
@@ -1370,6 +1426,7 @@
                 pinnedMessages = messageId
                     ? pinnedMessages.filter((message) => message.id !== messageId)
                     : [];
+                activePinnedIndex = 0;
                 renderPinnedMessage();
                 toastr.success(result.message || "Message unpinned.");
             } else {
@@ -2129,6 +2186,12 @@
                 const isActive = menu?.classList.contains("active");
                 closeMessageMenus();
                 if (!isActive && menu) {
+                    const pinItem = menu.querySelector('[data-action="pin"], [data-action="unpin"]');
+                    if (pinItem) {
+                        const isPinned = pinnedMessages.some((message) => message.id === menu.dataset.messageId);
+                        pinItem.dataset.action = isPinned ? "unpin" : "pin";
+                        pinItem.textContent = isPinned ? "Unpin" : "Pin";
+                    }
                     menu.classList.add("active");
                 }
                 return;
@@ -2174,8 +2237,15 @@
                 return;
             }
 
+            if (action === "unpin") {
+                await unpinPinnedMessage(data.id);
+                return;
+            }
+
             if (action === "pin") {
-                await setPinnedMessage(data);
+                const duration = await askPinDuration();
+                if (!duration) return;
+                await setPinnedMessage(data, duration);
             }
         });
 
@@ -2495,9 +2565,14 @@
                     await unpinPinnedMessage(removeBtn.dataset.messageId);
                     return;
                 }
+                if (event.target.closest(".pinned-next-btn")) {
+                    activePinnedIndex = (activePinnedIndex + 1) % pinnedMessages.length;
+                    renderPinnedMessage();
+                    return;
+                }
                 const item = event.target.closest(".pinned-item");
                 if (item) {
-                    showPinnedMessageDetails(item.dataset.messageId);
+                    jumpToPinnedMessage(item.dataset.messageId);
                 }
             });
         }

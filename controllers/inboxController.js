@@ -60,6 +60,35 @@ function getPinExpiry(duration) {
   return new Date(Date.now() + hours * 60 * 60 * 1000);
 }
 
+async function getPinnedMessagesForUser(conversation, userId) {
+  const pinnedEntries = getPinnedEntriesForUser(conversation, userId).sort(
+    (a, b) => b.pinnedAt - a.pinnedAt
+  );
+  const pinnedIds = pinnedEntries.map((item) => item.message).filter(Boolean);
+  const pinnedMessageDocs = pinnedIds.length
+    ? await Message.find({
+        _id: { $in: pinnedIds },
+        conversation_id: conversation._id,
+        hideable: { $nin: [userId] },
+      })
+    : [];
+  const pinnedMap = new Map(
+    pinnedMessageDocs.map((message) => [message._id.toString(), message])
+  );
+
+  return pinnedEntries
+    .map((item) => {
+      const message = pinnedMap.get(item.message?.toString());
+      if (!message) return null;
+      return {
+        ...message.toObject(),
+        pinnedAt: item.pinnedAt,
+        expiresAt: item.expiresAt,
+      };
+    })
+    .filter(Boolean);
+}
+
 async function removeExpiredPins(conversation) {
   const now = new Date();
   const expiredPins = (conversation.pinnedMessages || []).filter(
@@ -455,34 +484,10 @@ async function getMessages(req, res, next) {
       !conversation.isGroup && participant?.id
         ? await User.findById(participant.id)
         : null;
-    const pinnedEntries = getPinnedEntriesForUser(
+    const pinnedMessages = await getPinnedMessagesForUser(
       conversation,
       req.user.user_id
-    ).sort((a, b) => b.pinnedAt - a.pinnedAt);
-    const pinnedIds = pinnedEntries
-      .map((item) => item.message)
-      .filter(Boolean);
-    const pinnedMessageDocs = pinnedIds.length
-      ? await Message.find({
-          _id: { $in: pinnedIds },
-          conversation_id: req.params.conversation_id,
-          hideable: { $nin: [req.user.user_id] },
-        })
-      : [];
-    const pinnedMap = new Map(
-      pinnedMessageDocs.map((message) => [message._id.toString(), message])
     );
-    const pinnedMessages = pinnedEntries
-      .map((item) => {
-        const message = pinnedMap.get(item.message?.toString());
-        if (!message) return null;
-        return {
-          ...message.toObject(),
-          pinnedAt: item.pinnedAt,
-          expiresAt: item.expiresAt,
-        };
-      })
-      .filter(Boolean);
 
     res.status(200).json({
       data: {
@@ -633,7 +638,7 @@ async function pinMessage(req, res, next) {
       .filter((item) => item.user?.toString() === userIdStr)
       .sort((a, b) => b.pinnedAt - a.pinnedAt);
     const removedPins = new Set(
-      currentUserPins.slice(4).map((item) => item._id.toString())
+      currentUserPins.slice(3).map((item) => item._id.toString())
     );
     if (removedPins.size) {
       conversation.pinnedMessages = conversation.pinnedMessages.filter(
@@ -641,12 +646,17 @@ async function pinMessage(req, res, next) {
       );
     }
     await conversation.save();
+    const pinnedMessages = await getPinnedMessagesForUser(
+      conversation,
+      req.user.user_id
+    );
 
     res.status(200).json({
       message: "Message pinned.",
       data: {
-        pinnedMessage: message,
-        limitReached: currentUserPins.length > 4,
+        pinnedMessage: pinnedMessages[0] || null,
+        pinnedMessages,
+        limitReached: currentUserPins.length > 3,
       },
     });
   } catch (error) {

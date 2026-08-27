@@ -431,7 +431,8 @@
         let participant = null;
         let currentConversation = null;
         let pagination = { loading: false, hasMore: false, nextBefore: null };
-        let pinnedMessage = null;
+        let pinnedMessages = [];
+        let activePinnedIndex = 0;
         let attachmentFiles = [];
         let mediaRecorder = null;
         let audioRecordChunks = [];
@@ -734,7 +735,7 @@
             currentConversation = null;
             activeParticipantUser = null;
             pagination = { loading: false, hasMore: false, nextBefore: null };
-            pinnedMessage = null;
+            pinnedMessages = [];
             renderPinnedMessage();
             chat_message_title_container.classList.add("invisible");
             chat_form_container.classList.add("invisible");
@@ -1277,11 +1278,31 @@
 
         function renderPinnedMessage() {
             if (!pinned_message_container) return;
-            if (!pinnedMessage) {
+            if (!pinnedMessages.length) {
                 pinned_message_container.classList.add("hidden");
                 pinned_message_container.innerHTML = "";
                 return;
             }
+
+            const listHtml = pinnedMessages
+                .map((message, index) => {
+                    const pinnedText = message.text || "Attachment";
+                    const attachmentCount = message.attachments?.length || 0;
+                    const attachmentLabel = attachmentCount ? `${attachmentCount} attachment${attachmentCount > 1 ? "s" : ""}` : "";
+                    const senderName = message.sender?.name ? `${message.sender.name}: ` : "";
+                    return `<div class="pinned-item" data-message-id="${message.id}" data-pinned-index="${index}">
+                                <button class="pinned-content" type="button">
+                                    <div class="pinned-label">${index === 0 ? "Pinned" : "Previous pinned"}</div>
+                                    <div class="pinned-text">${escapeHtml(senderName)}${escapeHtml(pinnedText)}</div>
+                                    ${attachmentLabel ? `<div class="pinned-meta">${escapeHtml(attachmentLabel)}</div>` : ""}
+                                </button>
+                                <button class="pinned-remove-btn" type="button" data-message-id="${message.id}" aria-label="Unpin message">x</button>
+                            </div>`;
+                })
+                .join("");
+            pinned_message_container.innerHTML = `<div class="pinned-list">${listHtml}</div>`;
+            pinned_message_container.classList.remove("hidden");
+            return;
 
             const pinnedText = pinnedMessage.text || "Attachment";
             const attachmentCount = pinnedMessage.attachments?.length || 0;
@@ -1297,13 +1318,93 @@
             pinned_message_container.classList.remove("hidden");
         }
 
-        function setPinnedMessage(message) {
-            if (pinnedMessage && message && pinnedMessage.id === message.id) {
-                pinnedMessage = null;
-            } else {
-                pinnedMessage = message;
+        function normalizePinnedMessage(message) {
+            if (!message) return null;
+            return {
+                id: message._id || message.id || message.message_id || "",
+                text: message.text || "",
+                attachments: message.attachments || [],
+                sender: message.sender || null,
+                createdAt: message.createdAt || message.date_time || null,
+            };
+        }
+
+        function normalizePinnedMessages(messages) {
+            if (!Array.isArray(messages)) return [];
+            return messages.map(normalizePinnedMessage).filter((message) => message?.id);
+        }
+
+        async function setPinnedMessage(message) {
+            if (pinnedMessages.some((item) => item.id === message?.id)) {
+                await unpinPinnedMessage(message.id);
+                return;
             }
-            renderPinnedMessage();
+            if (!current_conversation_id || !message?.id) return;
+            const response = await fetch(`/inbox/message/${current_conversation_id}/pin`, {
+                method: "POST",
+                body: JSON.stringify({ message_id: message.id }),
+                headers: { "content-type": "application/json; charset=UTF-8" },
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                const pinned = normalizePinnedMessage(result.data?.pinnedMessage) || message;
+                pinnedMessages = [
+                    pinned,
+                    ...pinnedMessages.filter((item) => item.id !== pinned.id),
+                ];
+                renderPinnedMessage();
+                toastr.success(result.message || "Message pinned.");
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        async function unpinPinnedMessage(messageId = null) {
+            if (!current_conversation_id) return;
+            const query = messageId ? `?message_id=${encodeURIComponent(messageId)}` : "";
+            const response = await fetch(`/inbox/message/${current_conversation_id}/pin${query}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
+            if (!result.errors) {
+                pinnedMessages = messageId
+                    ? pinnedMessages.filter((message) => message.id !== messageId)
+                    : [];
+                renderPinnedMessage();
+                toastr.success(result.message || "Message unpinned.");
+            } else {
+                toastr.error(result.errors.common.msg);
+            }
+        }
+
+        function showPinnedMessageDetails(messageId) {
+            const message = pinnedMessages.find((item) => item.id === messageId);
+            if (!message || !pinned_message_container) return;
+            const existing = pinned_message_container.querySelector(".pinned-detail");
+            if (existing && existing.dataset.messageId === messageId) {
+                existing.remove();
+                return;
+            }
+            if (existing) existing.remove();
+            const attachmentNames = (message.attachments || []).length
+                ? `<div class="pinned-detail-files">${message.attachments.map((item) => `<span>${escapeHtml(getReadableFileName(item))}</span>`).join("")}</div>`
+                : "";
+            pinned_message_container.insertAdjacentHTML(
+                "beforeend",
+                `<div class="pinned-detail" data-message-id="${message.id}">
+                    <div class="pinned-detail-title">Message details</div>
+                    <div class="pinned-detail-row"><span>Sender</span><strong>${escapeHtml(message.sender?.name || "Unknown")}</strong></div>
+                    <div class="pinned-detail-row"><span>Time</span><strong>${message.createdAt ? moment(message.createdAt).format("lll") : "Unknown"}</strong></div>
+                    <div class="pinned-detail-text">${escapeHtml(message.text || "Attachment")}</div>
+                    ${attachmentNames}
+                </div>`
+            );
+            const row = chat_message_list?.querySelector(`.message-row[data-message-id="${message.id}"]`);
+            if (row) {
+                row.scrollIntoView({ behavior: "smooth", block: "center" });
+                row.classList.add("message-focus");
+                setTimeout(() => row.classList.remove("message-focus"), 1400);
+            }
         }
 
         function closeMessageMenus() {
@@ -1780,6 +1881,8 @@
                 updateOnlineStatusText();
                 updateBlockUnblockUi(currentUserId, result.participantUser?.blockable);
                 updateConversationMenu();
+                pinnedMessages = normalizePinnedMessages(result.data.pinnedMessages || (result.data.pinnedMessage ? [result.data.pinnedMessage] : []));
+                renderPinnedMessage();
 
                 if (reset) {
                     chat_message_title_container.classList.remove("invisible");
@@ -1802,7 +1905,7 @@
         function openConversation(conversationId, meta) {
             current_conversation_id = conversationId;
             currentConversation = meta;
-            pinnedMessage = null;
+            pinnedMessages = [];
             renderPinnedMessage();
             participant = {
                 id: meta.participantId,
@@ -2062,9 +2165,8 @@
                 const result = await response.json();
                 if (!result.errors) {
                     if (row) row.remove();
-                    if (pinnedMessage?.id === data.id) {
-                        pinnedMessage = null;
-                        renderPinnedMessage();
+                    if (pinnedMessages.some((message) => message.id === data.id)) {
+                        await unpinPinnedMessage(data.id);
                     }
                 } else {
                     toastr.error(result.errors.common.msg);
@@ -2073,7 +2175,7 @@
             }
 
             if (action === "pin") {
-                setPinnedMessage(data);
+                await setPinnedMessage(data);
             }
         });
 
@@ -2089,6 +2191,8 @@
             const result = await response.json();
             if (!result.errors) {
                 toastr.success(result.message);
+                pinnedMessages = [];
+                renderPinnedMessage();
                 chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
                             <h1 class="text-2xl font-bold">You don't have message</h1>
                         </div>`;
@@ -2109,6 +2213,8 @@
             const result = await response.json();
             if (!result.errors) {
                 toastr.success(result.message);
+                pinnedMessages = [];
+                renderPinnedMessage();
                 chat_message_list.innerHTML = `<div class="message-row message-nothing flex gap-2 text-soft-color items-center justify-center h-full">
                             <h1 class="text-2xl font-bold">You don't have message</h1>
                         </div>`;
@@ -2383,10 +2489,15 @@
         }
 
         if (pinned_message_container) {
-            pinned_message_container.addEventListener("click", (event) => {
-                if (event.target.closest(".pinned-remove-btn")) {
-                    pinnedMessage = null;
-                    renderPinnedMessage();
+            pinned_message_container.addEventListener("click", async (event) => {
+                const removeBtn = event.target.closest(".pinned-remove-btn");
+                if (removeBtn) {
+                    await unpinPinnedMessage(removeBtn.dataset.messageId);
+                    return;
+                }
+                const item = event.target.closest(".pinned-item");
+                if (item) {
+                    showPinnedMessageDetails(item.dataset.messageId);
                 }
             });
         }

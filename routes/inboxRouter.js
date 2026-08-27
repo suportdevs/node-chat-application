@@ -14,6 +14,8 @@ const {
   getMessages,
   searchMessages,
   sendMessage,
+  pinMessage,
+  unpinMessage,
   deleteMessage,
   clearMessage,
   deleteSingleMessage,
@@ -51,8 +53,12 @@ router.patch(
   renameGroup
 );
 
-router.get("/message/:conversation_id", authenticated, getMessages);
+router.post("/message/pin/:conversation_id", authenticated, pinMessage);
+router.delete("/message/pin/:conversation_id", authenticated, unpinMessage);
+router.post("/message/:conversation_id/pin", authenticated, pinMessage);
+router.delete("/message/:conversation_id/pin", authenticated, unpinMessage);
 router.get("/message/search/:conversation_id", authenticated, searchMessages);
+router.get("/message/:conversation_id", authenticated, getMessages);
 
 router.post("/message", attachmentUpload, authenticated, sendMessage);
 router.delete("/message/single/:message_id", authenticated, deleteSingleMessage);

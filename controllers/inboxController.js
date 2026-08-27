@@ -39,6 +39,40 @@ function getParticipantForUser(conversation, userId) {
   return isCreator ? conversation.participant : conversation.creator;
 }
 
+function getPinnedEntriesForUser(conversation, userId) {
+  const userIdStr = userId.toString();
+  const now = new Date();
+  return (conversation.pinnedMessages || []).filter(
+    (item) =>
+      item.user &&
+      item.user.toString() === userIdStr &&
+      (!item.expiresAt || item.expiresAt > now)
+  );
+}
+
+function getPinExpiry(duration) {
+  const hoursByDuration = {
+    "24h": 24,
+    "7d": 24 * 7,
+    "30d": 24 * 30,
+  };
+  const hours = hoursByDuration[duration] || hoursByDuration["7d"];
+  return new Date(Date.now() + hours * 60 * 60 * 1000);
+}
+
+async function removeExpiredPins(conversation) {
+  const now = new Date();
+  const expiredPins = (conversation.pinnedMessages || []).filter(
+    (item) => item.expiresAt && item.expiresAt <= now
+  );
+  if (expiredPins.length) {
+    conversation.pinnedMessages = conversation.pinnedMessages.filter(
+      (item) => !item.expiresAt || item.expiresAt > now
+    );
+    await conversation.save();
+  }
+}
+
 async function getInbox(req, res, next) {
   try {
     const conversations = await Conversation.find({
@@ -396,6 +430,7 @@ async function getMessages(req, res, next) {
         .status(403)
         .json({ errors: { common: { msg: "Not allowed." } } });
     }
+    await removeExpiredPins(conversation);
     const query = {
       conversation_id: req.params.conversation_id,
       hideable: { $nin: [req.user.user_id] },
@@ -420,9 +455,42 @@ async function getMessages(req, res, next) {
       !conversation.isGroup && participant?.id
         ? await User.findById(participant.id)
         : null;
+    const pinnedEntries = getPinnedEntriesForUser(
+      conversation,
+      req.user.user_id
+    ).sort((a, b) => b.pinnedAt - a.pinnedAt);
+    const pinnedIds = pinnedEntries
+      .map((item) => item.message)
+      .filter(Boolean);
+    const pinnedMessageDocs = pinnedIds.length
+      ? await Message.find({
+          _id: { $in: pinnedIds },
+          conversation_id: req.params.conversation_id,
+          hideable: { $nin: [req.user.user_id] },
+        })
+      : [];
+    const pinnedMap = new Map(
+      pinnedMessageDocs.map((message) => [message._id.toString(), message])
+    );
+    const pinnedMessages = pinnedEntries
+      .map((item) => {
+        const message = pinnedMap.get(item.message?.toString());
+        if (!message) return null;
+        return {
+          ...message.toObject(),
+          pinnedAt: item.pinnedAt,
+          expiresAt: item.expiresAt,
+        };
+      })
+      .filter(Boolean);
 
     res.status(200).json({
-      data: { messages, participant },
+      data: {
+        messages,
+        participant,
+        pinnedMessage: pinnedMessages[0] || null,
+        pinnedMessages,
+      },
       pagination: {
         hasMore,
         nextBefore: messages.length ? messages[0].createdAt : null,
@@ -514,6 +582,113 @@ async function sendMessage(req, res, next) {
   }
 }
 
+async function pinMessage(req, res, next) {
+  const { conversation_id } = req.params;
+  const { message_id, duration } = req.body;
+  if (!conversation_id || !message_id) {
+    return res.status(400).json({
+      errors: { common: { msg: "Conversation and message id are required." } },
+    });
+  }
+  try {
+    const conversation = await Conversation.findById(conversation_id);
+    if (!conversation) {
+      return res
+        .status(404)
+        .json({ errors: { common: { msg: "Conversation not found." } } });
+    }
+    if (!isMember(conversation, req.user.user_id)) {
+      return res
+        .status(403)
+        .json({ errors: { common: { msg: "Not allowed." } } });
+    }
+    await removeExpiredPins(conversation);
+
+    const message = await Message.findOne({
+      _id: message_id,
+      conversation_id,
+      hideable: { $nin: [req.user.user_id] },
+    });
+    if (!message) {
+      return res
+        .status(404)
+        .json({ errors: { common: { msg: "Message not found." } } });
+    }
+
+    const userIdStr = req.user.user_id.toString();
+    conversation.pinnedMessages = (conversation.pinnedMessages || []).filter(
+      (item) =>
+        !(
+          item.user?.toString() === userIdStr &&
+          item.message?.toString() === message._id.toString()
+        )
+    );
+    conversation.pinnedMessages.push({
+      user: req.user.user_id,
+      message: message._id,
+      pinnedAt: new Date(),
+      expiresAt: getPinExpiry(duration),
+    });
+    const currentUserPins = conversation.pinnedMessages
+      .filter((item) => item.user?.toString() === userIdStr)
+      .sort((a, b) => b.pinnedAt - a.pinnedAt);
+    const removedPins = new Set(
+      currentUserPins.slice(4).map((item) => item._id.toString())
+    );
+    if (removedPins.size) {
+      conversation.pinnedMessages = conversation.pinnedMessages.filter(
+        (item) => !removedPins.has(item._id.toString())
+      );
+    }
+    await conversation.save();
+
+    res.status(200).json({
+      message: "Message pinned.",
+      data: {
+        pinnedMessage: message,
+        limitReached: currentUserPins.length > 4,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ errors: { common: { msg: error.message } } });
+  }
+}
+
+async function unpinMessage(req, res, next) {
+  const { conversation_id } = req.params;
+  const message_id = req.body?.message_id || req.query.message_id;
+  if (!conversation_id) {
+    return res.status(400).json({
+      errors: { common: { msg: "Conversation id is required." } },
+    });
+  }
+  try {
+    const conversation = await Conversation.findById(conversation_id);
+    if (!conversation) {
+      return res
+        .status(404)
+        .json({ errors: { common: { msg: "Conversation not found." } } });
+    }
+    if (!isMember(conversation, req.user.user_id)) {
+      return res
+        .status(403)
+        .json({ errors: { common: { msg: "Not allowed." } } });
+    }
+
+    const pullQuery = message_id
+      ? { user: req.user.user_id, message: message_id }
+      : { user: req.user.user_id };
+    await Conversation.updateOne(
+      { _id: conversation_id },
+      { $pull: { pinnedMessages: pullQuery } }
+    );
+
+    res.status(200).json({ message: "Message unpinned." });
+  } catch (error) {
+    res.status(500).json({ errors: { common: { msg: error.message } } });
+  }
+}
+
 async function deleteMessage(req, res, next) {
   if (req.params.conversation_id) {
     try {
@@ -532,6 +707,10 @@ async function deleteMessage(req, res, next) {
       await Message.updateMany(
         { conversation_id },
         { $addToSet: { hideable: req.user.user_id } }
+      );
+      await Conversation.updateOne(
+        { _id: conversation_id },
+        { $pull: { pinnedMessages: { user: req.user.user_id } } }
       );
 
       // get lasted message
@@ -597,6 +776,17 @@ async function deleteSingleMessage(req, res, next) {
     await Message.updateOne(
       { _id: messageId },
       { $addToSet: { hideable: req.user.user_id } }
+    );
+    await Conversation.updateOne(
+      { _id: message.conversation_id },
+      {
+        $pull: {
+          pinnedMessages: {
+            user: req.user.user_id,
+            message: message._id,
+          },
+        },
+      }
     );
     res.status(200).json({ message: "Message removed." });
   } catch (error) {
@@ -680,6 +870,8 @@ async function clearMessage(req, res, next) {
           }
         });
         await Message.deleteMany({ conversation_id });
+        conversation.pinnedMessages = [];
+        await conversation.save();
       } else {
         createError("You don't have any messages");
       }
@@ -710,6 +902,8 @@ module.exports = {
   getMessages,
   searchMessages,
   sendMessage,
+  pinMessage,
+  unpinMessage,
   deleteMessage,
   clearMessage,
   deleteSingleMessage,

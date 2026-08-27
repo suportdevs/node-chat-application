@@ -34,6 +34,14 @@ const conversationSchema = mongoose.Schema(
       content: { type: String, default: "Your are joining this conversation." },
       date_time: { type: Date, default: Date.now() },
     },
+    pinnedMessages: [
+      {
+        user: { type: mongoose.Types.ObjectId },
+        message: { type: mongoose.Types.ObjectId, ref: "Message" },
+        pinnedAt: { type: Date, default: Date.now() },
+        expiresAt: { type: Date },
+      },
+    ],
   },
   { timestamps: true }
 );

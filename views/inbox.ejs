@@ -1307,7 +1307,6 @@
                             ${attachmentLabel || expiresLabel ? `<span class="pinned-meta">${escapeHtml([attachmentLabel, expiresLabel].filter(Boolean).join(" - "))}</span>` : ""}
                         </span>
                     </button>
-                    ${pinnedMessages.length > 1 ? `<button class="pinned-next-btn" type="button" aria-label="Show next pinned message">v</button>` : ""}
                     <button class="pinned-remove-btn" type="button" data-message-id="${pinnedMessage.id}" aria-label="Unpin message">×</button>
                 </div>
             `;
@@ -1323,9 +1322,30 @@
                 return;
             }
             pinned_message_container?.querySelector(".pinned-detail")?.remove();
+            focusMessageRow(row);
+        }
+
+        let messageFocusTimer = null;
+        function focusMessageRow(row) {
+            if (!row) return;
+            document.querySelectorAll(".message-row.message-focus").forEach((item) => {
+                item.classList.remove("message-focus");
+            });
+            window.clearTimeout(messageFocusTimer);
+
             row.scrollIntoView({ behavior: "smooth", block: "center" });
-            row.classList.add("message-focus");
-            setTimeout(() => row.classList.remove("message-focus"), 1400);
+
+            const applyFocus = () => {
+                row.classList.remove("message-focus");
+                void row.offsetWidth;
+                row.classList.add("message-focus");
+                messageFocusTimer = window.setTimeout(() => {
+                    row.classList.remove("message-focus");
+                }, 2200);
+            };
+
+            applyFocus();
+            window.setTimeout(applyFocus, 450);
         }
 
         function askPinDuration() {
@@ -1458,9 +1478,7 @@
             );
             const row = chat_message_list?.querySelector(`.message-row[data-message-id="${message.id}"]`);
             if (row) {
-                row.scrollIntoView({ behavior: "smooth", block: "center" });
-                row.classList.add("message-focus");
-                setTimeout(() => row.classList.remove("message-focus"), 1400);
+                focusMessageRow(row);
             }
         }
 
@@ -2572,7 +2590,13 @@
                 }
                 const item = event.target.closest(".pinned-item");
                 if (item) {
-                    jumpToPinnedMessage(item.dataset.messageId);
+                    let targetMessageId = item.dataset.messageId;
+                    if (pinnedMessages.length > 1) {
+                        activePinnedIndex = (activePinnedIndex + 1) % pinnedMessages.length;
+                        renderPinnedMessage();
+                        targetMessageId = pinnedMessages[activePinnedIndex]?.id || targetMessageId;
+                    }
+                    jumpToPinnedMessage(targetMessageId);
                 }
             });
         }
